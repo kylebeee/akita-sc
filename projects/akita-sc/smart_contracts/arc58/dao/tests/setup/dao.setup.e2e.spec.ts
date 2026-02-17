@@ -1,7 +1,8 @@
 import { algo, microAlgo } from '@algorandfoundation/algokit-utils';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
-import { AkitaDaoSDK, ProposalActionEnum } from 'akita-sdk/dao';
+import { ProposalActionEnum } from 'akita-sdk/dao';
+import { AkitaDaoDeployableSDK } from 'akita-sdk/dao-deployable';
 import { StakingPoolFactorySDK } from 'akita-sdk/staking-pool';
 import { SubscriptionsSDK } from 'akita-sdk/subscriptions';
 import { RevenueManagerPluginSDK, UpdateAkitaDAOPluginSDK, WalletFactorySDK } from 'akita-sdk/wallet';
@@ -38,7 +39,7 @@ describe('ARC58 DAO Setup', () => {
 
   // Phase 1: Core Contracts
   let escrowFactory: EscrowFactoryClient;
-  let dao: AkitaDaoSDK;
+  let dao: AkitaDaoDeployableSDK;
   let walletFactory: WalletFactorySDK;
   let subscriptions: SubscriptionsSDK;
   let stakingPoolFactory: StakingPoolFactorySDK;

@@ -11,7 +11,6 @@ import { ERR_NOT_AKITA_DAO } from "../social/errors"
 import { type AkitaBaseFeeGeneratorContract } from "../../../utils/base-contracts/base"
 import { MAX_AVM_BYTE_ARRAY_LENGTH } from "../../../utils/constants"
 import { AbstractedAccountFactory } from "../../account/factory.algo"
-
 /** Maximum chunk size for loading boxed contract data (2048 - ABI overhead) */
 const FACTORY_LOAD_CHUNK_SIZE: uint64 = 2032
 
@@ -244,4 +243,5 @@ export class UpdateAkitaDAOPlugin extends Contract {
     // Submit all inner transactions as a single group
     itxnCompose.submit()
   }
+
 }

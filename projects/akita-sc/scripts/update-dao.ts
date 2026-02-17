@@ -15,6 +15,7 @@
  */
 
 import { AlgorandClient } from '@algorandfoundation/algokit-utils'
+import { proposeAndExecute } from './utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { AlgorandFixture } from '@algorandfoundation/algokit-utils/types/testing'
 import { getNetworkAppIds, SDKClient, setCurrentNetwork, type AkitaNetwork } from 'akita-sdk'
@@ -30,23 +31,6 @@ interface UpdateOptions {
     mnemonic?: string
     version: string
     dryRun?: boolean
-}
-
-// Helper to create and execute a proposal in one step
-async function proposeAndExecute<TClient extends SDKClient>(
-    dao: AkitaDaoSDK,
-    actions: ProposalAction<TClient>[]
-): Promise<bigint> {
-    const info = await dao.proposalCost({ actions })
-    await dao.client.appClient.fundAppAccount({ amount: info.total.microAlgo() })
-
-    const { return: proposalId } = await dao.newProposal({ actions })
-    if (proposalId === undefined) {
-        throw new Error('Failed to create proposal')
-    }
-
-    await dao.executeProposal({ proposalId })
-    return proposalId
 }
 
 // Parse command line arguments
@@ -339,7 +323,7 @@ async function update() {
             lastValid: execution.lastValid,
         }
 
-        const proposalId = await proposeAndExecute(dao, [upgradeAction])
+        const proposalId = await proposeAndExecute(algorand, dao, [upgradeAction])
         console.log(`   Proposal ${proposalId} created and executed\n`)
 
         // Submit the actual update transaction

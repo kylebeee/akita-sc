@@ -684,7 +684,7 @@ export class AbstractedAccount extends Contract {
   /** @param version the version of the wallet */
   @abimethod({ allowActions: ['UpdateApplication'] })
   update(version: string): void {
-    assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_UPDATE)
+    assert(this.isAdmin() || Txn.sender === this.factoryApp.value.address, ERR_ONLY_ADMIN_CAN_UPDATE)
     this.version.value = version
   }
 

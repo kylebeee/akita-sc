@@ -11,9 +11,9 @@ import { AbstractAccountBoxPrefixExecutions, AbstractAccountBoxPrefixPlugins } f
 import { ERR_ALLOWANCE_ALREADY_EXISTS, ERR_ALLOWANCE_DOES_NOT_EXIST, ERR_ESCROW_ALREADY_EXISTS, ERR_ESCROW_DOES_NOT_EXIST, ERR_EXECUTION_KEY_NOT_FOUND, ERR_FORBIDDEN, ERR_INVALID_UPGRADE, ERR_WALLET_ALREADY_SETUP } from "../account/errors";
 import { AddAllowanceInfo, EscrowInfo, PluginInfo, PluginKey } from "../account/types";
 import { Split } from "../plugins/revenue-manager/types";
-import { AkitaDAOBoxPrefixProposals, AkitaDAOBoxPrefixProposalVotes, AkitaDAOGlobalStateKeysAddAllowancesProposalSettings, AkitaDAOGlobalStateKeysAddPluginProposalSettings, AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysAkitaAssets, AkitaDAOGlobalStateKeysAkitaSocialAppList, AkitaDAOGlobalStateKeysContentPolicy, AkitaDAOGlobalStateKeysInitialized, AkitaDAOGlobalStateKeysMinRewardsImpact, AkitaDAOGlobalStateKeysNewEscrowProposalSettings, AkitaDAOGlobalStateKeysNFTFees, AkitaDAOGlobalStateKeysOtherAppList, AkitaDAOGlobalStateKeysPluginAppList, AkitaDAOGlobalStateKeysProposalActionLimit, AkitaDAOGlobalStateKeysProposalID, AkitaDAOGlobalStateKeysRemoveAllowancesProposalSettings, AkitaDAOGlobalStateKeysRemoveExecutePluginProposalSettings, AkitaDAOGlobalStateKeysRemovePluginProposalSettings, AkitaDAOGlobalStateKeysRevenueSplits, AkitaDAOGlobalStateKeysSocialFees, AkitaDAOGlobalStateKeysStakingFees, AkitaDAOGlobalStateKeysSubscriptionFees, AkitaDAOGlobalStateKeysSwapFees, AkitaDAOGlobalStateKeysToggleEscrowLockProposalSettings, AkitaDAOGlobalStateKeysUpdateFieldsProposalSettings, AkitaDAOGlobalStateKeysUpgradeAppProposalSettings, AkitaDAOGlobalStateKeysWallet, AkitaDAOGlobalStateKeysWalletFees, AkitaDAONumGlobalBytes, AkitaDAONumGlobalUints, DAOExecutionMBR, DAOProposalVotesMBR, DaoStateDraft, DaoStateFullyInitialized, DaoStatePartiallyInitialized, MinDAOPluginMBR, MinDAOProposalActionMbr, MinDAOProposalMBR, ProposalActionTypeAddAllowances, ProposalActionTypeAddNamedPlugin, ProposalActionTypeAddPlugin, ProposalActionTypeExecutePlugin, ProposalActionTypeNewEscrow, ProposalActionTypeRemoveAllowances, ProposalActionTypeRemoveExecutePlugin, ProposalActionTypeRemoveNamedPlugin, ProposalActionTypeRemovePlugin, ProposalActionTypeToggleEscrowLock, ProposalActionTypeUpdateFields, ProposalActionTypeUpgradeApp, ProposalStatusApproved, ProposalStatusDraft, ProposalStatusExecuted, ProposalStatusRejected, ProposalStatusVoting, ProposalVoteTypeAbstain, ProposalVoteTypeApprove, ProposalVoteTypeReject } from "./constants";
-import { ERR_ACTION_LIMIT_MUST_BE_GREATER_THAN_ZERO, ERR_ALLOWANCE_LIST_EMPTY, ERR_ALREADY_INITIALIZED, ERR_DAO_NOT_INITIALIZED, ERR_EMPTY_ACTION_LIST, ERR_INCORRECT_SENDER, ERR_INSUFFICIENT_PROPOSAL_THRESHOLD, ERR_INVALID_CID, ERR_INVALID_DURATION, ERR_INVALID_MAX_APPROVAL, ERR_INVALID_MAX_PARTICIPATION, ERR_INVALID_MAX_POWER, ERR_INVALID_MIN_APPROVAL, ERR_INVALID_MIN_POWER, ERR_INVALID_MINIMUM_REWARDS_IMPACT, ERR_INVALID_PROPOSAL_ACTION, ERR_INVALID_PROPOSAL_ACTION_LIMIT, ERR_INVALID_PROPOSAL_STATE, ERR_MIN_REWARDS_IMPACT_MUST_BE_GREATER_THAN_ZERO, ERR_MIN_REWARDS_IMPACT_MUST_BE_LESS_THAN_OR_EQUAL_TO_1000s, ERR_NOT_EXECUTABLE_PLUGIN, ERR_PAYMENT_NOT_REQUIRED, ERR_PAYMENT_REQUIRED, ERR_PLUGIN_ALREADY_EXISTS, ERR_PLUGIN_DOES_NOT_EXIST, ERR_PLUGIN_EXPIRED, ERR_PROPOSAL_DOES_NOT_EXIST, ERR_PROPOSAL_VOTE_NOT_FOUND, ERR_TOO_MANY_ACTIONS, ERR_VERSION_CANNOT_BE_EMPTY, ERR_VOTING_DURATION_NOT_MET, ERR_VOTING_PARTICIPATION_NOT_MET } from "./errors";
-import { AkitaAppList, AkitaAssets, AkitaDAOApps, AkitaDAOFees, AkitaSocialAppList, DAOPluginKey, DaoState, ExecutionMetadata, NFTFees, OtherAppList, PluginAppList, ProposalAction, ProposalActionType, ProposalAddAllowances, ProposalAddNamedPlugin, ProposalAddPlugin, ProposalCostInfo, ProposalDetails, ProposalExecutePlugin, ProposalNewEscrow, ProposalRemoveAllowances, ProposalRemoveExecutePlugin, ProposalRemoveNamedPlugin, ProposalRemovePlugin, ProposalSettings, ProposalToggleEscrowLock, ProposalUpdateField, ProposalUpgradeApp, ProposalVoteInfo, ProposalVoteKey, ProposalVoteType, SocialFees, StakingFees, SubscriptionFees, SwapFees, WalletFees } from "./types";
+import { AkitaDAOBoxPrefixProposals, AkitaDAOBoxPrefixProposalVotes, AkitaDAOGlobalStateKeysAddAllowancesProposalSettings, AkitaDAOGlobalStateKeysAddPluginProposalSettings, AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysAkitaAssets, AkitaDAOGlobalStateKeysAkitaSocialAppList, AkitaDAOGlobalStateKeysContentPolicy, AkitaDAOGlobalStateKeysInitialized, AkitaDAOGlobalStateKeysMinRewardsImpact, AkitaDAOGlobalStateKeysNewEscrowProposalSettings, AkitaDAOGlobalStateKeysNFTFees, AkitaDAOGlobalStateKeysOtherAppList, AkitaDAOGlobalStateKeysPluginAppList, AkitaDAOGlobalStateKeysProposalActionLimit, AkitaDAOGlobalStateKeysProposalID, AkitaDAOGlobalStateKeysRemoveAllowancesProposalSettings, AkitaDAOGlobalStateKeysRemoveExecutePluginProposalSettings, AkitaDAOGlobalStateKeysRemovePluginProposalSettings, AkitaDAOGlobalStateKeysRevenueSplits, AkitaDAOGlobalStateKeysSocialFees, AkitaDAOGlobalStateKeysStakingFees, AkitaDAOGlobalStateKeysSubscriptionFees, AkitaDAOGlobalStateKeysSwapFees, AkitaDAOGlobalStateKeysToggleEscrowLockProposalSettings, AkitaDAOGlobalStateKeysUpdateFieldsProposalSettings, AkitaDAOGlobalStateKeysUpgradeAppProposalSettings, AkitaDAOGlobalStateKeysWallet, AkitaDAOGlobalStateKeysWalletFees, AkitaDAONumGlobalBytes, AkitaDAONumGlobalUints, DAOExecutionMBR, DAOProposalVotesMBR, DaoStateDraft, DaoStateFullyInitialized, DaoStatePartiallyInitialized, MinDAOPluginMBR, MinDAOProposalActionMbr, MinDAOProposalMBR, ProposalActionTypeAddAllowances, ProposalActionTypeAddNamedPlugin, ProposalActionTypeAddPlugin, ProposalActionTypeExecutePlugin, ProposalActionTypeNewEscrow, ProposalActionTypeRemoveAllowances, ProposalActionTypeRemoveExecutePlugin, ProposalActionTypeRemoveNamedPlugin, ProposalActionTypeRemovePlugin, ProposalActionTypeToggleEscrowLock, ProposalActionTypeUpdateFields, ProposalActionTypeUpdateWallet, ProposalActionTypeUpgradeApp, ProposalStatusApproved, ProposalStatusDraft, ProposalStatusExecuted, ProposalStatusRejected, ProposalStatusVoting, ProposalVoteTypeAbstain, ProposalVoteTypeApprove, ProposalVoteTypeReject } from "./constants";
+import { ERR_ACTION_LIMIT_MUST_BE_GREATER_THAN_ZERO, ERR_ALLOWANCE_LIST_EMPTY, ERR_DAO_NOT_INITIALIZED, ERR_EMPTY_ACTION_LIST, ERR_INCORRECT_SENDER, ERR_INSUFFICIENT_PROPOSAL_THRESHOLD, ERR_INVALID_CID, ERR_INVALID_DURATION, ERR_INVALID_MAX_APPROVAL, ERR_INVALID_MAX_PARTICIPATION, ERR_INVALID_MAX_POWER, ERR_INVALID_MIN_APPROVAL, ERR_INVALID_MIN_POWER, ERR_INVALID_MINIMUM_REWARDS_IMPACT, ERR_INVALID_PROPOSAL_ACTION, ERR_INVALID_PROPOSAL_ACTION_LIMIT, ERR_INVALID_PROPOSAL_STATE, ERR_MIN_REWARDS_IMPACT_MUST_BE_GREATER_THAN_ZERO, ERR_MIN_REWARDS_IMPACT_MUST_BE_LESS_THAN_OR_EQUAL_TO_1000s, ERR_NOT_EXECUTABLE_PLUGIN, ERR_PAYMENT_NOT_REQUIRED, ERR_PAYMENT_REQUIRED, ERR_PLUGIN_ALREADY_EXISTS, ERR_PLUGIN_DOES_NOT_EXIST, ERR_PLUGIN_EXPIRED, ERR_PROPOSAL_DOES_NOT_EXIST, ERR_PROPOSAL_VOTE_NOT_FOUND, ERR_TOO_MANY_ACTIONS, ERR_VOTING_DURATION_NOT_MET, ERR_VOTING_PARTICIPATION_NOT_MET } from "./errors";
+import { AkitaAppList, AkitaAssets, AkitaSocialAppList, DAOPluginKey, DaoState, ExecutionMetadata, NFTFees, OtherAppList, PluginAppList, ProposalAction, ProposalActionType, ProposalAddAllowances, ProposalAddNamedPlugin, ProposalAddPlugin, ProposalCostInfo, ProposalDetails, ProposalExecutePlugin, ProposalNewEscrow, ProposalRemoveAllowances, ProposalRemoveExecutePlugin, ProposalRemoveNamedPlugin, ProposalRemovePlugin, ProposalSettings, ProposalToggleEscrowLock, ProposalUpdateField, ProposalUpgradeApp, ProposalVoteInfo, ProposalVoteKey, ProposalVoteType, SocialFees, StakingFees, SubscriptionFees, SwapFees, WalletFees } from "./types";
 
 // CONTRACT IMPORTS
 import type { Staking } from "../../staking/contract.algo";
@@ -95,6 +95,7 @@ export class AkitaDAO extends Contract {
   proposalVotes = BoxMap<ProposalVoteKey, ProposalVoteInfo>({ keyPrefix: AkitaDAOBoxPrefixProposalVotes })
   /** extra execution information for the DAO */
   executions = BoxMap<bytes<32>, ExecutionMetadata>({ keyPrefix: AbstractAccountBoxPrefixExecutions })
+
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
   private pluginsMbr(escrow: string): uint64 {
@@ -339,6 +340,10 @@ export class AkitaDAO extends Contract {
           }
           break
         }
+        case ProposalActionTypeUpdateWallet: {
+          // No additional validation needed — factory validates admin
+          break
+        }
         default: {
           assert(false, ERR_INVALID_PROPOSAL_ACTION)
         }
@@ -460,7 +465,8 @@ export class AkitaDAO extends Contract {
 
   private getProposalSettings(type: ProposalActionType, data: bytes): ProposalSettings {
     switch (type) {
-      case ProposalActionTypeUpgradeApp: {
+      case ProposalActionTypeUpgradeApp:
+      case ProposalActionTypeUpdateWallet: {
         return this.upgradeAppProposalSettings.value
       }
       case ProposalActionTypeAddPlugin:
@@ -758,139 +764,18 @@ export class AkitaDAO extends Contract {
     return id
   }
 
-  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
-
-  @abimethod({ onCreate: 'require' })
-  create(
-    version: string,
-    akta: uint64,
-    contentPolicy: CID,
-    minRewardsImpact: uint64,
-    apps: AkitaDAOApps,
-    fees: AkitaDAOFees,
-    proposalSettings: {
-      upgradeApp: ProposalSettings,
-      addPlugin: ProposalSettings,
-      removeExecutePlugin: ProposalSettings,
-      removePlugin: ProposalSettings,
-      addAllowance: ProposalSettings,
-      removeAllowance: ProposalSettings,
-      newEscrow: ProposalSettings,
-      toggleEscrowLock: ProposalSettings
-      updateFields: ProposalSettings,
-    },
-    revenueSplits: Split[]
-  ): void {
-    assert(this.version.value === '', ERR_ALREADY_INITIALIZED)
-    assert(version !== '', ERR_VERSION_CANNOT_BE_EMPTY)
-
-    this.version.value = version
-    this.proposalActionLimit.value = 5
-    this.akitaAssets.value = { akta, bones: 0 }
-    this.contentPolicy.value = contentPolicy
-    this.minRewardsImpact.value = minRewardsImpact
-
-    this.akitaAppList.value = {
-      staking: apps.staking,
-      rewards: apps.rewards,
-      pool: apps.pool,
-      prizeBox: apps.prizeBox,
-      subscriptions: apps.subscriptions,
-      gate: apps.gate,
-      auction: apps.auction,
-      hyperSwap: apps.hyperSwap,
-      raffle: apps.raffle,
-      metaMerkles: apps.metaMerkles,
-      marketplace: apps.marketplace,
-      wallet: apps.wallet,
-    }
-
-    this.akitaSocialAppList.value = {
-      social: apps.social,
-      graph: apps.graph,
-      impact: apps.impact,
-      moderation: apps.moderation
-    }
-
-    this.pluginAppList.value = {
-      optin: apps.optin,
-      revenueManager: apps.revenueManager,
-      update: apps.update
-    }
-
-    this.otherAppList.value = {
-      vrfBeacon: apps.vrfBeacon,
-      nfdRegistry: apps.nfdRegistry,
-      assetInbox: apps.assetInbox,
-      escrow: apps.escrow,
-      akitaNfd: apps.akitaNfd,
-      poll: apps.poll
-    }
-
-    this.walletFees.value = {
-      createFee: fees.walletCreateFee,
-      referrerPercentage: fees.walletReferrerPercentage
-    }
-
-    this.socialFees.value = {
-      postFee: fees.postFee,
-      reactFee: fees.reactFee,
-      impactTaxMin: fees.impactTaxMin,
-      impactTaxMax: fees.impactTaxMax,
-    }
-
-    this.stakingFees.value = {
-      creationFee: fees.poolCreationFee,
-      impactTaxMin: fees.poolImpactTaxMin,
-      impactTaxMax: fees.poolImpactTaxMax
-    }
-
-    this.subscriptionFees.value = {
-      serviceCreationFee: fees.subscriptionServiceCreationFee,
-      paymentPercentage: fees.subscriptionPaymentPercentage,
-      triggerPercentage: fees.subscriptionTriggerPercentage,
-    }
-
-    this.nftFees.value = {
-      marketplaceSalePercentageMin: fees.marketplaceSalePercentageMin,
-      marketplaceSalePercentageMax: fees.marketplaceSalePercentageMax,
-      marketplaceComposablePercentage: fees.marketplaceComposablePercentage,
-      marketplaceRoyaltyDefaultPercentage: fees.marketplaceRoyaltyDefaultPercentage,
-      shuffleSalePercentage: fees.shuffleSalePercentage,
-      omnigemSaleFee: fees.omnigemSaleFee,
-      auctionCreationFee: fees.auctionCreationFee,
-      auctionSaleImpactTaxMin: fees.auctionSaleImpactTaxMin,
-      auctionSaleImpactTaxMax: fees.auctionSaleImpactTaxMax,
-      auctionComposablePercentage: fees.auctionComposablePercentage,
-      auctionRafflePercentage: fees.auctionRafflePercentage,
-      raffleCreationFee: fees.raffleCreationFee,
-      raffleSaleImpactTaxMin: fees.raffleSaleImpactTaxMin,
-      raffleSaleImpactTaxMax: fees.raffleSaleImpactTaxMax,
-      raffleComposablePercentage: fees.raffleComposablePercentage,
-    }
-
-    this.swapFees.value = {
-      impactTaxMin: fees.swapFeeImpactTaxMin,
-      impactTaxMax: fees.swapFeeImpactTaxMax,
-    }
-
-    this.upgradeAppProposalSettings.value = clone(proposalSettings.upgradeApp)
-    this.addPluginProposalSettings.value = clone(proposalSettings.addPlugin)
-    this.removeExecutePluginProposalSettings.value = clone(proposalSettings.removeExecutePlugin)
-    this.removePluginProposalSettings.value = clone(proposalSettings.removePlugin)
-    this.addAllowancesProposalSettings.value = clone(proposalSettings.addAllowance)
-    this.removeAllowancesProposalSettings.value = clone(proposalSettings.removeAllowance)
-    this.newEscrowProposalSettings.value = clone(proposalSettings.newEscrow)
-    this.toggleEscrowLockProposalSettings.value = clone(proposalSettings.toggleEscrowLock)
-    this.updateFieldsProposalSettings.value = clone(proposalSettings.updateFields)
-
-    this.revenueSplits.value = clone(revenueSplits)
-
-    this.proposalID.value = 1
+  private updateWallet(): void {
+    const factoryAppId = this.akitaAppList.value.wallet
+    abiCall<typeof AbstractedAccountFactory.prototype.updateWallet>({
+      appId: factoryAppId,
+      args: [this.wallet.value]
+    })
   }
 
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
+
   /**
-   * 
+   *
    * The Akita DAO contract supports its own upgrade via a secure, auditable process. Here's a step-by-step trace of how a self-upgrade is executed:
    * 
    * 1. Proposal Creation:
@@ -924,32 +809,6 @@ export class AkitaDAO extends Contract {
     assert(Global.callerApplicationId === updatePlugin, ERR_INVALID_UPGRADE)
     this.version.value = newVersion
     // this.executions(Txn.lease).delete()
-  }
-
-  setup(nickname: string): uint64 {
-    assert(!this.wallet.hasValue, ERR_WALLET_ALREADY_SETUP)
-
-    const { wallet: appId } = this.akitaAppList.value
-
-    const cost = this.setupCost()
-
-    const walletID = abiCall<typeof AbstractedAccountFactory.prototype.newAccount>({
-      appId,
-      args: [
-        itxn.payment({
-          receiver: Application(appId).address,
-          amount: cost,
-        }),
-        Global.zeroAddress,
-        Global.currentApplicationAddress,
-        nickname,
-        Global.zeroAddress,
-      ]
-    }).returnValue
-
-    this.wallet.value = Application(walletID)
-
-    return walletID
   }
 
   partiallyInitialize(): void {
@@ -1229,6 +1088,10 @@ export class AkitaDAO extends Contract {
         case ProposalActionTypeUpdateFields: {
           const { field, value } = decodeArc4<ProposalUpdateField>(data)
           this.updateField(field, value)
+          break
+        }
+        case ProposalActionTypeUpdateWallet: {
+          this.updateWallet()
           break
         }
       }

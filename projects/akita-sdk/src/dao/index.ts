@@ -16,7 +16,7 @@ import {
 } from '../generated/AkitaDAOTypesClient'
 import { BaseSDK } from "../base";
 import { ENV_VAR_NAMES } from "../config";
-import { GroupReturn, isPluginSDKReturn, MaybeSigner, NewContractSDKParams, SDKClient, TxnReturn } from "../types";
+import { isPluginSDKReturn, MaybeSigner, NewContractSDKParams, SDKClient, TxnReturn } from "../types";
 import { WalletSDK } from "../wallet";
 import { AkitaDaoGlobalState, DecodedProposal, DecodedProposalAction, EditProposalParams, NewProposalParams, ProposalAction, ProposalAddPluginArgs, SplitsToTuples } from "./types";
 import { DAOProposalVotesMBR, ProposalActionEnum } from "./constants";
@@ -598,40 +598,6 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
     }
 
     return preppedActions;
-  }
-
-  async setup(params?: MaybeSigner): Promise<GroupReturn> {
-
-    const sendParams = this.getSendParams(params);
-
-    const group = this.client.newGroup()
-
-    group.setup({
-      ...sendParams,
-      args: { nickname: 'Akita DAO' },
-      maxFee: (6_000).microAlgo()
-    })
-
-    group.opUp({ args: {}, maxFee: (1_000).microAlgos() })
-
-    const result = await group.send({ ...sendParams })
-
-    if (result.returns === undefined) {
-      throw new Error('Failed to setup Akita DAO');
-    }
-
-    this.wallet = new WalletSDK({
-      algorand: this.algorand,
-      factoryParams: {
-        appId: result.returns[0] as bigint,
-        defaultSender: sendParams.sender,
-        defaultSigner: sendParams.signer
-      }
-    })
-
-    await this.wallet.register({ ...sendParams, escrow: '' })
-
-    return result;
   }
 
   async initialize(params?: MaybeSigner): Promise<TxnReturn<void>> {

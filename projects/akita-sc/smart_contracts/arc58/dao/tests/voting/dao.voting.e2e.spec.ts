@@ -1,7 +1,8 @@
 import { algo, microAlgo } from '@algorandfoundation/algokit-utils';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
-import { AkitaDaoSDK, EMPTY_CID, ProposalActionEnum } from 'akita-sdk/dao';
+import { EMPTY_CID, ProposalActionEnum } from 'akita-sdk/dao';
+import { AkitaDaoDeployableSDK } from 'akita-sdk/dao-deployable';
 import { WalletFactorySDK } from 'akita-sdk/wallet';
 import type { TransactionSigner } from 'algosdk';
 import { deployAbstractedAccountFactory } from '../../../../../tests/fixtures/abstracted-account';
@@ -73,7 +74,7 @@ describe('ARC58 DAO Voting', () => {
     let sender: string;
     let signer: TransactionSigner;
     let escrowFactory: EscrowFactoryClient;
-    let dao: AkitaDaoSDK;
+    let dao: AkitaDaoDeployableSDK;
     let walletFactory: WalletFactorySDK;
     let staking: StakingClient;
 

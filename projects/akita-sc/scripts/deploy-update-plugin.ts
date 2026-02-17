@@ -18,10 +18,11 @@
  */
 
 import { AlgorandClient, microAlgo } from '@algorandfoundation/algokit-utils'
+import { getAppFundingNeeded, proposeAndExecute } from './utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { AlgorandFixture } from '@algorandfoundation/algokit-utils/types/testing'
-import { getNetworkAppIds, SDKClient, type AkitaNetwork } from 'akita-sdk'
-import { AkitaDaoSDK, ProposalAction, ProposalActionEnum } from 'akita-sdk/dao'
+import { getNetworkAppIds, setCurrentNetwork, type AkitaNetwork } from 'akita-sdk'
+import { AkitaDaoSDK, ProposalActionEnum } from 'akita-sdk/dao'
 import { UpdateAkitaDAOPluginSDK } from 'akita-sdk/wallet'
 import algosdk, { ALGORAND_ZERO_ADDRESS_STRING, makeBasicAccountTransactionSigner } from 'algosdk'
 import { UpdateAkitaDaoPluginFactory } from '../smart_contracts/artifacts/arc58/plugins/update-akita-dao/UpdateAkitaDAOPluginClient'
@@ -40,23 +41,6 @@ interface DeployOptions {
   mnemonic?: string
   oldPluginId?: bigint
   dryRun?: boolean
-}
-
-// Helper to create and execute a proposal in one step
-async function proposeAndExecute<TClient extends SDKClient>(
-  dao: AkitaDaoSDK,
-  actions: ProposalAction<TClient>[]
-): Promise<bigint> {
-  const info = await dao.proposalCost({ actions })
-  await dao.client.appClient.fundAppAccount({ amount: info.total.microAlgo() })
-
-  const { return: proposalId } = await dao.newProposal({ actions })
-  if (proposalId === undefined) {
-    throw new Error('Failed to create proposal')
-  }
-
-  await dao.executeProposal({ proposalId })
-  return proposalId
 }
 
 // Parse command line arguments
@@ -223,6 +207,9 @@ async function deploy() {
     console.log(`   DAO: ${appIds.dao}`)
     console.log(`   Old Update Plugin: ${oldPluginId}\n`)
 
+    // Set the network so the SDK can resolve app IDs
+    setCurrentNetwork(options.network)
+
     // Create Algorand client
     const algorand = createAlgorandClient(options.network)
 
@@ -304,7 +291,7 @@ async function deploy() {
 
     // Step 2: Update DAO's Plugin App List (PAL)
     console.log('📜 Step 2: Updating DAO Plugin App List...')
-    const updatePalProposalId = await proposeAndExecute(dao, [
+    const updatePalProposalId = await proposeAndExecute(algorand, dao, [
       {
         type: ProposalActionEnum.UpdateFields,
         field: 'pal',
@@ -315,7 +302,7 @@ async function deploy() {
 
     // Step 3: Remove old plugin from wallet
     console.log('🗑️  Step 3: Removing old plugin from wallet...')
-    const removePluginProposalId = await proposeAndExecute(dao, [
+    const removePluginProposalId = await proposeAndExecute(algorand, dao, [
       {
         type: ProposalActionEnum.RemovePlugin,
         plugin: oldPluginId,
@@ -333,14 +320,17 @@ async function deploy() {
       plugin: '',
       groups: 2n,
     })
-    await wallet.client.appClient.fundAppAccount({
-      amount: microAlgo(mbr.plugins + mbr.executions + 1_000_000n),
-    })
+    const walletFunding = await getAppFundingNeeded(algorand, wallet.client.appAddress.toString(), mbr.plugins + mbr.executions)
+    if (walletFunding > 0n) {
+      await wallet.client.appClient.fundAppAccount({
+        amount: microAlgo(walletFunding),
+      })
+    }
     console.log(`   ✅ Wallet funded\n`)
 
     // Step 5: Add new plugin to wallet
     console.log('➕ Step 5: Installing new plugin on wallet...')
-    const installPluginProposalId = await proposeAndExecute(dao, [
+    const installPluginProposalId = await proposeAndExecute(algorand, dao, [
       {
         type: ProposalActionEnum.AddPlugin,
         fee: DEFAULT_UPDATE_AKITA_DAO_PROPOSAL_CREATION,

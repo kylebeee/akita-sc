@@ -7,6 +7,7 @@ import { ProposalAction, ProposalVoteType } from "../../dao/types";
 import { AkitaDAOPluginGlobalStateKeysDAOAppID } from "./constants";
 
 // CONTRACT IMPORTS
+import type { AkitaDAODeployable } from "../../dao-deployable/contract.algo";
 import type { AkitaDAO } from "../../dao/contract.algo";
 import { ERR_PROPOSAL_DOES_NOT_EXIST } from "../../dao/errors";
 
@@ -29,7 +30,7 @@ export class AkitaDAOPlugin extends Contract {
   setup(wallet: Application, rekeyBack: boolean, nickname: string): void {
     const sender = getSpendingAccount(wallet)
 
-    abiCall<typeof AkitaDAO.prototype.setup>({
+    abiCall<typeof AkitaDAODeployable.prototype.setup>({
       sender,
       appId: this.daoAppID.value,
       args: [nickname],

@@ -15,7 +15,7 @@ import { SDKClient } from 'akita-sdk/types';
 import { type UpdateAkitaDAOPluginSDK, type WalletAddPluginParams, type WalletFactorySDK } from 'akita-sdk/wallet';
 import type { TransactionSigner } from 'algosdk';
 import { buildAkitaUniverse, deployAkitaDAO } from '../../../../../tests/fixtures/dao';
-import type { AkitaDaoApps } from '../../../../artifacts/arc58/dao/AkitaDAOClient';
+import type { AkitaDaoApps } from '../../../../artifacts/arc58/dao-deployable/AkitaDAOClient';
 
 export interface BootstrapDaoTestContextOptions {
   fixture?: AlgorandFixture;

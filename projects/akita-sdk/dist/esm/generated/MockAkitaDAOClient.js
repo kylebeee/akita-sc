@@ -1,7 +1,7 @@
 import { getArc56ReturnValue } from '@algorandfoundation/algokit-utils/types/app-arc56';
 import { AppClient as _AppClient, } from '@algorandfoundation/algokit-utils/types/app-client';
 import { AppFactory as _AppFactory } from '@algorandfoundation/algokit-utils/types/app-factory';
-export const APP_SPEC = { "name": "MockAkitaDAO", "structs": {}, "methods": [{ "name": "ping", "args": [], "returns": { "type": "uint64" }, "actions": { "create": [], "call": ["NoOp"] }, "readonly": false, "events": [], "recommendations": {} }], "arcs": [22, 28], "networks": {}, "state": { "schema": { "global": { "ints": 0, "bytes": 0 }, "local": { "ints": 0, "bytes": 0 } }, "keys": { "global": {}, "local": {}, "box": {} }, "maps": { "global": {}, "local": {}, "box": {} } }, "bareActions": { "create": ["NoOp"], "call": [] }, "sourceInfo": { "approval": { "sourceInfo": [{ "pc": [52], "errorMessage": "OnCompletion must be NoOp && can only call when creating" }, { "pc": [26], "errorMessage": "OnCompletion must be NoOp && can only call when not creating" }], "pcOffsetMethod": "none" }, "clear": { "sourceInfo": [], "pcOffsetMethod": "none" } }, "source": { "approval": "I3ByYWdtYSB2ZXJzaW9uIDExCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYXJjNC9pbmRleC5kLnRzOjpDb250cmFjdC5hcHByb3ZhbFByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICAvLyBzbWFydF9jb250cmFjdHMvbW9ja3MvZGFvL21vY2suYWxnby50czozCiAgICAvLyBleHBvcnQgY2xhc3MgTW9ja0FraXRhREFPIGV4dGVuZHMgQ29udHJhY3QgewogICAgdHhuIE51bUFwcEFyZ3MKICAgIGJ6IG1haW5fX19hbGdvdHNfXy5kZWZhdWx0Q3JlYXRlQDUKICAgIHB1c2hieXRlcyAweDFkNWM1NjFiIC8vIG1ldGhvZCAicGluZygpdWludDY0IgogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMAogICAgbWF0Y2ggbWFpbl9waW5nX3JvdXRlQDMKICAgIGVycgoKbWFpbl9waW5nX3JvdXRlQDM6CiAgICAvLyBzbWFydF9jb250cmFjdHMvbW9ja3MvZGFvL21vY2suYWxnby50czo1CiAgICAvLyBwaW5nKCk6IHVpbnQ2NCB7CiAgICB0eG4gT25Db21wbGV0aW9uCiAgICAhCiAgICB0eG4gQXBwbGljYXRpb25JRAogICAgJiYKICAgIGFzc2VydCAvLyBPbkNvbXBsZXRpb24gbXVzdCBiZSBOb09wICYmIGNhbiBvbmx5IGNhbGwgd2hlbiBub3QgY3JlYXRpbmcKICAgIHB1c2hieXRlcyAweDE1MWY3Yzc1MDAwMDAwMDAwMDAwMDUzOQogICAgbG9nCiAgICBwdXNoaW50IDEgLy8gMQogICAgcmV0dXJuCgptYWluX19fYWxnb3RzX18uZGVmYXVsdENyZWF0ZUA1OgogICAgLy8gc21hcnRfY29udHJhY3RzL21vY2tzL2Rhby9tb2NrLmFsZ28udHM6MwogICAgLy8gZXhwb3J0IGNsYXNzIE1vY2tBa2l0YURBTyBleHRlbmRzIENvbnRyYWN0IHsKICAgIHR4biBPbkNvbXBsZXRpb24KICAgICEKICAgIHR4biBBcHBsaWNhdGlvbklECiAgICAhCiAgICAmJgogICAgcmV0dXJuIC8vIG9uIGVycm9yOiBPbkNvbXBsZXRpb24gbXVzdCBiZSBOb09wICYmIGNhbiBvbmx5IGNhbGwgd2hlbiBjcmVhdGluZwo=", "clear": "I3ByYWdtYSB2ZXJzaW9uIDExCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYmFzZS1jb250cmFjdC5kLnRzOjpCYXNlQ29udHJhY3QuY2xlYXJTdGF0ZVByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICBwdXNoaW50IDEgLy8gMQogICAgcmV0dXJuCg==" }, "byteCode": { "approval": "CzEbQQAngAQdXFYbNhoAjgEAAQAxGRQxGBBEgAwVH3x1AAAAAAAABTmwgQFDMRkUMRgUEEM=", "clear": "C4EBQw==" }, "events": [], "templateVariables": {} };
+export const APP_SPEC = { "name": "MockAkitaDAO", "structs": {}, "methods": [{ "name": "update", "args": [{ "type": "string", "name": "newVersion" }], "returns": { "type": "void" }, "actions": { "create": [], "call": ["UpdateApplication"] }, "readonly": false, "events": [], "recommendations": {} }, { "name": "ping", "args": [], "returns": { "type": "uint64" }, "actions": { "create": [], "call": ["NoOp"] }, "readonly": false, "events": [], "recommendations": {} }], "arcs": [22, 28], "networks": {}, "state": { "schema": { "global": { "ints": 0, "bytes": 0 }, "local": { "ints": 0, "bytes": 0 } }, "keys": { "global": {}, "local": {}, "box": {} }, "maps": { "global": {}, "local": {}, "box": {} } }, "bareActions": { "create": ["NoOp"], "call": [] }, "sourceInfo": { "approval": { "sourceInfo": [{ "pc": [72], "errorMessage": "OnCompletion must be NoOp && can only call when creating" }, { "pc": [34], "errorMessage": "OnCompletion must be NoOp && can only call when not creating" }, { "pc": [61], "errorMessage": "OnCompletion must be UpdateApplication && can only call when not creating" }, { "pc": [86], "errorMessage": "invalid number of bytes for (len+utf8[])" }], "pcOffsetMethod": "none" }, "clear": { "sourceInfo": [], "pcOffsetMethod": "none" } }, "source": { "approval": "I3ByYWdtYSB2ZXJzaW9uIDExCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYXJjNC9pbmRleC5kLnRzOjpDb250cmFjdC5hcHByb3ZhbFByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICAvLyBzbWFydF9jb250cmFjdHMvbW9ja3MvZGFvL21vY2suYWxnby50czo0CiAgICAvLyBleHBvcnQgY2xhc3MgTW9ja0FraXRhREFPIGV4dGVuZHMgQ29udHJhY3QgewogICAgdHhuIE51bUFwcEFyZ3MKICAgIGJ6IG1haW5fX19hbGdvdHNfXy5kZWZhdWx0Q3JlYXRlQDYKICAgIHB1c2hieXRlc3MgMHhlYTkxODBkZCAweDFkNWM1NjFiIC8vIG1ldGhvZCAidXBkYXRlKHN0cmluZyl2b2lkIiwgbWV0aG9kICJwaW5nKCl1aW50NjQiCiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAwCiAgICBtYXRjaCBtYWluX3VwZGF0ZV9yb3V0ZUAzIG1haW5fcGluZ19yb3V0ZUA0CiAgICBlcnIKCm1haW5fcGluZ19yb3V0ZUA0OgogICAgLy8gc21hcnRfY29udHJhY3RzL21vY2tzL2Rhby9tb2NrLmFsZ28udHM6OQogICAgLy8gcGluZygpOiB1aW50NjQgewogICAgdHhuIE9uQ29tcGxldGlvbgogICAgIQogICAgdHhuIEFwcGxpY2F0aW9uSUQKICAgICYmCiAgICBhc3NlcnQgLy8gT25Db21wbGV0aW9uIG11c3QgYmUgTm9PcCAmJiBjYW4gb25seSBjYWxsIHdoZW4gbm90IGNyZWF0aW5nCiAgICBwdXNoYnl0ZXMgMHgxNTFmN2M3NTAwMDAwMDAwMDAwMDA1MzkKICAgIGxvZwogICAgcHVzaGludCAxIC8vIDEKICAgIHJldHVybgoKbWFpbl91cGRhdGVfcm91dGVAMzoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9tb2Nrcy9kYW8vbW9jay5hbGdvLnRzOjYKICAgIC8vIEBhYmltZXRob2QoeyBhbGxvd0FjdGlvbnM6IFsnVXBkYXRlQXBwbGljYXRpb24nXSB9KQogICAgdHhuIE9uQ29tcGxldGlvbgogICAgcHVzaGludCA0IC8vIFVwZGF0ZUFwcGxpY2F0aW9uCiAgICA9PQogICAgdHhuIEFwcGxpY2F0aW9uSUQKICAgICYmCiAgICBhc3NlcnQgLy8gT25Db21wbGV0aW9uIG11c3QgYmUgVXBkYXRlQXBwbGljYXRpb24gJiYgY2FuIG9ubHkgY2FsbCB3aGVuIG5vdCBjcmVhdGluZwogICAgYiB1cGRhdGUKCm1haW5fX19hbGdvdHNfXy5kZWZhdWx0Q3JlYXRlQDY6CiAgICAvLyBzbWFydF9jb250cmFjdHMvbW9ja3MvZGFvL21vY2suYWxnby50czo0CiAgICAvLyBleHBvcnQgY2xhc3MgTW9ja0FraXRhREFPIGV4dGVuZHMgQ29udHJhY3QgewogICAgdHhuIE9uQ29tcGxldGlvbgogICAgIQogICAgdHhuIEFwcGxpY2F0aW9uSUQKICAgICEKICAgICYmCiAgICByZXR1cm4gLy8gb24gZXJyb3I6IE9uQ29tcGxldGlvbiBtdXN0IGJlIE5vT3AgJiYgY2FuIG9ubHkgY2FsbCB3aGVuIGNyZWF0aW5nCgoKLy8gc21hcnRfY29udHJhY3RzL21vY2tzL2Rhby9tb2NrLmFsZ28udHM6Ok1vY2tBa2l0YURBTy51cGRhdGVbcm91dGluZ10oKSAtPiB2b2lkOgp1cGRhdGU6CiAgICAvLyBzbWFydF9jb250cmFjdHMvbW9ja3MvZGFvL21vY2suYWxnby50czo2CiAgICAvLyBAYWJpbWV0aG9kKHsgYWxsb3dBY3Rpb25zOiBbJ1VwZGF0ZUFwcGxpY2F0aW9uJ10gfSkKICAgIHR4bmEgQXBwbGljYXRpb25BcmdzIDEKICAgIGR1cAogICAgcHVzaGludCAwIC8vIDAKICAgIGV4dHJhY3RfdWludDE2CiAgICBwdXNoaW50IDIgLy8gMgogICAgKwogICAgc3dhcAogICAgbGVuCiAgICA9PQogICAgcmV0dXJuIC8vIG9uIGVycm9yOiBpbnZhbGlkIG51bWJlciBvZiBieXRlcyBmb3IgKGxlbit1dGY4W10pCg==", "clear": "I3ByYWdtYSB2ZXJzaW9uIDExCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYmFzZS1jb250cmFjdC5kLnRzOjpCYXNlQ29udHJhY3QuY2xlYXJTdGF0ZVByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICBwdXNoaW50IDEgLy8gMQogICAgcmV0dXJuCg==" }, "byteCode": { "approval": "CzEbQQA7ggIE6pGA3QQdXFYbNhoAjgIAGgABADEZFDEYEESADBUffHUAAAAAAAAFObCBAUMxGYEEEjEYEERCAAgxGRQxGBQQQzYaAUmBAFmBAghMFRJD", "clear": "C4EBQw==" }, "events": [], "templateVariables": {} };
 class BinaryStateValue {
     constructor(value) {
         this.value = value;
@@ -17,6 +17,34 @@ class BinaryStateValue {
  * Exposes methods for constructing `AppClient` params objects for ABI calls to the MockAkitaDao smart contract
  */
 export class MockAkitaDaoParamsFactory {
+    /**
+     * Gets available update ABI call param factories
+     */
+    static get update() {
+        return {
+            _resolveByMethod(params) {
+                switch (params.method) {
+                    case 'update':
+                    case 'update(string)void':
+                        return MockAkitaDaoParamsFactory.update.update(params);
+                }
+                throw new Error(`Unknown ' + verb + ' method`);
+            },
+            /**
+             * Constructs update ABI call params for the MockAkitaDAO smart contract using the update(string)void ABI method
+             *
+             * @param params Parameters for the call
+             * @returns An `AppClientMethodCallParams` object for the call
+             */
+            update(params) {
+                return {
+                    ...params,
+                    method: 'update(string)void',
+                    args: Array.isArray(params.args) ? params.args : [params.args.newVersion],
+                };
+            },
+        };
+    }
     /**
      * Constructs a no op call for the ping()uint64 ABI method
      *
@@ -57,6 +85,20 @@ export class MockAkitaDaoFactory {
                  */
                 bare: (params) => {
                     return this.appFactory.params.bare.create(params);
+                },
+            },
+            /**
+             * Gets available deployUpdate methods
+             */
+            deployUpdate: {
+                /**
+                 * Updates an existing instance of the MockAkitaDAO smart contract using the update(string)void ABI method.
+                 *
+                 * @param params The params for the smart contract call
+                 * @returns The deployUpdate params
+                 */
+                update: (params) => {
+                    return this.appFactory.params.deployUpdate(MockAkitaDaoParamsFactory.update.update(params));
                 },
             },
         };
@@ -148,6 +190,7 @@ export class MockAkitaDaoFactory {
     async deploy(params = {}) {
         const result = await this.appFactory.deploy({
             ...params,
+            updateParams: params.updateParams?.method ? MockAkitaDaoParamsFactory.update._resolveByMethod(params.updateParams) : params.updateParams ? params.updateParams : undefined,
         });
         return { result: result.result, appClient: new MockAkitaDaoClient(result.appClient) };
     }
@@ -161,6 +204,20 @@ export class MockAkitaDaoClient {
          * Get parameters to create transactions for the current app. A good mental model for this is that these parameters represent a deferred transaction creation.
          */
         this.params = {
+            /**
+             * Gets available update methods
+             */
+            update: {
+                /**
+                 * Updates an existing instance of the MockAkitaDAO smart contract using the `update(string)void` ABI method.
+                 *
+                 * @param params The params for the smart contract call
+                 * @returns The update params
+                 */
+                update: (params) => {
+                    return this.appClient.params.update(MockAkitaDaoParamsFactory.update.update(params));
+                },
+            },
             /**
              * Makes a clear_state call to an existing instance of the MockAkitaDAO smart contract.
              *
@@ -185,6 +242,20 @@ export class MockAkitaDaoClient {
          */
         this.createTransaction = {
             /**
+             * Gets available update methods
+             */
+            update: {
+                /**
+                 * Updates an existing instance of the MockAkitaDAO smart contract using the `update(string)void` ABI method.
+                 *
+                 * @param params The params for the smart contract call
+                 * @returns The update transaction
+                 */
+                update: (params) => {
+                    return this.appClient.createTransaction.update(MockAkitaDaoParamsFactory.update.update(params));
+                },
+            },
+            /**
              * Makes a clear_state call to an existing instance of the MockAkitaDAO smart contract.
              *
              * @param params The params for the bare (raw) call
@@ -207,6 +278,21 @@ export class MockAkitaDaoClient {
          * Send calls to the current app
          */
         this.send = {
+            /**
+             * Gets available update methods
+             */
+            update: {
+                /**
+                 * Updates an existing instance of the MockAkitaDAO smart contract using the `update(string)void` ABI method.
+                 *
+                 * @param params The params for the smart contract call
+                 * @returns The update result
+                 */
+                update: async (params) => {
+                    const result = await this.appClient.send.update(MockAkitaDaoParamsFactory.update.update(params));
+                    return { ...result, return: result.return };
+                },
+            },
             /**
              * Makes a clear_state call to an existing instance of the MockAkitaDAO smart contract.
              *
@@ -303,6 +389,15 @@ export class MockAkitaDaoClient {
                 promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.ping(params)));
                 resultMappers.push((v) => client.decodeReturnValue('ping()uint64', v));
                 return this;
+            },
+            get update() {
+                return {
+                    update: (params) => {
+                        promiseChain = promiseChain.then(async () => composer.addAppUpdateMethodCall(await client.params.update.update(params)));
+                        resultMappers.push(undefined);
+                        return this;
+                    },
+                };
             },
             /**
              * Add a clear state call to the MockAkitaDAO contract

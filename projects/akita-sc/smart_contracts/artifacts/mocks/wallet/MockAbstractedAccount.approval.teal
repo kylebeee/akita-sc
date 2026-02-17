@@ -1,0 +1,63 @@
+#pragma version 11
+#pragma typetrack false
+
+// @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
+main:
+    // smart_contracts/mocks/wallet/mock.algo.ts:4
+    // export class MockAbstractedAccount extends Contract {
+    txn NumAppArgs
+    bz main___algots__.defaultCreate@6
+    pushbytess 0xea9180dd 0x1d5c561b // method "update(string)void", method "ping()uint64"
+    txna ApplicationArgs 0
+    match main_update_route@3 main_ping_route@4
+    err
+
+main_ping_route@4:
+    // smart_contracts/mocks/wallet/mock.algo.ts:9
+    // ping(): uint64 {
+    txn OnCompletion
+    !
+    txn ApplicationID
+    &&
+    assert // OnCompletion must be NoOp && can only call when not creating
+    pushbytes 0x151f7c750000000000001093
+    log
+    pushint 1 // 1
+    return
+
+main_update_route@3:
+    // smart_contracts/mocks/wallet/mock.algo.ts:6
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    txn OnCompletion
+    pushint 4 // UpdateApplication
+    ==
+    txn ApplicationID
+    &&
+    assert // OnCompletion must be UpdateApplication && can only call when not creating
+    b update
+
+main___algots__.defaultCreate@6:
+    // smart_contracts/mocks/wallet/mock.algo.ts:4
+    // export class MockAbstractedAccount extends Contract {
+    txn OnCompletion
+    !
+    txn ApplicationID
+    !
+    &&
+    return // on error: OnCompletion must be NoOp && can only call when creating
+
+
+// smart_contracts/mocks/wallet/mock.algo.ts::MockAbstractedAccount.update[routing]() -> void:
+update:
+    // smart_contracts/mocks/wallet/mock.algo.ts:6
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    txna ApplicationArgs 1
+    dup
+    pushint 0 // 0
+    extract_uint16
+    pushint 2 // 2
+    +
+    swap
+    len
+    ==
+    return // on error: invalid number of bytes for (len+utf8[])

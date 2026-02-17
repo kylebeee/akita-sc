@@ -1177,34 +1177,6 @@ export declare class AkitaDaoFactory {
             /**
              * Updates an existing instance of the AkitaDAO smart contract using the update(string)void ABI method.
              *
-            *
-            The Akita DAO contract supports its own upgrade via a secure, auditable process. Here's a step-by-step trace of how a self-upgrade is executed:
-            
-            1. Proposal Creation:
-              - A member submits a proposal to upgrade the DAO by including a ProposalAction of type `UpgradeApp`.
-              - This proposal references the ARC58 contract and specifies the required upgrade parameters, such as the new application code and any associated execution keys.
-            
-            2. Proposal Approval:
-              - The DAO community votes on the proposal. If it receives sufficient approvals as defined in the proposal’s settings, its status changes to `Approved`.
-            
-            3. Execution Initiation:
-              - Upon approval, the DAO creates an execution entry in the ARC58 contract using the parameters from the upgrade proposal.
-              - This sets up the conditions under which an upgrade may be performed, such as locking execution to a valid round interval and binding it to a unique execution key (via the transaction lease).
-            
-            4. Upgrade Execution:
-              - A transaction group is submitted where the ARC58 account (or an authorized delegate) triggers the actual `update` method on the DAO contract.
-              - The `update` method receives the `proposalID` and index of the upgrade action.
-              - The DAO contract performs the following validation checks before actually permitting the upgrade:
-                  a. Confirms the referenced proposal exists and has status `Approved`.
-                  b. Ensures the action type matches `UpgradeApp`.
-                  c. Verifies the current app ID matches the proposal’s intended target.
-                  d. Ensures the transaction lease matches the authorized execution key from the proposal.
-                  e. Validates that the group context (via groupId and round) satisfies execution constraints—e.g., only the specified group may proceed and only within a permitted round window.
-              - Only if all conditions are satisfied is the application update allowed to continue.
-            
-            This architecture ensures upgrades are strictly governed, requiring DAO consensus, group-based transaction atomicity, and explicit validation checks at execution time.
-      
-             *
              * @param params The params for the smart contract call
              * @returns The deployUpdate params
              */
@@ -1402,34 +1374,6 @@ export declare class AkitaDaoClient {
         update: {
             /**
              * Updates an existing instance of the AkitaDAO smart contract using the `update(string)void` ABI method.
-             *
-            *
-            The Akita DAO contract supports its own upgrade via a secure, auditable process. Here's a step-by-step trace of how a self-upgrade is executed:
-            
-            1. Proposal Creation:
-              - A member submits a proposal to upgrade the DAO by including a ProposalAction of type `UpgradeApp`.
-              - This proposal references the ARC58 contract and specifies the required upgrade parameters, such as the new application code and any associated execution keys.
-            
-            2. Proposal Approval:
-              - The DAO community votes on the proposal. If it receives sufficient approvals as defined in the proposal’s settings, its status changes to `Approved`.
-            
-            3. Execution Initiation:
-              - Upon approval, the DAO creates an execution entry in the ARC58 contract using the parameters from the upgrade proposal.
-              - This sets up the conditions under which an upgrade may be performed, such as locking execution to a valid round interval and binding it to a unique execution key (via the transaction lease).
-            
-            4. Upgrade Execution:
-              - A transaction group is submitted where the ARC58 account (or an authorized delegate) triggers the actual `update` method on the DAO contract.
-              - The `update` method receives the `proposalID` and index of the upgrade action.
-              - The DAO contract performs the following validation checks before actually permitting the upgrade:
-                  a. Confirms the referenced proposal exists and has status `Approved`.
-                  b. Ensures the action type matches `UpgradeApp`.
-                  c. Verifies the current app ID matches the proposal’s intended target.
-                  d. Ensures the transaction lease matches the authorized execution key from the proposal.
-                  e. Validates that the group context (via groupId and round) satisfies execution constraints—e.g., only the specified group may proceed and only within a permitted round window.
-              - Only if all conditions are satisfied is the application update allowed to continue.
-            
-            This architecture ensures upgrades are strictly governed, requiring DAO consensus, group-based transaction atomicity, and explicit validation checks at execution time.
-      
              *
              * @param params The params for the smart contract call
              * @returns The update params
@@ -1697,34 +1641,6 @@ export declare class AkitaDaoClient {
             /**
              * Updates an existing instance of the AkitaDAO smart contract using the `update(string)void` ABI method.
              *
-            *
-            The Akita DAO contract supports its own upgrade via a secure, auditable process. Here's a step-by-step trace of how a self-upgrade is executed:
-            
-            1. Proposal Creation:
-              - A member submits a proposal to upgrade the DAO by including a ProposalAction of type `UpgradeApp`.
-              - This proposal references the ARC58 contract and specifies the required upgrade parameters, such as the new application code and any associated execution keys.
-            
-            2. Proposal Approval:
-              - The DAO community votes on the proposal. If it receives sufficient approvals as defined in the proposal’s settings, its status changes to `Approved`.
-            
-            3. Execution Initiation:
-              - Upon approval, the DAO creates an execution entry in the ARC58 contract using the parameters from the upgrade proposal.
-              - This sets up the conditions under which an upgrade may be performed, such as locking execution to a valid round interval and binding it to a unique execution key (via the transaction lease).
-            
-            4. Upgrade Execution:
-              - A transaction group is submitted where the ARC58 account (or an authorized delegate) triggers the actual `update` method on the DAO contract.
-              - The `update` method receives the `proposalID` and index of the upgrade action.
-              - The DAO contract performs the following validation checks before actually permitting the upgrade:
-                  a. Confirms the referenced proposal exists and has status `Approved`.
-                  b. Ensures the action type matches `UpgradeApp`.
-                  c. Verifies the current app ID matches the proposal’s intended target.
-                  d. Ensures the transaction lease matches the authorized execution key from the proposal.
-                  e. Validates that the group context (via groupId and round) satisfies execution constraints—e.g., only the specified group may proceed and only within a permitted round window.
-              - Only if all conditions are satisfied is the application update allowed to continue.
-            
-            This architecture ensures upgrades are strictly governed, requiring DAO consensus, group-based transaction atomicity, and explicit validation checks at execution time.
-      
-             *
              * @param params The params for the smart contract call
              * @returns The update transaction
              */
@@ -1981,34 +1897,6 @@ export declare class AkitaDaoClient {
         update: {
             /**
              * Updates an existing instance of the AkitaDAO smart contract using the `update(string)void` ABI method.
-             *
-            *
-            The Akita DAO contract supports its own upgrade via a secure, auditable process. Here's a step-by-step trace of how a self-upgrade is executed:
-            
-            1. Proposal Creation:
-              - A member submits a proposal to upgrade the DAO by including a ProposalAction of type `UpgradeApp`.
-              - This proposal references the ARC58 contract and specifies the required upgrade parameters, such as the new application code and any associated execution keys.
-            
-            2. Proposal Approval:
-              - The DAO community votes on the proposal. If it receives sufficient approvals as defined in the proposal’s settings, its status changes to `Approved`.
-            
-            3. Execution Initiation:
-              - Upon approval, the DAO creates an execution entry in the ARC58 contract using the parameters from the upgrade proposal.
-              - This sets up the conditions under which an upgrade may be performed, such as locking execution to a valid round interval and binding it to a unique execution key (via the transaction lease).
-            
-            4. Upgrade Execution:
-              - A transaction group is submitted where the ARC58 account (or an authorized delegate) triggers the actual `update` method on the DAO contract.
-              - The `update` method receives the `proposalID` and index of the upgrade action.
-              - The DAO contract performs the following validation checks before actually permitting the upgrade:
-                  a. Confirms the referenced proposal exists and has status `Approved`.
-                  b. Ensures the action type matches `UpgradeApp`.
-                  c. Verifies the current app ID matches the proposal’s intended target.
-                  d. Ensures the transaction lease matches the authorized execution key from the proposal.
-                  e. Validates that the group context (via groupId and round) satisfies execution constraints—e.g., only the specified group may proceed and only within a permitted round window.
-              - Only if all conditions are satisfied is the application update allowed to continue.
-            
-            This architecture ensures upgrades are strictly governed, requiring DAO consensus, group-based transaction atomicity, and explicit validation checks at execution time.
-      
              *
              * @param params The params for the smart contract call
              * @returns The update result

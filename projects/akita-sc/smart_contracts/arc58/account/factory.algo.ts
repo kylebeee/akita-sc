@@ -3,21 +3,25 @@ import {
   Application,
   assert,
   assertMatch,
+  Bytes,
+  bytes,
   Global,
   GlobalState,
   gtxn,
   itxn,
+  OnCompleteAction,
+  op,
   Txn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { abimethod, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { GlobalStateKeyEscrowFactory, GlobalStateKeyRevocation } from '../../constants'
 import { ERR_NOT_AKITA_DAO } from '../../errors'
 import { ARC58WalletIDsByAccountsMbr } from '../../escrow/constants'
-import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../../utils/constants'
+import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_AVM_BYTE_ARRAY_LENGTH, MAX_PROGRAM_PAGES } from '../../utils/constants'
 import { ERR_INVALID_PAYMENT } from '../../utils/errors'
 import { costInstantDisbursement, getWalletFees, getWalletIDUsingAkitaDAO, sendReferralPayment } from '../../utils/functions'
-import { AbstractAccountNumGlobalBytes, AbstractAccountNumGlobalUints, AbstractedAccountFactoryGlobalStateKeyDomain } from './constants'
+import { AbstractAccountGlobalStateKeysAdmin, AbstractAccountNumGlobalBytes, AbstractAccountNumGlobalUints, AbstractedAccountFactoryGlobalStateKeyDomain } from './constants'
 
 // CONTRACT IMPORTS
 import { FactoryContract } from '../../utils/base-contracts/factory'
@@ -159,8 +163,45 @@ export class AbstractedAccountFactory extends FactoryContract {
       (GLOBAL_STATE_KEY_BYTES_COST * AbstractAccountNumGlobalBytes) +
       Global.minBalance +
       ARC58WalletIDsByAccountsMbr +
-      creationFee + 
+      creationFee +
       referralCost
     )
+  }
+
+  // WALLET UPDATE METHODS -------------------------------------------------------------------------
+
+  /**
+   * Permanent: Update a wallet's bytecode. The caller must be the wallet's admin.
+   * The factory sends the update inner txn as itself (factory address), which the
+   * wallet accepts because Txn.sender === factoryApp.address.
+   *
+   * @param wallet The wallet application to update
+   */
+  updateWallet(wallet: Application): void {
+
+    const [adminBytes] = op.AppGlobal.getExBytes(wallet, Bytes(AbstractAccountGlobalStateKeysAdmin))
+    assert(Txn.sender === Account(adminBytes))
+
+    const approvalSize: uint64 = this.boxedContract.length
+
+    let chunk1: bytes
+    let chunk2: bytes
+    if (approvalSize > MAX_AVM_BYTE_ARRAY_LENGTH) {
+      chunk1 = this.boxedContract.extract(0, MAX_AVM_BYTE_ARRAY_LENGTH)
+      chunk2 = this.boxedContract.extract(MAX_AVM_BYTE_ARRAY_LENGTH, approvalSize - MAX_AVM_BYTE_ARRAY_LENGTH)
+    } else {
+      chunk1 = this.boxedContract.extract(0, approvalSize)
+      chunk2 = Bytes('')
+    }
+
+    const clearProgram = compileArc4(AbstractedAccount).clearStateProgram
+
+    abiCall<typeof AbstractedAccount.prototype.update>({
+      appId: wallet,
+      args: [this.childContractVersion.value],
+      onCompletion: OnCompleteAction.UpdateApplication,
+      approvalProgram: [chunk1, chunk2],
+      clearStateProgram: clearProgram,
+    })
   }
 }

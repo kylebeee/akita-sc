@@ -8,7 +8,7 @@ import { ABIReturn } from '@algorandfoundation/algokit-utils/types/app';
 import { Arc56Contract } from '@algorandfoundation/algokit-utils/types/app-arc56';
 import { AppClient as _AppClient, AppClientMethodCallParams, AppClientParams, AppClientBareCallParams, CallOnComplete, AppClientCompilationParams, ResolveAppClientByCreatorAndName, ResolveAppClientByNetwork, CloneAppClientParams } from '@algorandfoundation/algokit-utils/types/app-client';
 import { AppFactory as _AppFactory, AppFactoryAppClientParams, AppFactoryResolveAppClientByCreatorAndNameParams, AppFactoryDeployParams, AppFactoryParams, CreateSchema } from '@algorandfoundation/algokit-utils/types/app-factory';
-import { TransactionComposer, AppCallMethodCall, RawSimulateOptions, SkipSignaturesSimulateOptions } from '@algorandfoundation/algokit-utils/types/composer';
+import { TransactionComposer, AppCallMethodCall, AppMethodCallTransactionArgument, RawSimulateOptions, SkipSignaturesSimulateOptions } from '@algorandfoundation/algokit-utils/types/composer';
 import { SendParams, SendAtomicTransactionComposerResults } from '@algorandfoundation/algokit-utils/types/transaction';
 import { Address, modelsv2, OnApplicationComplete, Transaction, TransactionSigner } from 'algosdk';
 export declare const APP_SPEC: Arc56Contract;
@@ -40,12 +40,16 @@ export type MockAkitaDaoArgs = {
      * The object representation of the arguments for each method
      */
     obj: {
+        'update(string)void': {
+            newVersion: string;
+        };
         'ping()uint64': Record<string, never>;
     };
     /**
      * The tuple representation of the arguments for each method
      */
     tuple: {
+        'update(string)void': [newVersion: string];
         'ping()uint64': [];
     };
 };
@@ -53,6 +57,7 @@ export type MockAkitaDaoArgs = {
  * The return type for each method
  */
 export type MockAkitaDaoReturns = {
+    'update(string)void': void;
     'ping()uint64': bigint;
 };
 /**
@@ -62,7 +67,11 @@ export type MockAkitaDaoTypes = {
     /**
      * Maps method signatures / names to their argument and return types.
      */
-    methods: Record<'ping()uint64' | 'ping', {
+    methods: Record<'update(string)void' | 'update', {
+        argsObj: MockAkitaDaoArgs['obj']['update(string)void'];
+        argsTuple: MockAkitaDaoArgs['tuple']['update(string)void'];
+        returns: MockAkitaDaoReturns['update(string)void'];
+    }> & Record<'ping()uint64' | 'ping', {
         argsObj: MockAkitaDaoArgs['obj']['ping()uint64'];
         argsTuple: MockAkitaDaoArgs['tuple']['ping()uint64'];
         returns: MockAkitaDaoReturns['ping()uint64'];
@@ -100,6 +109,14 @@ export type MockAkitaDaoCreateCallParams = Expand<AppClientBareCallParams & {
     onComplete?: OnApplicationComplete.NoOpOC;
 } & CreateSchema>;
 /**
+ * Defines supported update method params for this smart contract
+ */
+export type MockAkitaDaoUpdateCallParams = Expand<CallParams<MockAkitaDaoArgs['obj']['update(string)void'] | MockAkitaDaoArgs['tuple']['update(string)void']> & {
+    method: 'update';
+}> | Expand<CallParams<MockAkitaDaoArgs['obj']['update(string)void'] | MockAkitaDaoArgs['tuple']['update(string)void']> & {
+    method: 'update(string)void';
+}>;
+/**
  * Defines arguments required for the deploy method.
  */
 export type MockAkitaDaoDeployParams = Expand<Omit<AppFactoryDeployParams, 'createParams' | 'updateParams' | 'deleteParams'> & {
@@ -107,11 +124,49 @@ export type MockAkitaDaoDeployParams = Expand<Omit<AppFactoryDeployParams, 'crea
      * Create transaction parameters to use if a create needs to be issued as part of deployment; use `method` to define ABI call (if available) or leave out for a bare call (if available)
      */
     createParams?: MockAkitaDaoCreateCallParams;
+    /**
+     * Update transaction parameters to use if a create needs to be issued as part of deployment; use `method` to define ABI call (if available) or leave out for a bare call (if available)
+     */
+    updateParams?: MockAkitaDaoUpdateCallParams;
 }>;
 /**
  * Exposes methods for constructing `AppClient` params objects for ABI calls to the MockAkitaDao smart contract
  */
 export declare abstract class MockAkitaDaoParamsFactory {
+    /**
+     * Gets available update ABI call param factories
+     */
+    static get update(): {
+        _resolveByMethod<TParams extends MockAkitaDaoUpdateCallParams & {
+            method: string;
+        }>(params: TParams): {
+            maxFee?: import("@algorandfoundation/algokit-utils/types/amount").AlgoAmount | undefined;
+            signer?: (TransactionSigner | import("@algorandfoundation/algokit-utils/types/account").TransactionSignerAccount) | undefined;
+            rekeyTo?: (string | Address) | undefined;
+            note?: (Uint8Array | string) | undefined;
+            lease?: (Uint8Array | string) | undefined;
+            staticFee?: import("@algorandfoundation/algokit-utils/types/amount").AlgoAmount | undefined;
+            extraFee?: import("@algorandfoundation/algokit-utils/types/amount").AlgoAmount | undefined;
+            validityWindow?: number | bigint | undefined;
+            firstValidRound?: bigint | undefined;
+            lastValidRound?: bigint | undefined;
+            onComplete?: OnApplicationComplete | undefined;
+            accountReferences?: (string | Address)[] | undefined;
+            appReferences?: bigint[] | undefined;
+            assetReferences?: bigint[] | undefined;
+            boxReferences?: (import("@algorandfoundation/algokit-utils/types/app-manager").BoxReference | import("@algorandfoundation/algokit-utils/types/app-manager").BoxIdentifier)[] | undefined;
+            sender?: (Address | string) | undefined;
+            method: string;
+            args?: (import("algosdk").ABIValue | import("@algorandfoundation/algokit-utils/types/app-arc56").ABIStruct | AppMethodCallTransactionArgument | undefined)[] | undefined;
+        } & AppClientCompilationParams;
+        /**
+         * Constructs update ABI call params for the MockAkitaDAO smart contract using the update(string)void ABI method
+         *
+         * @param params Parameters for the call
+         * @returns An `AppClientMethodCallParams` object for the call
+         */
+        update(params: CallParams<MockAkitaDaoArgs["obj"]["update(string)void"] | MockAkitaDaoArgs["tuple"]["update(string)void"]> & AppClientCompilationParams): AppClientMethodCallParams & AppClientCompilationParams;
+    };
     /**
      * Constructs a no op call for the ping()uint64 ABI method
      *
@@ -309,6 +364,91 @@ export declare class MockAkitaDaoFactory {
                 onComplete: OnApplicationComplete.NoOpOC | OnApplicationComplete.OptInOC | OnApplicationComplete.CloseOutOC | OnApplicationComplete.UpdateApplicationOC | OnApplicationComplete.DeleteApplicationOC;
             }>;
         };
+        /**
+         * Gets available deployUpdate methods
+         */
+        deployUpdate: {
+            /**
+             * Updates an existing instance of the MockAkitaDAO smart contract using the update(string)void ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The deployUpdate params
+             */
+            update: (params: CallParams<MockAkitaDaoArgs["obj"]["update(string)void"] | MockAkitaDaoArgs["tuple"]["update(string)void"]> & AppClientCompilationParams) => {
+                maxFee?: import("@algorandfoundation/algokit-utils/types/amount").AlgoAmount | undefined;
+                note?: string | Uint8Array | undefined;
+                signer?: TransactionSigner | import("@algorandfoundation/algokit-utils/types/account").TransactionSignerAccount | undefined;
+                onComplete?: OnApplicationComplete | undefined;
+                lease?: string | Uint8Array | undefined;
+                rekeyTo?: string | Address | undefined;
+                staticFee?: import("@algorandfoundation/algokit-utils/types/amount").AlgoAmount | undefined;
+                extraFee?: import("@algorandfoundation/algokit-utils/types/amount").AlgoAmount | undefined;
+                validityWindow?: number | bigint | undefined;
+                firstValidRound?: bigint | undefined;
+                lastValidRound?: bigint | undefined;
+                accountReferences?: (string | Address)[] | undefined;
+                appReferences?: bigint[] | undefined;
+                assetReferences?: bigint[] | undefined;
+                boxReferences?: (import("@algorandfoundation/algokit-utils/types/app-manager").BoxIdentifier | import("@algorandfoundation/algokit-utils/types/app-manager").BoxReference)[] | undefined;
+                sender?: string | Address | undefined;
+                method: string;
+                args?: (import("algosdk").ABIValue | AppMethodCallTransactionArgument | import("@algorandfoundation/algokit-utils/types/app-arc56").ABIStruct | undefined)[] | undefined;
+            } & {
+                sender: Address;
+                signer: TransactionSigner | import("@algorandfoundation/algokit-utils/types/account").TransactionSignerAccount | undefined;
+                method: import("@algorandfoundation/algokit-utils/types/app-arc56").Arc56Method;
+                args: (Transaction | import("algosdk").ABIValue | import("algosdk").TransactionWithSigner | Promise<Transaction> | import("@algorandfoundation/algokit-utils/types/composer").AppMethodCall<{
+                    sender: string | Address;
+                    maxFee?: import("@algorandfoundation/algokit-utils/types/amount").AlgoAmount | undefined;
+                    note?: string | Uint8Array | undefined;
+                    args?: Uint8Array[] | undefined;
+                    signer?: TransactionSigner | import("@algorandfoundation/algokit-utils/types/account").TransactionSignerAccount | undefined;
+                    onComplete?: OnApplicationComplete.NoOpOC | OnApplicationComplete.OptInOC | OnApplicationComplete.CloseOutOC | OnApplicationComplete.UpdateApplicationOC | OnApplicationComplete.DeleteApplicationOC | undefined;
+                    lease?: string | Uint8Array | undefined;
+                    rekeyTo?: string | Address | undefined;
+                    staticFee?: import("@algorandfoundation/algokit-utils/types/amount").AlgoAmount | undefined;
+                    extraFee?: import("@algorandfoundation/algokit-utils/types/amount").AlgoAmount | undefined;
+                    validityWindow?: number | bigint | undefined;
+                    firstValidRound?: bigint | undefined;
+                    lastValidRound?: bigint | undefined;
+                    accountReferences?: (string | Address)[] | undefined;
+                    appReferences?: bigint[] | undefined;
+                    assetReferences?: bigint[] | undefined;
+                    boxReferences?: (import("@algorandfoundation/algokit-utils/types/app-manager").BoxIdentifier | import("@algorandfoundation/algokit-utils/types/app-manager").BoxReference)[] | undefined;
+                    approvalProgram: string | Uint8Array;
+                    clearStateProgram: string | Uint8Array;
+                    schema?: {
+                        globalInts: number;
+                        globalByteSlices: number;
+                        localInts: number;
+                        localByteSlices: number;
+                    } | undefined;
+                    extraProgramPages?: number | undefined;
+                }> | import("@algorandfoundation/algokit-utils/types/composer").AppMethodCall<{
+                    sender: string | Address;
+                    signer?: TransactionSigner | import("@algorandfoundation/algokit-utils/types/account").TransactionSignerAccount | undefined;
+                    rekeyTo?: string | Address | undefined;
+                    note?: string | Uint8Array | undefined;
+                    lease?: string | Uint8Array | undefined;
+                    staticFee?: import("@algorandfoundation/algokit-utils/types/amount").AlgoAmount | undefined;
+                    extraFee?: import("@algorandfoundation/algokit-utils/types/amount").AlgoAmount | undefined;
+                    maxFee?: import("@algorandfoundation/algokit-utils/types/amount").AlgoAmount | undefined;
+                    validityWindow?: number | bigint | undefined;
+                    firstValidRound?: bigint | undefined;
+                    lastValidRound?: bigint | undefined;
+                    appId: bigint;
+                    onComplete?: OnApplicationComplete.UpdateApplicationOC | undefined;
+                    args?: Uint8Array[] | undefined;
+                    accountReferences?: (string | Address)[] | undefined;
+                    appReferences?: bigint[] | undefined;
+                    assetReferences?: bigint[] | undefined;
+                    boxReferences?: (import("@algorandfoundation/algokit-utils/types/app-manager").BoxIdentifier | import("@algorandfoundation/algokit-utils/types/app-manager").BoxReference)[] | undefined;
+                    approvalProgram: string | Uint8Array;
+                    clearStateProgram: string | Uint8Array;
+                }> | import("@algorandfoundation/algokit-utils/types/composer").AppMethodCall<import("@algorandfoundation/algokit-utils/types/composer").AppMethodCallParams> | undefined)[] | undefined;
+                onComplete: OnApplicationComplete.UpdateApplicationOC;
+            };
+        };
     };
     /**
      * Create transactions for the current app
@@ -419,6 +559,99 @@ export declare class MockAkitaDaoClient {
      */
     readonly params: {
         /**
+         * Gets available update methods
+         */
+        update: {
+            /**
+             * Updates an existing instance of the MockAkitaDAO smart contract using the `update(string)void` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The update params
+             */
+            update: (params: CallParams<MockAkitaDaoArgs["obj"]["update(string)void"] | MockAkitaDaoArgs["tuple"]["update(string)void"]> & AppClientCompilationParams) => Promise<{
+                approvalProgram: Uint8Array;
+                clearStateProgram: Uint8Array;
+                compiledApproval?: import("@algorandfoundation/algokit-utils/types/app").CompiledTeal | undefined;
+                compiledClear?: import("@algorandfoundation/algokit-utils/types/app").CompiledTeal | undefined;
+                maxFee?: import("@algorandfoundation/algokit-utils/types/amount").AlgoAmount | undefined;
+                note?: string | Uint8Array | undefined;
+                signer?: TransactionSigner | import("@algorandfoundation/algokit-utils/types/account").TransactionSignerAccount | undefined;
+                onComplete?: OnApplicationComplete | undefined;
+                lease?: string | Uint8Array | undefined;
+                rekeyTo?: string | Address | undefined;
+                staticFee?: import("@algorandfoundation/algokit-utils/types/amount").AlgoAmount | undefined;
+                extraFee?: import("@algorandfoundation/algokit-utils/types/amount").AlgoAmount | undefined;
+                validityWindow?: number | bigint | undefined;
+                firstValidRound?: bigint | undefined;
+                lastValidRound?: bigint | undefined;
+                accountReferences?: (string | Address)[] | undefined;
+                appReferences?: bigint[] | undefined;
+                assetReferences?: bigint[] | undefined;
+                boxReferences?: (import("@algorandfoundation/algokit-utils/types/app-manager").BoxIdentifier | import("@algorandfoundation/algokit-utils/types/app-manager").BoxReference)[] | undefined;
+                sender?: string | Address | undefined;
+                method: string;
+                args?: (import("algosdk").ABIValue | AppMethodCallTransactionArgument | import("@algorandfoundation/algokit-utils/types/app-arc56").ABIStruct | undefined)[] | undefined;
+                deployTimeParams?: import("@algorandfoundation/algokit-utils/types/app").TealTemplateParams | undefined;
+                updatable?: boolean | undefined;
+                deletable?: boolean | undefined;
+            } & {
+                appId: bigint;
+                sender: Address;
+                signer: TransactionSigner | import("@algorandfoundation/algokit-utils/types/account").TransactionSignerAccount | undefined;
+                method: import("@algorandfoundation/algokit-utils/types/app-arc56").Arc56Method;
+                onComplete: OnApplicationComplete.UpdateApplicationOC;
+                args: (Transaction | import("algosdk").ABIValue | import("algosdk").TransactionWithSigner | Promise<Transaction> | import("@algorandfoundation/algokit-utils/types/composer").AppMethodCall<{
+                    sender: string | Address;
+                    maxFee?: import("@algorandfoundation/algokit-utils/types/amount").AlgoAmount | undefined;
+                    note?: string | Uint8Array | undefined;
+                    args?: Uint8Array[] | undefined;
+                    signer?: TransactionSigner | import("@algorandfoundation/algokit-utils/types/account").TransactionSignerAccount | undefined;
+                    onComplete?: OnApplicationComplete.NoOpOC | OnApplicationComplete.OptInOC | OnApplicationComplete.CloseOutOC | OnApplicationComplete.UpdateApplicationOC | OnApplicationComplete.DeleteApplicationOC | undefined;
+                    lease?: string | Uint8Array | undefined;
+                    rekeyTo?: string | Address | undefined;
+                    staticFee?: import("@algorandfoundation/algokit-utils/types/amount").AlgoAmount | undefined;
+                    extraFee?: import("@algorandfoundation/algokit-utils/types/amount").AlgoAmount | undefined;
+                    validityWindow?: number | bigint | undefined;
+                    firstValidRound?: bigint | undefined;
+                    lastValidRound?: bigint | undefined;
+                    accountReferences?: (string | Address)[] | undefined;
+                    appReferences?: bigint[] | undefined;
+                    assetReferences?: bigint[] | undefined;
+                    boxReferences?: (import("@algorandfoundation/algokit-utils/types/app-manager").BoxIdentifier | import("@algorandfoundation/algokit-utils/types/app-manager").BoxReference)[] | undefined;
+                    approvalProgram: string | Uint8Array;
+                    clearStateProgram: string | Uint8Array;
+                    schema?: {
+                        globalInts: number;
+                        globalByteSlices: number;
+                        localInts: number;
+                        localByteSlices: number;
+                    } | undefined;
+                    extraProgramPages?: number | undefined;
+                }> | import("@algorandfoundation/algokit-utils/types/composer").AppMethodCall<{
+                    sender: string | Address;
+                    signer?: TransactionSigner | import("@algorandfoundation/algokit-utils/types/account").TransactionSignerAccount | undefined;
+                    rekeyTo?: string | Address | undefined;
+                    note?: string | Uint8Array | undefined;
+                    lease?: string | Uint8Array | undefined;
+                    staticFee?: import("@algorandfoundation/algokit-utils/types/amount").AlgoAmount | undefined;
+                    extraFee?: import("@algorandfoundation/algokit-utils/types/amount").AlgoAmount | undefined;
+                    maxFee?: import("@algorandfoundation/algokit-utils/types/amount").AlgoAmount | undefined;
+                    validityWindow?: number | bigint | undefined;
+                    firstValidRound?: bigint | undefined;
+                    lastValidRound?: bigint | undefined;
+                    appId: bigint;
+                    onComplete?: OnApplicationComplete.UpdateApplicationOC | undefined;
+                    args?: Uint8Array[] | undefined;
+                    accountReferences?: (string | Address)[] | undefined;
+                    appReferences?: bigint[] | undefined;
+                    assetReferences?: bigint[] | undefined;
+                    boxReferences?: (import("@algorandfoundation/algokit-utils/types/app-manager").BoxIdentifier | import("@algorandfoundation/algokit-utils/types/app-manager").BoxReference)[] | undefined;
+                    approvalProgram: string | Uint8Array;
+                    clearStateProgram: string | Uint8Array;
+                }> | import("@algorandfoundation/algokit-utils/types/composer").AppMethodCall<import("@algorandfoundation/algokit-utils/types/composer").AppMethodCallParams> | undefined)[] | undefined;
+            }>;
+        };
+        /**
          * Makes a clear_state call to an existing instance of the MockAkitaDAO smart contract.
          *
          * @param params The params for the bare (raw) call
@@ -439,6 +672,22 @@ export declare class MockAkitaDaoClient {
      * Create transactions for the current app
      */
     readonly createTransaction: {
+        /**
+         * Gets available update methods
+         */
+        update: {
+            /**
+             * Updates an existing instance of the MockAkitaDAO smart contract using the `update(string)void` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The update transaction
+             */
+            update: (params: CallParams<MockAkitaDaoArgs["obj"]["update(string)void"] | MockAkitaDaoArgs["tuple"]["update(string)void"]> & AppClientCompilationParams) => Promise<{
+                transactions: Transaction[];
+                methodCalls: Map<number, import("algosdk").ABIMethod>;
+                signers: Map<number, TransactionSigner>;
+            }>;
+        };
         /**
          * Makes a clear_state call to an existing instance of the MockAkitaDAO smart contract.
          *
@@ -464,6 +713,29 @@ export declare class MockAkitaDaoClient {
      * Send calls to the current app
      */
     readonly send: {
+        /**
+         * Gets available update methods
+         */
+        update: {
+            /**
+             * Updates an existing instance of the MockAkitaDAO smart contract using the `update(string)void` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The update result
+             */
+            update: (params: CallParams<MockAkitaDaoArgs["obj"]["update(string)void"] | MockAkitaDaoArgs["tuple"]["update(string)void"]> & AppClientCompilationParams & SendParams) => Promise<{
+                return: (undefined | MockAkitaDaoReturns["update(string)void"]);
+                compiledApproval?: import("@algorandfoundation/algokit-utils/types/app").CompiledTeal | undefined;
+                compiledClear?: import("@algorandfoundation/algokit-utils/types/app").CompiledTeal | undefined;
+                groupId: string;
+                txIds: string[];
+                returns?: ABIReturn[] | undefined;
+                confirmations: modelsv2.PendingTransactionResponse[];
+                transactions: Transaction[];
+                confirmation: modelsv2.PendingTransactionResponse;
+                transaction: Transaction;
+            }>;
+        };
         /**
          * Makes a clear_state call to an existing instance of the MockAkitaDAO smart contract.
          *
@@ -521,6 +793,19 @@ export type MockAkitaDaoComposer<TReturns extends [...any[]] = []> = {
      * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
      */
     ping(params?: CallParams<MockAkitaDaoArgs['obj']['ping()uint64'] | MockAkitaDaoArgs['tuple']['ping()uint64']>): MockAkitaDaoComposer<[...TReturns, MockAkitaDaoReturns['ping()uint64'] | undefined]>;
+    /**
+     * Gets available update methods
+     */
+    readonly update: {
+        /**
+         * Updates an existing instance of the MockAkitaDAO smart contract using the update(string)void ABI method.
+         *
+         * @param args The arguments for the smart contract call
+         * @param params Any additional parameters for the call
+         * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
+         */
+        update(params?: CallParams<MockAkitaDaoArgs['obj']['update(string)void'] | MockAkitaDaoArgs['tuple']['update(string)void']>): MockAkitaDaoComposer<[...TReturns, MockAkitaDaoReturns['update(string)void'] | undefined]>;
+    };
     /**
      * Makes a clear_state call to an existing instance of the MockAkitaDAO smart contract.
      *

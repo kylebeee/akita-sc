@@ -20,6 +20,11 @@
       "require": "./dist/cjs/dao/index.js",
       "import": "./dist/esm/dao/index.js"
     },
+    "./dao-deployable": {
+      "types": "./dist/esm/dao-deployable/index.d.ts",
+      "require": "./dist/cjs/dao-deployable/index.js",
+      "import": "./dist/esm/dao-deployable/index.js"
+    },
     "./escrow": {
       "types": "./dist/esm/escrow/index.d.ts",
       "require": "./dist/cjs/escrow/index.js",
@@ -105,6 +110,7 @@
     "*": {
       "auction": ["./dist/esm/auction/index.d.ts"],
       "dao": ["./dist/esm/dao/index.d.ts"],
+      "dao-deployable": ["./dist/esm/dao-deployable/index.d.ts"],
       "escrow": ["./dist/esm/escrow/index.d.ts"],
       "gates": ["./dist/esm/gates/index.d.ts"],
       "hyper-swap": ["./dist/esm/hyper-swap/index.d.ts"],
@@ -129,7 +135,7 @@
   "scripts": {
     "clean": "rm -rf dist/ src/generated/",
     "prebuild": "npm run clean && npm run generate",
-    "generate": "algokit generate client ../akita-sc/smart_contracts/artifacts -v 6.0.1-beta.2 -o src/generated/{contract_name}Client.ts",
+    "generate": "algokit generate client ../akita-sc/smart_contracts/artifacts -v 6.0.1-beta.2 -o src/generated/{contract_name}Client.ts && algokit generate client ../akita-sc/smart_contracts/artifacts/arc58/dao-deployable -v 6.0.1-beta.2 -o src/generated/{contract_name}Client.ts",
     "build:cjs": "tsc --project tsconfig.cjs.json",
     "build:esm": "tsc --project tsconfig.esm.json",
     "build": "concurrently 'npm run build:cjs' 'npm run build:esm'"

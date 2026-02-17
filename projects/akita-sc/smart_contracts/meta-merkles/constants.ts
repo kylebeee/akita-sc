@@ -61,3 +61,4 @@ export const MerkleTreeTypeTrait: uint64 = 2 // Trait: uint64
 export const MerkleTreeTypeTrade: uint64 = 3 // Trade: address,address,uint64,uint64
 export const MerkleTreeTypeWhitelist: uint64 = 4 // Whitelist: address
 export const MerkleTreeTypeAddresses: uint64 = 5 // Addresses: address
+export const MerkleTreeTypeHyperSwap: uint64 = 6 // HyperSwap: address,address,uint64,uint64,uint64

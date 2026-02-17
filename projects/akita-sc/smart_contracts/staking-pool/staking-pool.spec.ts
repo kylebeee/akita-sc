@@ -161,12 +161,12 @@ describe('Staking Pool Contract', () => {
     // The MBR verification tests ensure operations use exact amounts
     // Use fixture.context.generateAccount to ensure accounts are properly created in localnet
     const ctx = fixture.context
-    deployer = await ctx.generateAccount({ initialFunds: algokit.microAlgos(2_000_000_000) })
+    deployer = await ctx.generateAccount({ initialFunds: algokit.microAlgos(2_500_000_000) })
     creator = await ctx.generateAccount({ initialFunds: algokit.microAlgos(2_000_000_000) })
     user1 = await ctx.generateAccount({ initialFunds: algokit.microAlgos(500_000_000) })
     user2 = await ctx.generateAccount({ initialFunds: algokit.microAlgos(500_000_000) })
 
-    await algorand.account.ensureFunded(deployer.addr, dispenser, (2000).algo())
+    await algorand.account.ensureFunded(deployer.addr, dispenser, (2500).algo())
     await algorand.account.ensureFunded(creator.addr, dispenser, (2000).algo())
     await algorand.account.ensureFunded(user1.addr, dispenser, (500).algo())
     await algorand.account.ensureFunded(user2.addr, dispenser, (500).algo())

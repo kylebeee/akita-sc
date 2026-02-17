@@ -439,30 +439,6 @@ class AkitaDaoSDK extends base_1.BaseSDK {
         }
         return preppedActions;
     }
-    async setup(params) {
-        const sendParams = this.getSendParams(params);
-        const group = this.client.newGroup();
-        group.setup({
-            ...sendParams,
-            args: { nickname: 'Akita DAO' },
-            maxFee: (6000).microAlgo()
-        });
-        group.opUp({ args: {}, maxFee: (1000).microAlgos() });
-        const result = await group.send({ ...sendParams });
-        if (result.returns === undefined) {
-            throw new Error('Failed to setup Akita DAO');
-        }
-        this.wallet = new wallet_1.WalletSDK({
-            algorand: this.algorand,
-            factoryParams: {
-                appId: result.returns[0],
-                defaultSender: sendParams.sender,
-                defaultSigner: sendParams.signer
-            }
-        });
-        await this.wallet.register({ ...sendParams, escrow: '' });
-        return result;
-    }
     async initialize(params) {
         const sendParams = this.getSendParams(params);
         return await this.client.send.initialize({

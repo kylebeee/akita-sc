@@ -1,8 +1,10 @@
 import { microAlgo } from '@algorandfoundation/algokit-utils';
 import { AlgorandFixture } from '@algorandfoundation/algokit-utils/types/testing';
+import { proposeAndExecute } from '../../scripts/utils';
 import { setCurrentNetwork } from 'akita-sdk';
 import { AuctionFactorySDK } from 'akita-sdk/auction';
-import { AkitaDaoSDK, EMPTY_CID, ProposalAction, ProposalActionEnum, SplitDistributionType } from 'akita-sdk/dao';
+import { AkitaDaoSDK, EMPTY_CID, ProposalActionEnum, SplitDistributionType } from 'akita-sdk/dao';
+import { AkitaDaoDeployableSDK } from 'akita-sdk/dao-deployable';
 import { MarketplaceSDK } from 'akita-sdk/marketplace';
 import { PollFactorySDK } from 'akita-sdk/poll';
 import { PrizeBoxFactorySDK } from 'akita-sdk/prize-box';
@@ -11,7 +13,6 @@ import { SocialSDK } from 'akita-sdk/social';
 import { StakingSDK } from 'akita-sdk/staking';
 import { StakingPoolFactorySDK } from 'akita-sdk/staking-pool';
 import { SubscriptionsSDK } from 'akita-sdk/subscriptions';
-import { SDKClient } from 'akita-sdk/types';
 import {
   AsaMintPluginSDK,
   AuctionPluginSDK,
@@ -37,7 +38,7 @@ import {
   WalletFactorySDK
 } from 'akita-sdk/wallet';
 import algosdk, { ALGORAND_ZERO_ADDRESS_STRING, getApplicationAddress } from 'algosdk';
-import { AkitaDaoApps, AkitaDaoFactory } from '../../smart_contracts/artifacts/arc58/dao/AkitaDAOClient';
+import { AkitaDaoApps, AkitaDaoFactory } from '../../smart_contracts/artifacts/arc58/dao-deployable/AkitaDAOClient';
 import { EscrowFactoryClient } from '../../smart_contracts/artifacts/escrow/EscrowFactoryClient';
 import { GateClient } from '../../smart_contracts/artifacts/gates/GateClient';
 import { HyperSwapClient } from '../../smart_contracts/artifacts/hyper-swap/HyperSwapClient';
@@ -178,7 +179,7 @@ export const deployAkitaDAO = async ({
   } = {},
   sender,
   signer
-}: DeployParams): Promise<AkitaDaoSDK> => {
+}: DeployParams): Promise<AkitaDaoDeployableSDK> => {
   // Ensure network is set for SDK initialization (fixtures are always localnet)
   setCurrentNetwork('localnet');
   
@@ -335,7 +336,7 @@ export const deployAkitaDAO = async ({
 
   logger.deploy('Akita DAO', client.appId, client.appAddress.toString());
 
-  return new AkitaDaoSDK({
+  return new AkitaDaoDeployableSDK({
     algorand,
     factoryParams: {
       appId: client.appId,
@@ -444,8 +445,9 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   // Get dispenser only on fixture (for auto-funding during tests)
   const dispenser = isLocalnet ? await fixture.algorand.account.dispenserFromEnvironment() : null;
 
-  // Deploy DAO first (with rewards: 0n - will be updated later)
-  const dao = await deployAkitaDAO({ ...params, apps: { ...params.apps, escrow: escrowFactory.appId } });
+  // Deploy DAO with the deployable version (has setup() for initial wallet creation)
+  const deployableDao = await deployAkitaDAO({ ...params, apps: { ...params.apps, escrow: escrowFactory.appId } });
+  let dao: AkitaDaoSDK = deployableDao;
 
   // Now deploy Rewards contract with the actual DAO app ID
   const rewardsClient = await deployRewards({
@@ -462,9 +464,9 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   // Fund the rewards contract (on fixture use dispenser, on testnet/mainnet use direct payment)
   if (isLocalnet && dispenser) {
     await fixture.algorand.account.ensureFunded(rewardsClient.appAddress, dispenser, (10).algos());
-    // Fund sender with enough ALGO to cover all proposals and executions during setup
-    // Each proposal costs ~1-20 ALGO and we make 15+ proposals during buildAkitaUniverse
-    await fixture.algorand.account.ensureFunded(params.sender, dispenser, (500).algos());
+    // Fund sender with enough ALGO to cover all proposals, executions, and MetaMerkles type registration
+    // Each proposal costs ~1-20 ALGO, we make 15+ proposals, and MetaMerkles addType costs 100 ALGO x4
+    await fixture.algorand.account.ensureFunded(params.sender, dispenser, (1000).algos());
     await fixture.algorand.account.ensureFunded(dao.readerAccount, dispenser, (1).algos());
   } else {
     // On testnet/mainnet, fund contracts directly from the sender account
@@ -622,7 +624,10 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   });
   logger.deploy('Prize Box Factory', prizeBoxFactoryResult.client.appId, prizeBoxFactoryResult.client.appAddress.toString());
 
-  // Deploy MetaMerkles
+  // Deploy MetaMerkles (type registration costs 400 ALGO, re-fund sender if needed)
+  if (isLocalnet && dispenser) {
+    await fixture.algorand.account.ensureFunded(params.sender, dispenser, (500).algos());
+  }
   const metaMerklesResult = await deployMetaMerkles({
     fixture,
     sender: params.sender,
@@ -671,7 +676,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   // ═══════════════════════════════════════════════════════════════════════════
   logger.phase('CONFIGURE_DAO');
 
-  const updateFieldsProposalId = await proposeAndExecute(dao, [
+  const updateFieldsProposalId = await proposeAndExecute(fixture.algorand, dao, [
     {
       type: ProposalActionEnum.UpdateFields,
       field: 'aal',
@@ -692,7 +697,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   ]);
   logger.proposal('UpdateFields: Set wallet factory, staking, subscriptions, pool, auction, marketplace, raffle, prizeBox, metaMerkles, gate, and hyperSwap', updateFieldsProposalId);
 
-  const updateSalProposalId = await proposeAndExecute(dao, [
+  const updateSalProposalId = await proposeAndExecute(fixture.algorand, dao, [
     {
       type: ProposalActionEnum.UpdateFields,
       field: 'sal',
@@ -708,7 +713,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
   // Set the otherAppList (oal) with the escrow factory and poll - required for revenue collection
   // External values come from params.otherAppList, escrow and poll are set internally
-  const updateOalProposalId = await proposeAndExecute(dao, [
+  const updateOalProposalId = await proposeAndExecute(fixture.algorand, dao, [
     {
       type: ProposalActionEnum.UpdateFields,
       field: 'oal',
@@ -721,11 +726,22 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   logger.proposal('UpdateFields: Set otherAppList (oal) with escrow factory, poll, and external apps', updateOalProposalId);
 
   // Fund DAO with setup cost before creating the wallet
-  const setupCost = await dao.setupCost();
-  await dao.client.appClient.fundAppAccount({ amount: setupCost.microAlgo() });
+  const setupCost = await deployableDao.setupCost();
+  await deployableDao.client.appClient.fundAppAccount({ amount: setupCost.microAlgo() });
 
-  await dao.setup();
-  logger.wallet('DAO ARC58 Wallet', dao.wallet.client.appId, dao.wallet.client.appAddress.toString());
+  await deployableDao.setup();
+  logger.wallet('DAO ARC58 Wallet', deployableDao.wallet.client.appId, deployableDao.wallet.client.appAddress.toString());
+
+  // Upgrade to regular AkitaDaoSDK (setup is complete, no longer needed)
+  dao = new AkitaDaoSDK({
+    algorand: fixture.algorand,
+    factoryParams: {
+      appId: deployableDao.appId,
+      defaultSender: params.sender,
+      defaultSigner: params.signer,
+    }
+  });
+  await dao.getWallet();
 
   // ═══════════════════════════════════════════════════════════════════════════
   // Calculate total wallet MBR needed for all proposals & executions
@@ -817,7 +833,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
     });
   }
 
-  await proposeAndExecute(dao, [{
+  await proposeAndExecute(fixture.algorand, dao, [{
     type: ProposalActionEnum.UpdateFields,
     field: 'pal',
     value: {
@@ -825,7 +841,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
     }
   }]);
 
-  const installRevenueManagerProposalId = await proposeAndExecute(dao, [
+  const installRevenueManagerProposalId = await proposeAndExecute(fixture.algorand, dao, [
     {
       type: ProposalActionEnum.AddPlugin,
       client: revenueManagerPluginSdk,
@@ -853,7 +869,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   });
   logger.plugin('deploy', 'UpdateAkitaDAOPlugin', daoUpdatePluginSdk.appId);
 
-  await proposeAndExecute(dao, [
+  await proposeAndExecute(fixture.algorand, dao, [
     {
       type: ProposalActionEnum.UpdateFields,
       field: 'pal',
@@ -862,7 +878,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   ]);
 
   // Install UpdateAkitaDAO Plugin
-  const installUpdatePluginProposalId = await proposeAndExecute(dao, [
+  const installUpdatePluginProposalId = await proposeAndExecute(fixture.algorand, dao, [
     {
       type: ProposalActionEnum.AddPlugin,
       fee: DEFAULT_UPDATE_AKITA_DAO_PROPOSAL_CREATION,
@@ -879,7 +895,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   logger.proposal('Install UpdateAkitaDAOPlugin (global)', installUpdatePluginProposalId);
 
   // Update the DAO's akitaAppList with the rewards app ID (DAO was deployed with rewards: 0n)
-  const updateRewardsInDaoProposalId = await proposeAndExecute(dao, [
+  const updateRewardsInDaoProposalId = await proposeAndExecute(fixture.algorand, dao, [
     {
       type: ProposalActionEnum.UpdateFields,
       field: 'aal',
@@ -904,7 +920,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   const pollFactoryRevenueEscrow = 'rev_poll';
 
   // Create rev_wallet escrow first so we can get its ID for wallet factory configuration
-  await proposeAndExecute(dao, [{ type: ProposalActionEnum.NewEscrow, escrow: walletFactoryRevenueEscrow }]);
+  await proposeAndExecute(fixture.algorand, dao, [{ type: ProposalActionEnum.NewEscrow, escrow: walletFactoryRevenueEscrow }]);
   logger.escrow(walletFactoryRevenueEscrow, 'create');
 
   // Get rev_wallet escrow info and update wallet factory escrow
@@ -924,7 +940,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
     ]
   });
 
-  const executePluginProposalId = await proposeAndExecute(dao, [
+  const executePluginProposalId = await proposeAndExecute(fixture.algorand, dao, [
     {
       type: ProposalActionEnum.ExecutePlugin,
       plugin: daoUpdatePluginSdk.appId,
@@ -960,7 +976,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   logger.plugin('deploy', 'OptInPlugin', optInPluginSDK.appId);
 
   // Add OptInPlugin to PluginAppList (pal)
-  await proposeAndExecute(dao, [{
+  await proposeAndExecute(fixture.algorand, dao, [{
     type: ProposalActionEnum.UpdateFields,
     field: 'pal',
     value: {
@@ -1154,12 +1170,12 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
   for (const escrow of recipientEscrows) {
     // Create escrow first
-    await proposeAndExecute(dao, [
+    await proposeAndExecute(fixture.algorand, dao, [
       { type: ProposalActionEnum.NewEscrow, escrow },
     ]);
 
     // Add plugin and toggle lock in separate proposal (escrow must exist for validation)
-    await proposeAndExecute(dao, [
+    await proposeAndExecute(fixture.algorand, dao, [
       {
         type: ProposalActionEnum.AddPlugin,
         client: optInPluginSDK,
@@ -1172,7 +1188,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
     ]);
   }
 
-  await proposeAndExecute(dao, [{
+  await proposeAndExecute(fixture.algorand, dao, [{
     type: ProposalActionEnum.UpdateFields,
     field: 'revenue_splits',
     value: [
@@ -1258,7 +1274,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
     // Only create escrow if it hasn't been created already
     if (!alreadyCreated) {
-      await proposeAndExecute(dao, [{ type: ProposalActionEnum.NewEscrow, escrow }]);
+      await proposeAndExecute(fixture.algorand, dao, [{ type: ProposalActionEnum.NewEscrow, escrow }]);
     }
 
     const newReceiveEscrowPluginBuild = await dao.wallet.build.usePlugin({
@@ -1281,7 +1297,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
       ]
     });
 
-    await proposeAndExecute(dao, [
+    await proposeAndExecute(fixture.algorand, dao, [
       {
         type: ProposalActionEnum.ExecutePlugin,
         plugin: revenueManagerPluginSdk.appId,
@@ -1334,7 +1350,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
         ]
       });
 
-      await proposeAndExecute(dao, [
+      await proposeAndExecute(fixture.algorand, dao, [
         {
           type: ProposalActionEnum.ExecutePlugin,
           plugin: daoUpdatePluginSdk.appId,
@@ -1363,7 +1379,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   }
 
   // Add asa-mint plugin to DAO wallet (global, no escrow)
-  await proposeAndExecute(dao, [
+  await proposeAndExecute(fixture.algorand, dao, [
     {
       type: ProposalActionEnum.AddPlugin,
       client: asaMintPluginSDK,
@@ -1412,7 +1428,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
     akitaAssetsUpdate.akta = aktaAssetId;
   }
   
-  await proposeAndExecute(dao, [
+  await proposeAndExecute(fixture.algorand, dao, [
     {
       type: ProposalActionEnum.UpdateFields,
       field: 'akita_assets',
@@ -1422,7 +1438,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   logger.proposal(`UpdateFields: Set assets (AKTA: ${aktaAssetId}, BONES: ${bonesAssetId})`, 0n);
 
   // Add pay plugin to DAO wallet (global, no escrow)
-  await proposeAndExecute(dao, [
+  await proposeAndExecute(fixture.algorand, dao, [
     {
       type: ProposalActionEnum.AddPlugin,
       client: payPluginSDK,
@@ -1454,11 +1470,11 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
     }
 
     // Create the escrow
-    await proposeAndExecute(dao, [{ type: ProposalActionEnum.NewEscrow, escrow }]);
+    await proposeAndExecute(fixture.algorand, dao, [{ type: ProposalActionEnum.NewEscrow, escrow }]);
     logger.escrow(escrow, 'create');
 
     // Add optin plugin to the escrow
-    await proposeAndExecute(dao, [
+    await proposeAndExecute(fixture.algorand, dao, [
       {
         type: ProposalActionEnum.AddPlugin,
         client: optInPluginSDK,
@@ -1485,7 +1501,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
     logger.escrow(escrow, 'optin');
 
     // Remove the optin plugin from the escrow (must use zero address since it was added with global: true)
-    await proposeAndExecute(dao, [
+    await proposeAndExecute(fixture.algorand, dao, [
       {
         type: ProposalActionEnum.RemovePlugin,
         plugin: optInPluginSDK.appId,
@@ -1546,6 +1562,11 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
     walletFactory: abstractAccountFactory.appId,
   });
 
+  // Re-fund sender after universe build (MetaMerkles type registration + proposals consume significant ALGO)
+  if (isLocalnet && dispenser) {
+    await fixture.algorand.account.ensureFunded(params.sender, dispenser, (500).algos());
+  }
+
   return {
     dao,
     walletFactory: abstractAccountFactory,
@@ -1593,18 +1614,3 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   }
 }
 
-const proposeAndExecute = async (dao: AkitaDaoSDK, actions: ProposalAction<SDKClient>[]): Promise<bigint> => {
-  const info = await dao.proposalCost({ actions });
-
-  await dao.client.appClient.fundAppAccount({ amount: info.total.microAlgo() });
-
-  const { return: proposalId } = await dao.newProposal({ actions });
-
-  if (proposalId === undefined) {
-    throw new Error('Failed to create proposal');
-  }
-
-  await dao.executeProposal({ proposalId });
-
-  return proposalId;
-}

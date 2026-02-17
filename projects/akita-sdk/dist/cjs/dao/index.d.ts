@@ -1,7 +1,7 @@
 import { AkitaDaoArgs, AkitaDaoClient, ProposalCostInfo } from '../generated/AkitaDAOClient';
 import { AkitaDaoTypesClient } from '../generated/AkitaDAOTypesClient';
 import { BaseSDK } from "../base";
-import { GroupReturn, MaybeSigner, NewContractSDKParams, SDKClient, TxnReturn } from "../types";
+import { MaybeSigner, NewContractSDKParams, SDKClient, TxnReturn } from "../types";
 import { WalletSDK } from "../wallet";
 import { AkitaDaoGlobalState, DecodedProposal, EditProposalParams, NewProposalParams, ProposalAction } from "./types";
 import { AppReturn } from "@algorandfoundation/algokit-utils/types/app";
@@ -31,7 +31,6 @@ export declare class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
      */
     set wallet(wallet: WalletSDK);
     private prepProposalActions;
-    setup(params?: MaybeSigner): Promise<GroupReturn>;
     initialize(params?: MaybeSigner): Promise<TxnReturn<void>>;
     newProposal<TClient extends SDKClient>({ sender, signer, cid, actions, consolidateFees }: NewProposalParams<TClient>): Promise<{
         groupId: string;

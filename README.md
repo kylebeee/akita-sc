@@ -222,11 +222,11 @@ Wallet plugins extend abstracted account functionality:
 | `rafflePlugin` | `751972341` | `3368399868` |
 | `revenueManagerPlugin` | `751972084` | `3368395771` |
 | `rewardsPlugin` | `751972347` | `3368399956` |
-| `socialPlugin` | `754162312` | `3414942259` |
+| `socialPlugin` | `755645846` | `3453609510` |
 | `stakingPlugin` | `751972363` | `3368400044` |
 | `stakingPoolPlugin` | `751972365` | `3368400148` |
 | `subscriptionsPlugin` | `752474150` | `3378296099` |
-| `updatePlugin` | `752472935` | `3378277726` |
+| `updatePlugin` | `755638741` | `3453512910` |
 
 ### Sub-Gates
 

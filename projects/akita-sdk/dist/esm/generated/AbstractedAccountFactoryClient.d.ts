@@ -59,6 +59,12 @@ export type AbstractedAccountFactoryArgs = {
             referrer: string;
         };
         'cost()uint64': Record<string, never>;
+        'updateWallet(uint64)void': {
+            /**
+             * The wallet application to update
+             */
+            wallet: bigint | number;
+        };
         'initBoxedContract(string,uint64)void': {
             version: string;
             size: bigint | number;
@@ -100,6 +106,7 @@ export type AbstractedAccountFactoryArgs = {
         'updateRevocation(uint64)void': [app: bigint | number];
         'newAccount(pay,address,address,string,address)uint64': [payment: AppMethodCallTransactionArgument, controlledAddress: string, admin: string, nickname: string, referrer: string];
         'cost()uint64': [];
+        'updateWallet(uint64)void': [wallet: bigint | number];
         'initBoxedContract(string,uint64)void': [version: string, size: bigint | number];
         'loadBoxedContract(uint64,byte[])void': [offset: bigint | number, data: Uint8Array];
         'deleteBoxedContract()void': [];
@@ -119,6 +126,7 @@ export type AbstractedAccountFactoryReturns = {
     'updateRevocation(uint64)void': void;
     'newAccount(pay,address,address,string,address)uint64': bigint;
     'cost()uint64': bigint;
+    'updateWallet(uint64)void': void;
     'initBoxedContract(string,uint64)void': void;
     'loadBoxedContract(uint64,byte[])void': void;
     'deleteBoxedContract()void': void;
@@ -152,6 +160,10 @@ export type AbstractedAccountFactoryTypes = {
         argsObj: AbstractedAccountFactoryArgs['obj']['cost()uint64'];
         argsTuple: AbstractedAccountFactoryArgs['tuple']['cost()uint64'];
         returns: AbstractedAccountFactoryReturns['cost()uint64'];
+    }> & Record<'updateWallet(uint64)void' | 'updateWallet', {
+        argsObj: AbstractedAccountFactoryArgs['obj']['updateWallet(uint64)void'];
+        argsTuple: AbstractedAccountFactoryArgs['tuple']['updateWallet(uint64)void'];
+        returns: AbstractedAccountFactoryReturns['updateWallet(uint64)void'];
     }> & Record<'initBoxedContract(string,uint64)void' | 'initBoxedContract', {
         argsObj: AbstractedAccountFactoryArgs['obj']['initBoxedContract(string,uint64)void'];
         argsTuple: AbstractedAccountFactoryArgs['tuple']['initBoxedContract(string,uint64)void'];
@@ -397,6 +409,18 @@ export declare abstract class AbstractedAccountFactoryParamsFactory {
      * @returns An `AppClientMethodCallParams` object for the call
      */
     static cost(params: CallParams<AbstractedAccountFactoryArgs['obj']['cost()uint64'] | AbstractedAccountFactoryArgs['tuple']['cost()uint64']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
+    /**
+     * Constructs a no op call for the updateWallet(uint64)void ABI method
+     *
+    * Permanent: Update a wallet's bytecode. The caller must be the wallet's admin.
+    The factory sends the update inner txn as itself (factory address), which the
+    wallet accepts because Txn.sender === factoryApp.address.
+  
+     *
+     * @param params Parameters for the call
+     * @returns An `AppClientMethodCallParams` object for the call
+     */
+    static updateWallet(params: CallParams<AbstractedAccountFactoryArgs['obj']['updateWallet(uint64)void'] | AbstractedAccountFactoryArgs['tuple']['updateWallet(uint64)void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
     /**
      * Constructs a no op call for the initBoxedContract(string,uint64)void ABI method
      *
@@ -1022,6 +1046,20 @@ export declare class AbstractedAccountFactoryClient {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<AppCallMethodCall>;
         /**
+         * Makes a call to the AbstractedAccountFactory smart contract using the `updateWallet(uint64)void` ABI method.
+         *
+        * Permanent: Update a wallet's bytecode. The caller must be the wallet's admin.
+        The factory sends the update inner txn as itself (factory address), which the
+        wallet accepts because Txn.sender === factoryApp.address.
+    
+         *
+         * @param params The params for the smart contract call
+         * @returns The call params
+         */
+        updateWallet: (params: CallParams<AbstractedAccountFactoryArgs["obj"]["updateWallet(uint64)void"] | AbstractedAccountFactoryArgs["tuple"]["updateWallet(uint64)void"]> & {
+            onComplete?: OnApplicationComplete.NoOpOC;
+        }) => Promise<AppCallMethodCall>;
+        /**
          * Makes a call to the AbstractedAccountFactory smart contract using the `initBoxedContract(string,uint64)void` ABI method.
          *
          * @param params The params for the smart contract call
@@ -1160,6 +1198,24 @@ export declare class AbstractedAccountFactoryClient {
          * @returns The call transaction
          */
         cost: (params?: CallParams<AbstractedAccountFactoryArgs["obj"]["cost()uint64"] | AbstractedAccountFactoryArgs["tuple"]["cost()uint64"]> & {
+            onComplete?: OnApplicationComplete.NoOpOC;
+        }) => Promise<{
+            transactions: Transaction[];
+            methodCalls: Map<number, import("algosdk").ABIMethod>;
+            signers: Map<number, TransactionSigner>;
+        }>;
+        /**
+         * Makes a call to the AbstractedAccountFactory smart contract using the `updateWallet(uint64)void` ABI method.
+         *
+        * Permanent: Update a wallet's bytecode. The caller must be the wallet's admin.
+        The factory sends the update inner txn as itself (factory address), which the
+        wallet accepts because Txn.sender === factoryApp.address.
+    
+         *
+         * @param params The params for the smart contract call
+         * @returns The call transaction
+         */
+        updateWallet: (params: CallParams<AbstractedAccountFactoryArgs["obj"]["updateWallet(uint64)void"] | AbstractedAccountFactoryArgs["tuple"]["updateWallet(uint64)void"]> & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<{
             transactions: Transaction[];
@@ -1366,6 +1422,29 @@ export declare class AbstractedAccountFactoryClient {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<{
             return: (undefined | AbstractedAccountFactoryReturns["cost()uint64"]);
+            groupId: string;
+            txIds: string[];
+            returns?: ABIReturn[] | undefined | undefined;
+            confirmations: modelsv2.PendingTransactionResponse[];
+            transactions: Transaction[];
+            confirmation: modelsv2.PendingTransactionResponse;
+            transaction: Transaction;
+        }>;
+        /**
+         * Makes a call to the AbstractedAccountFactory smart contract using the `updateWallet(uint64)void` ABI method.
+         *
+        * Permanent: Update a wallet's bytecode. The caller must be the wallet's admin.
+        The factory sends the update inner txn as itself (factory address), which the
+        wallet accepts because Txn.sender === factoryApp.address.
+    
+         *
+         * @param params The params for the smart contract call
+         * @returns The call result
+         */
+        updateWallet: (params: CallParams<AbstractedAccountFactoryArgs["obj"]["updateWallet(uint64)void"] | AbstractedAccountFactoryArgs["tuple"]["updateWallet(uint64)void"]> & SendParams & {
+            onComplete?: OnApplicationComplete.NoOpOC;
+        }) => Promise<{
+            return: (undefined | AbstractedAccountFactoryReturns["updateWallet(uint64)void"]);
             groupId: string;
             txIds: string[];
             returns?: ABIReturn[] | undefined | undefined;
@@ -1630,6 +1709,19 @@ export type AbstractedAccountFactoryComposer<TReturns extends [...any[]] = []> =
      * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
      */
     cost(params?: CallParams<AbstractedAccountFactoryArgs['obj']['cost()uint64'] | AbstractedAccountFactoryArgs['tuple']['cost()uint64']>): AbstractedAccountFactoryComposer<[...TReturns, AbstractedAccountFactoryReturns['cost()uint64'] | undefined]>;
+    /**
+     * Calls the updateWallet(uint64)void ABI method.
+     *
+    * Permanent: Update a wallet's bytecode. The caller must be the wallet's admin.
+    The factory sends the update inner txn as itself (factory address), which the
+    wallet accepts because Txn.sender === factoryApp.address.
+  
+     *
+     * @param args The arguments for the contract call
+     * @param params Any additional parameters for the call
+     * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
+     */
+    updateWallet(params?: CallParams<AbstractedAccountFactoryArgs['obj']['updateWallet(uint64)void'] | AbstractedAccountFactoryArgs['tuple']['updateWallet(uint64)void']>): AbstractedAccountFactoryComposer<[...TReturns, AbstractedAccountFactoryReturns['updateWallet(uint64)void'] | undefined]>;
     /**
      * Calls the initBoxedContract(string,uint64)void ABI method.
      *

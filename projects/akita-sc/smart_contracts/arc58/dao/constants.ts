@@ -103,6 +103,7 @@ export const ProposalActionTypeRemoveAllowances: ProposalActionType = new Uint8(
 export const ProposalActionTypeNewEscrow: ProposalActionType = new Uint8(70)
 export const ProposalActionTypeToggleEscrowLock: ProposalActionType = new Uint8(71)
 export const ProposalActionTypeUpdateFields: ProposalActionType = new Uint8(80)
+export const ProposalActionTypeUpdateWallet: ProposalActionType = new Uint8(90)
 
 // proposal vote types
 export const ProposalVoteTypeApprove: ProposalVoteType = new Uint8(10)
