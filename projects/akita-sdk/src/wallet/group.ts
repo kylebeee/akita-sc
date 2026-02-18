@@ -342,10 +342,14 @@ export class WalletGroupComposer {
       }
     )
 
+    // Strip flags already handled by prepareGroupWithCost so AlgoKit doesn't
+    // try to handle them a second time (which would require maxFee on every txn)
+    const { coverAppCallInnerTransactionFees, populateAppCallResources, ...sendParams } = params ?? {} as any
+
     // Send the prepared atomic group
     const result = await this.wallet.client.algorand.newGroup()
       .addAtc(populatedAtc)
-      .send(params) as unknown as GroupReturn
+      .send(sendParams) as unknown as GroupReturn
 
     // Run post-processors (register escrows, update caches)
     for (const postProcessor of this.postProcessors) {
