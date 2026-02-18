@@ -14,9 +14,11 @@ import { Txn } from '@algorandfoundation/algokit-utils/types/composer';
 import { prepareGroupWithCost } from '../simulate/prepare';
 import { ExpectedCost } from '../simulate/types';
 import { estimateFallbackCost } from '../simulate/fallback';
+import { WalletGroupComposer } from './group';
 
 export * from './constants';
 export * from './factory';
+export * from './group';
 export * from './plugins';
 export * from "./types";
 
@@ -45,7 +47,11 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
     super({ factory: AbstractedAccountFactory, ...params }, ENV_VAR_NAMES.WALLET_APP_ID);
   }
 
-  private async updateCache(key: PluginKey, allowances?: bigint[]): Promise<void> {
+  group(): WalletGroupComposer {
+    return new WalletGroupComposer(this)
+  }
+
+  async updateCache(key: PluginKey, allowances?: bigint[]): Promise<void> {
     const { escrow } = key;
 
     const requestList: any[] = [this.getPluginByKey(key)]
@@ -90,7 +96,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
     }
   }
 
-  private async prepareUsePlugin({
+  async prepareUsePlugin({
     sender,
     signer,
     name = '',
@@ -676,7 +682,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
     });
   }
 
-  async optinEscrow({ sender, signer, ...args }: ContractArgs['arc58_optInEscrow(string,uint64[])void'] & MaybeSigner): Promise<TxnReturn<void>> {
+  async optInEscrow({ sender, signer, ...args }: ContractArgs['arc58_optInEscrow(string,uint64[])void'] & MaybeSigner): Promise<TxnReturn<void>> {
 
     const sendParams = this.getSendParams({ sender, signer });
 

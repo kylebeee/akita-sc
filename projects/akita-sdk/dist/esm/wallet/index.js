@@ -8,8 +8,10 @@ import { AllowanceInfoTranslate, AllowancesToTuple, domainBoxKey, executionBoxKe
 import { NewEscrowFeeAmount } from './constants';
 import { encodeLease, microAlgo } from '@algorandfoundation/algokit-utils';
 import { prepareGroupWithCost } from '../simulate/prepare';
+import { WalletGroupComposer } from './group';
 export * from './constants';
 export * from './factory';
+export * from './group';
 export * from './plugins';
 export * from "./types";
 // things i want to include in the SDK
@@ -153,6 +155,9 @@ export class WalletSDK extends BaseSDK {
                 return groups;
             }
         };
+    }
+    group() {
+        return new WalletGroupComposer(this);
     }
     async updateCache(key, allowances) {
         const { escrow } = key;
@@ -673,7 +678,7 @@ export class WalletSDK extends BaseSDK {
             args
         });
     }
-    async optinEscrow({ sender, signer, ...args }) {
+    async optInEscrow({ sender, signer, ...args }) {
         const sendParams = this.getSendParams({ sender, signer });
         return await this.client.send.arc58OptInEscrow({ ...sendParams, args });
     }

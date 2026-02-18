@@ -1,10 +1,12 @@
-import { AbstractAccountBoxMbrData, AbstractedAccountArgs, AllowanceKey, EscrowInfo, PluginKey, type AbstractedAccountClient, ExecutionInfo } from '../generated/AbstractedAccountClient';
+import { AbstractAccountBoxMbrData, AbstractedAccountArgs, AllowanceKey, EscrowInfo, PluginKey, type AbstractedAccountClient, ExecutionInfo, AbstractedAccountComposer } from '../generated/AbstractedAccountClient';
 import { AddAllowanceArgs, AllowanceInfo, BuildWalletUsePluginParams, CanCallParams, ExecutionBuildGroup, MbrParams, PluginInfo, WalletAddPluginParams, WalletGlobalState, WalletUsePluginParams } from './types';
-import { MaybeSigner, NewContractSDKParams, SDKClient, GroupReturn, TxnReturn } from '../types';
+import { MaybeSigner, NewContractSDKParams, SDKClient, GroupReturn, TxnReturn, ExpandedSendParamsWithSigner } from '../types';
 import { BaseSDK } from '../base';
 import { ValueMap } from './utils';
+import { WalletGroupComposer } from './group';
 export * from './constants';
 export * from './factory';
+export * from './group';
 export * from './plugins';
 export * from "./types";
 type ContractArgs = AbstractedAccountArgs["obj"];
@@ -17,8 +19,16 @@ export declare class WalletSDK extends BaseSDK<AbstractedAccountClient> {
     allowances: ValueMap<AllowanceKey, AllowanceInfo>;
     executions: Map<Uint8Array, ExecutionInfo>;
     constructor(params: NewContractSDKParams);
-    private updateCache;
-    private prepareUsePlugin;
+    group(): WalletGroupComposer;
+    updateCache(key: PluginKey, allowances?: bigint[]): Promise<void>;
+    prepareUsePlugin({ sender, signer, name, global, escrow, fundsRequest, calls, lease }: WalletUsePluginParams): Promise<{
+        plugins: bigint[];
+        caller: string;
+        useRounds: boolean;
+        length: number;
+        group: AbstractedAccountComposer<[]>;
+        sendParams: ExpandedSendParamsWithSigner;
+    }>;
     register({ sender, signer, escrow }: ContractArgs['register(string)void'] & MaybeSigner): Promise<void>;
     changeRevocationApp({ sender, signer, app }: MaybeSigner & {
         app: bigint;
@@ -47,7 +57,7 @@ export declare class WalletSDK extends BaseSDK<AbstractedAccountClient> {
     newEscrow({ sender, signer, ...args }: ContractArgs['arc58_newEscrow(string)uint64'] & MaybeSigner): Promise<TxnReturn<bigint>>;
     toggleEscrowLock({ sender, signer, ...args }: ContractArgs['arc58_toggleEscrowLock(string)(uint64,bool)'] & MaybeSigner): Promise<TxnReturn<EscrowInfo>>;
     reclaimFunds({ sender, signer, ...args }: ContractArgs['arc58_reclaim(string,(uint64,uint64,bool)[])void'] & MaybeSigner): Promise<TxnReturn<void>>;
-    optinEscrow({ sender, signer, ...args }: ContractArgs['arc58_optInEscrow(string,uint64[])void'] & MaybeSigner): Promise<TxnReturn<void>>;
+    optInEscrow({ sender, signer, ...args }: ContractArgs['arc58_optInEscrow(string,uint64[])void'] & MaybeSigner): Promise<TxnReturn<void>>;
     addAllowances({ sender, signer, escrow, allowances }: {
         escrow: string;
         allowances: AddAllowanceArgs[];

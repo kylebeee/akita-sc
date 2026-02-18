@@ -4,7 +4,7 @@ import { AlgorandClient } from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { AlgorandFixture } from '@algorandfoundation/algokit-utils/types/testing'
 import algosdk, { makeBasicAccountTransactionSigner } from 'algosdk'
-import { AkitaDaoApps } from '../smart_contracts/artifacts/arc58/dao/AkitaDAOClient'
+import { AkitaDaoApps } from '../smart_contracts/artifacts/arc58/dao-deployable/AkitaDAOClient'
 import { AkitaUniverse, buildAkitaUniverse } from '../tests/fixtures/dao'
 
 type Network = 'localnet' | 'testnet' | 'mainnet'

@@ -38,14 +38,8 @@ export interface SerializedMethodDefinition {
 export interface AgentInstallPlugin {
     /** Plugin identifier (sdkKey from NetworkAppIds, e.g. "payPlugin") */
     id: string;
-    /** 0 = Global, 1 = Admin, 2 = Agent (caller-scoped) */
-    delegationType: number;
     /** Whether the wallet owner covers transaction fees */
     coverFees?: boolean;
-    /** Whether to default plugin execution to the escrow */
-    defaultToEscrow?: boolean;
-    /** Whether to use an execution key */
-    useExecutionKey?: boolean;
     /** Method cooldown in seconds (default 0) */
     cooldown?: string;
     /** Spending allowances for this plugin */

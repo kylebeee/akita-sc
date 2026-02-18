@@ -47,8 +47,10 @@ const utils_1 = require("./utils");
 const constants_2 = require("./constants");
 const algokit_utils_1 = require("@algorandfoundation/algokit-utils");
 const prepare_1 = require("../simulate/prepare");
+const group_1 = require("./group");
 __exportStar(require("./constants"), exports);
 __exportStar(require("./factory"), exports);
+__exportStar(require("./group"), exports);
 __exportStar(require("./plugins"), exports);
 __exportStar(require("./types"), exports);
 // things i want to include in the SDK
@@ -192,6 +194,9 @@ class WalletSDK extends base_1.BaseSDK {
                 return groups;
             }
         };
+    }
+    group() {
+        return new group_1.WalletGroupComposer(this);
     }
     async updateCache(key, allowances) {
         const { escrow } = key;
@@ -712,7 +717,7 @@ class WalletSDK extends base_1.BaseSDK {
             args
         });
     }
-    async optinEscrow({ sender, signer, ...args }) {
+    async optInEscrow({ sender, signer, ...args }) {
         const sendParams = this.getSendParams({ sender, signer });
         return await this.client.send.arc58OptInEscrow({ ...sendParams, args });
     }
