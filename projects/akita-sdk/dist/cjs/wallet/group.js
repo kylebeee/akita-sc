@@ -20,6 +20,8 @@ class WalletGroupComposer {
         this.resolvers = [];
         this.postProcessors = [];
         this.newEscrows = new Set();
+        /** Tracks `"escrow:asset"` keys to deduplicate allowance additions */
+        this.newAllowances = new Set();
         this.wallet = wallet;
         this.group = wallet.client.newGroup();
     }
@@ -101,13 +103,23 @@ class WalletGroupComposer {
                 if (escrow === '') {
                     throw new Error('Allowances can only be added to plugins with an escrow');
                 }
-                this.group.arc58AddAllowances({
-                    ...sendParams,
-                    args: {
-                        escrow,
-                        allowances: (0, utils_1.AllowancesToTuple)(allowances)
-                    }
+                // Deduplicate: skip allowances whose (escrow, asset) pair was already queued
+                const dedupedAllowances = allowances.filter((a) => {
+                    const key = `${escrow}:${a.asset}`;
+                    if (this.newAllowances.has(key))
+                        return false;
+                    this.newAllowances.add(key);
+                    return true;
                 });
+                if (dedupedAllowances.length > 0) {
+                    this.group.arc58AddAllowances({
+                        ...sendParams,
+                        args: {
+                            escrow,
+                            allowances: (0, utils_1.AllowancesToTuple)(dedupedAllowances)
+                        }
+                    });
+                }
             }
             // Queue post-processing (runs after the group is sent)
             const pluginKey = { plugin, caller: caller, escrow };

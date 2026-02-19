@@ -123,6 +123,11 @@ export declare function isDripAllowance(info: AllowanceInfo): info is Extract<Al
 type BaseWalletAddPluginParams<TClient extends SDKClient> = Partial<Omit<ContractArgs['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool,bool)void'], 'methods'>> & MaybeSigner & {
     client: AkitaSDK<TClient>;
     methods?: PluginMethodDefinition[];
+    /**
+     * @deprecated Use `WalletGroupComposer.addAllowances()` instead.
+     * Allowances are keyed on-chain by `{escrow, asset}` and should be
+     * set at the escrow level, not per-plugin.
+     */
     allowances?: AddAllowanceArgs[];
 };
 export type WalletAddPluginParams<TClient extends SDKClient> = BaseWalletAddPluginParams<TClient> & ({

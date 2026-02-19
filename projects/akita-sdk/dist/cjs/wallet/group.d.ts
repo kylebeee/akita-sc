@@ -16,6 +16,8 @@ export declare class WalletGroupComposer {
     private resolvers;
     private postProcessors;
     private newEscrows;
+    /** Tracks `"escrow:asset"` keys to deduplicate allowance additions */
+    private newAllowances;
     private group;
     constructor(wallet: WalletSDK);
     private getSendParams;

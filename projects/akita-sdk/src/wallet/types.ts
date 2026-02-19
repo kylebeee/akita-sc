@@ -172,6 +172,11 @@ type BaseWalletAddPluginParams<TClient extends SDKClient> =
   {
     client: AkitaSDK<TClient>
     methods?: PluginMethodDefinition[]
+    /**
+     * @deprecated Use `WalletGroupComposer.addAllowances()` instead.
+     * Allowances are keyed on-chain by `{escrow, asset}` and should be
+     * set at the escrow level, not per-plugin.
+     */
     allowances?: AddAllowanceArgs[]
   }
 
