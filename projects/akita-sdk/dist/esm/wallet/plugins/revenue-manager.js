@@ -1,12 +1,18 @@
-import { RevenueManagerPluginFactory } from "../../generated/RevenueManagerPluginClient";
-import { BaseSDK } from "../../base";
-import algosdk from "algosdk";
-import { getTxns } from "../utils";
-import { microAlgo } from "@algorandfoundation/algokit-utils";
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RevenueManagerPluginSDK = void 0;
+const RevenueManagerPluginClient_1 = require("../../generated/RevenueManagerPluginClient");
+const base_1 = require("../../base");
+const algosdk_1 = __importDefault(require("algosdk"));
+const utils_1 = require("../utils");
+const algokit_utils_1 = require("@algorandfoundation/algokit-utils");
 const assetOptInCost = 100000; // This is the cost for asset opt-in, adjust as necessary
-export class RevenueManagerPluginSDK extends BaseSDK {
+class RevenueManagerPluginSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: RevenueManagerPluginFactory, ...params });
+        super({ factory: RevenueManagerPluginClient_1.RevenueManagerPluginFactory, ...params });
     }
     optIn(args) {
         const methodName = 'optIn';
@@ -15,7 +21,7 @@ export class RevenueManagerPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer, assets } = args;
@@ -27,8 +33,8 @@ export class RevenueManagerPluginSDK extends BaseSDK {
                 const rekeyBack = args.rekeyBack ?? true;
                 const mbrPayment = this.client.algorand.createTransaction.payment({
                     ...sendParams,
-                    amount: microAlgo(assetOptInCost * assets.length),
-                    receiver: spendingAddress ? spendingAddress : algosdk.getApplicationAddress(wallet),
+                    amount: (0, algokit_utils_1.microAlgo)(assetOptInCost * assets.length),
+                    receiver: spendingAddress ? spendingAddress : algosdk_1.default.getApplicationAddress(wallet),
                 });
                 const params = (await this.client.params.optIn({
                     ...sendParams,
@@ -48,7 +54,7 @@ export class RevenueManagerPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer, escrow, source, allocatable, optinAllowed, splits } = args;
@@ -76,7 +82,7 @@ export class RevenueManagerPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer, escrow, source, allocatable, optinAllowed, splitRef } = args;
@@ -104,7 +110,7 @@ export class RevenueManagerPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -132,7 +138,7 @@ export class RevenueManagerPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer, ids } = args;
@@ -160,7 +166,7 @@ export class RevenueManagerPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer, ids } = args;
@@ -182,4 +188,5 @@ export class RevenueManagerPluginSDK extends BaseSDK {
         });
     }
 }
+exports.RevenueManagerPluginSDK = RevenueManagerPluginSDK;
 //# sourceMappingURL=revenue-manager.js.map

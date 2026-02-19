@@ -1,16 +1,28 @@
-import { sha256 } from '@noble/hashes/sha256';
-import { SchemaPart } from './types';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MerkleTree = void 0;
+exports.bytesToHex = bytesToHex;
+exports.hexToBytes = hexToBytes;
+exports.encodeValue = encodeValue;
+exports.encodeLeaf = encodeLeaf;
+exports.hashLeaf = hashLeaf;
+exports.createAddressTree = createAddressTree;
+exports.createUint64Tree = createUint64Tree;
+exports.createAssetTree = createAssetTree;
+exports.verifyProof = verifyProof;
+const sha256_1 = require("@noble/hashes/sha256");
+const types_1 = require("./types");
 // ========== Utility Functions ==========
 /**
  * Converts a Uint8Array to a hex string prefixed with 0x
  */
-export function bytesToHex(bytes) {
+function bytesToHex(bytes) {
     return `0x${Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('')}`;
 }
 /**
  * Converts a hex string (with or without 0x prefix) to Uint8Array
  */
-export function hexToBytes(hex) {
+function hexToBytes(hex) {
     const cleanHex = hex.startsWith('0x') ? hex.slice(2) : hex;
     const bytes = new Uint8Array(cleanHex.length / 2);
     for (let i = 0; i < bytes.length; i++) {
@@ -37,40 +49,40 @@ function compareBytes(a, b) {
 function hashPair(a, b) {
     // Sort the pair - larger value second (same as contract: if BigUint(a) > BigUint(b) then sha256(b.concat(a)))
     if (compareBytes(a, b) > 0) {
-        return sha256(new Uint8Array([...b, ...a]));
+        return (0, sha256_1.sha256)(new Uint8Array([...b, ...a]));
     }
-    return sha256(new Uint8Array([...a, ...b]));
+    return (0, sha256_1.sha256)(new Uint8Array([...a, ...b]));
 }
 // ========== Leaf Encoding Functions ==========
 /**
  * Encodes a value as bytes according to a schema part type.
  */
-export function encodeValue(value, schemaPart) {
+function encodeValue(value, schemaPart) {
     switch (schemaPart) {
-        case SchemaPart.Uint8: {
+        case types_1.SchemaPart.Uint8: {
             const buf = new Uint8Array(1);
             buf[0] = Number(value) & 0xff;
             return buf;
         }
-        case SchemaPart.Uint16: {
+        case types_1.SchemaPart.Uint16: {
             const buf = new Uint8Array(2);
             const view = new DataView(buf.buffer);
             view.setUint16(0, Number(value), false);
             return buf;
         }
-        case SchemaPart.Uint32: {
+        case types_1.SchemaPart.Uint32: {
             const buf = new Uint8Array(4);
             const view = new DataView(buf.buffer);
             view.setUint32(0, Number(value), false);
             return buf;
         }
-        case SchemaPart.Uint64: {
+        case types_1.SchemaPart.Uint64: {
             const buf = new Uint8Array(8);
             const view = new DataView(buf.buffer);
             view.setBigUint64(0, BigInt(value), false);
             return buf;
         }
-        case SchemaPart.Uint128: {
+        case types_1.SchemaPart.Uint128: {
             const buf = new Uint8Array(16);
             let n = BigInt(value);
             for (let i = 15; i >= 0; i--) {
@@ -79,7 +91,7 @@ export function encodeValue(value, schemaPart) {
             }
             return buf;
         }
-        case SchemaPart.Uint256: {
+        case types_1.SchemaPart.Uint256: {
             const buf = new Uint8Array(32);
             let n = BigInt(value);
             for (let i = 31; i >= 0; i--) {
@@ -88,7 +100,7 @@ export function encodeValue(value, schemaPart) {
             }
             return buf;
         }
-        case SchemaPart.Uint512: {
+        case types_1.SchemaPart.Uint512: {
             const buf = new Uint8Array(64);
             let n = BigInt(value);
             for (let i = 63; i >= 0; i--) {
@@ -97,23 +109,23 @@ export function encodeValue(value, schemaPart) {
             }
             return buf;
         }
-        case SchemaPart.Bytes4:
-        case SchemaPart.Bytes8:
-        case SchemaPart.Bytes16:
-        case SchemaPart.Bytes32:
-        case SchemaPart.Bytes64:
-        case SchemaPart.Bytes128:
-        case SchemaPart.Bytes256:
-        case SchemaPart.Bytes512: {
+        case types_1.SchemaPart.Bytes4:
+        case types_1.SchemaPart.Bytes8:
+        case types_1.SchemaPart.Bytes16:
+        case types_1.SchemaPart.Bytes32:
+        case types_1.SchemaPart.Bytes64:
+        case types_1.SchemaPart.Bytes128:
+        case types_1.SchemaPart.Bytes256:
+        case types_1.SchemaPart.Bytes512: {
             const sizes = {
-                [SchemaPart.Bytes4]: 4,
-                [SchemaPart.Bytes8]: 8,
-                [SchemaPart.Bytes16]: 16,
-                [SchemaPart.Bytes32]: 32,
-                [SchemaPart.Bytes64]: 64,
-                [SchemaPart.Bytes128]: 128,
-                [SchemaPart.Bytes256]: 256,
-                [SchemaPart.Bytes512]: 512,
+                [types_1.SchemaPart.Bytes4]: 4,
+                [types_1.SchemaPart.Bytes8]: 8,
+                [types_1.SchemaPart.Bytes16]: 16,
+                [types_1.SchemaPart.Bytes32]: 32,
+                [types_1.SchemaPart.Bytes64]: 64,
+                [types_1.SchemaPart.Bytes128]: 128,
+                [types_1.SchemaPart.Bytes256]: 256,
+                [types_1.SchemaPart.Bytes512]: 512,
             };
             const size = sizes[schemaPart];
             if (value instanceof Uint8Array) {
@@ -129,10 +141,10 @@ export function encodeValue(value, schemaPart) {
             }
             return bytes;
         }
-        case SchemaPart.String: {
+        case types_1.SchemaPart.String: {
             return new TextEncoder().encode(value);
         }
-        case SchemaPart.Address: {
+        case types_1.SchemaPart.Address: {
             // Algorand addresses are 32 bytes when decoded from base32
             const addr = value;
             // Use algosdk-style decoding or raw bytes
@@ -156,7 +168,7 @@ export function encodeValue(value, schemaPart) {
  * For single values, pass a single-element array schema.
  * For tuples, pass values and schema arrays of matching length.
  */
-export function encodeLeaf(values, schema) {
+function encodeLeaf(values, schema) {
     if (values.length !== schema.length) {
         throw new Error(`Values length (${values.length}) must match schema length (${schema.length})`);
     }
@@ -175,9 +187,9 @@ export function encodeLeaf(values, schema) {
  * The leaf is double-hashed: sha256(sha256(encoded_value))
  * This is the standard "leaf prefix" technique to prevent second preimage attacks.
  */
-export function hashLeaf(encodedLeaf) {
+function hashLeaf(encodedLeaf) {
     // Double hash for leaf nodes (standard merkle tree practice)
-    return sha256(sha256(encodedLeaf));
+    return (0, sha256_1.sha256)((0, sha256_1.sha256)(encodedLeaf));
 }
 // ========== Merkle Tree Class ==========
 /**
@@ -198,7 +210,7 @@ export function hashLeaf(encodedLeaf) {
  * const isValid = tree.verify(0, proof);
  * ```
  */
-export class MerkleTree {
+class MerkleTree {
     constructor(values, schema) {
         this.values = values;
         this.schema = schema;
@@ -407,28 +419,29 @@ export class MerkleTree {
                 value,
                 treeIndex: this.leafIndices.get(i),
             })),
-            leafEncoding: this.schema.map(s => SchemaPart[s]).join(','),
+            leafEncoding: this.schema.map(s => types_1.SchemaPart[s]).join(','),
         };
     }
 }
+exports.MerkleTree = MerkleTree;
 // ========== Helper Functions for Common Use Cases ==========
 /**
  * Creates a merkle tree of Algorand addresses.
  * @param addresses - Array of Algorand addresses as Uint8Array (32 bytes each)
  */
-export function createAddressTree(addresses) {
-    return MerkleTree.ofSimple(addresses, SchemaPart.Address);
+function createAddressTree(addresses) {
+    return MerkleTree.ofSimple(addresses, types_1.SchemaPart.Address);
 }
 /**
  * Creates a merkle tree of uint64 values.
  */
-export function createUint64Tree(values) {
-    return MerkleTree.ofSimple(values, SchemaPart.Uint64);
+function createUint64Tree(values) {
+    return MerkleTree.ofSimple(values, types_1.SchemaPart.Uint64);
 }
 /**
  * Creates a merkle tree of asset IDs (uint64).
  */
-export function createAssetTree(assetIds) {
+function createAssetTree(assetIds) {
     return createUint64Tree(assetIds);
 }
 /**
@@ -438,7 +451,7 @@ export function createAssetTree(assetIds) {
  * @param proof - Array of proof elements (each 32 bytes)
  * @returns true if the proof is valid
  */
-export function verifyProof(root, leaf, proof) {
+function verifyProof(root, leaf, proof) {
     let hash = leaf;
     for (const sibling of proof) {
         hash = hashPair(hash, sibling);

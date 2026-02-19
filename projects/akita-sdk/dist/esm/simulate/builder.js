@@ -1,4 +1,10 @@
-import algosdk from "algosdk";
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SimulateBuilder = void 0;
+const algosdk_1 = __importDefault(require("algosdk"));
 const ZERO = 0n;
 function applyHint(base, hint) {
     if (!hint)
@@ -46,7 +52,7 @@ function collectPayments(group, hints) {
         if (!txn)
             continue;
         const type = txn.type;
-        if (type === algosdk.TransactionType.pay) {
+        if (type === algosdk_1.default.TransactionType.pay) {
             // Payment transaction - use typed SDK properties
             const payment = txn.payment;
             const amount = payment?.amount ?? 0n;
@@ -62,7 +68,7 @@ function collectPayments(group, hints) {
             };
             payments.push(applyHint(base, hints.get(0n)));
         }
-        else if (type === algosdk.TransactionType.axfer) {
+        else if (type === algosdk_1.default.TransactionType.axfer) {
             // Asset transfer - use typed SDK properties
             const assetTransfer = txn.assetTransfer;
             const assetId = assetTransfer?.assetIndex ?? 0n;
@@ -97,7 +103,7 @@ function collectPayments(group, hints) {
     }
     return payments;
 }
-export class SimulateBuilder {
+class SimulateBuilder {
     constructor(atc, options = {}) {
         this.atc = atc;
         this.options = options;
@@ -121,4 +127,5 @@ export class SimulateBuilder {
         };
     }
 }
+exports.SimulateBuilder = SimulateBuilder;
 //# sourceMappingURL=builder.js.map

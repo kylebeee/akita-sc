@@ -1445,7 +1445,12 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
       global: true,
       escrow: '',
       sourceLink: 'https://github.com/kylebee/akita-sc',
-      useExecutionKey: false,
+      useExecutionKey: true,
+      fee: DEFAULT_CREATION,
+      power: DEFAULT_ADD_PLUGIN_PROPOSAL_POWER,
+      duration: DEFAULT_ADD_PLUGIN_VOTING_DURATION,
+      participation: DEFAULT_ADD_PLUGIN_PARTICIPATION,
+      approval: DEFAULT_ADD_PLUGIN_APPROVAL,
     }
   ]);
   logger.proposal('Install PayPlugin (global)', 0n);
@@ -1513,14 +1518,17 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   }
 
   // Send Bones tokens to each escrow (one at a time to avoid reference limits)
+  // Pay plugin requires execution key, so we use build.usePlugin + ExecutePlugin proposal pattern
   for (const escrow of bonesEscrowNames) {
     const escrowInfo = await dao.wallet.getEscrow(escrow);
     const escrowAddress = getApplicationAddress(escrowInfo.id).toString();
     const amount = bonesDistributions[escrow] * 1_000_000n; // Convert to base units (6 decimals)
 
-    await dao.wallet.usePlugin({
+    const { lease, firstValid, lastValid, ids: groups, atcs } = await dao.wallet.build.usePlugin({
       sender: params.sender,
       signer: params.signer,
+      lease: `pay_bones_${escrow}`,
+      windowSize: 2000n,
       global: true,
       calls: [
         payPluginSDK.pay({
@@ -1532,6 +1540,21 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
         }),
       ]
     });
+
+    await proposeAndExecute(fixture.algorand, dao, [
+      {
+        type: ProposalActionEnum.ExecutePlugin,
+        plugin: payPluginSDK.appId,
+        caller: params.sender.toString(),
+        escrow: '',
+        executionKey: lease,
+        groups,
+        firstValid,
+        lastValid
+      }
+    ]);
+
+    await atcs[0].submit(dao.wallet.client.algorand.client.algod);
     logger.escrow(escrow, 'configure');
   }
   logger.proposal('Distribute Bones to escrows', 0n);

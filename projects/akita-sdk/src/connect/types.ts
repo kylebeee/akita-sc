@@ -65,7 +65,11 @@ export interface AgentInstallPlugin {
   coverFees?: boolean
   /** Method cooldown in seconds (default 0) */
   cooldown?: string
-  /** Spending allowances for this plugin */
+  /**
+   * Spending allowances for this plugin.
+   * @deprecated Use top-level `AgentInstallRequest.allowances` instead (v2).
+   * Kept for backward compatibility with v1 requests.
+   */
   allowances?: SerializedAllowance[]
   /** Method restrictions */
   methods?: SerializedMethodDefinition[]
@@ -77,7 +81,7 @@ export interface AgentInstallPlugin {
 
 export interface AgentInstallRequest {
   type: 'agent-install'
-  v: 1
+  v: 1 | 2
   agent: {
     name: string
     address: string
@@ -87,6 +91,13 @@ export interface AgentInstallRequest {
   /** When true, the app sends 4.352 ALGO to the agent address for MBR */
   newAgentAccount: boolean
   plugins: AgentInstallPlugin[]
+  /**
+   * Escrow-level spending allowances (v2).
+   * Allowances are keyed on-chain by `{escrow, asset}`, so they belong at
+   * the escrow level rather than per-plugin. For v1 requests, allowances
+   * are read from individual `AgentInstallPlugin.allowances` entries.
+   */
+  allowances?: SerializedAllowance[]
 }
 
 // Future request types can be added here:

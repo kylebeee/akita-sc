@@ -1,11 +1,17 @@
-import algosdk from "algosdk";
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.extractAccountDeltas = extractAccountDeltas;
+const algosdk_1 = __importDefault(require("algosdk"));
 const normalizeAddr = (addr) => {
     if (!addr)
         return null;
     if (typeof addr === "string")
         return addr;
     if (addr instanceof Uint8Array && addr.length === 32) {
-        return algosdk.encodeAddress(addr);
+        return algosdk_1.default.encodeAddress(addr);
     }
     return null;
 };
@@ -17,7 +23,7 @@ const normalizeAddr = (addr) => {
  * - Payment (pay): snd, rcv, amt, fee, close
  * - Asset Transfer (axfer): snd, arcv, aamt, xaid, fee, aclose
  */
-export function extractAccountDeltas(simResponse, account) {
+function extractAccountDeltas(simResponse, account) {
     const deltas = new Map();
     const addDelta = (asset, delta) => {
         deltas.set(asset, (deltas.get(asset) ?? 0n) + delta);

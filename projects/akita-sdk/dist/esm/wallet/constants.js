@@ -1,3 +1,6 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.NewEscrowFeeAmount = void 0;
 /**
  * New escrows require 6 extra transactions
  * 1 payment to the escrow factory
@@ -7,5 +10,5 @@
  * 1 'rekey' app call to the new escrow
  * 1 payment from the new escrow to rekey to the arc58 account
  */
-export const NewEscrowFeeAmount = 6000n;
+exports.NewEscrowFeeAmount = 6000n;
 //# sourceMappingURL=constants.js.map

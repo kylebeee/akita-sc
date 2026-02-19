@@ -1,9 +1,12 @@
-import { BaseSDK } from "../../base";
-import { GatePluginFactory } from "../../generated/GatePluginClient";
-import { getTxns } from "../utils";
-export class GatePluginSDK extends BaseSDK {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GatePluginSDK = void 0;
+const base_1 = require("../../base");
+const GatePluginClient_1 = require("../../generated/GatePluginClient");
+const utils_1 = require("../utils");
+class GatePluginSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: GatePluginFactory, ...params });
+        super({ factory: GatePluginClient_1.GatePluginFactory, ...params });
     }
     register(args) {
         const methodName = 'register';
@@ -11,7 +14,7 @@ export class GatePluginSDK extends BaseSDK {
             return (_spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -33,4 +36,5 @@ export class GatePluginSDK extends BaseSDK {
         });
     }
 }
+exports.GatePluginSDK = GatePluginSDK;
 //# sourceMappingURL=gate.js.map

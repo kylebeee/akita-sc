@@ -120,11 +120,12 @@ export type AbstractedAccountArgs = {
      * The object representation of the arguments for each method
      */
     obj: {
-        'create(string,address,address,string,uint64,uint64,string,address)void': {
+        'create(string,uint64,address,address,string,uint64,uint64,string,address)void': {
             /**
              * The version of the abstracted account application
              */
             version: string;
+            akitaDao: bigint | number;
             /**
              * The address of the abstracted account. If zeroAddress, then the address of the contract account will be used
              */
@@ -177,6 +178,12 @@ export type AbstractedAccountArgs = {
              * The app ID of the new revocation app
              */
             app: bigint | number;
+        };
+        'setAkitaDAO(uint64)void': {
+            /**
+             * The app ID of the new Akita DAO
+             */
+            akitaDao: bigint | number;
         };
         'setNickname(string)void': {
             /**
@@ -619,11 +626,12 @@ export type AbstractedAccountArgs = {
      * The tuple representation of the arguments for each method
      */
     tuple: {
-        'create(string,address,address,string,uint64,uint64,string,address)void': [version: string, controlledAddress: string, admin: string, domain: string, escrowFactory: bigint | number, revocationApp: bigint | number, nickname: string, referrer: string];
+        'create(string,uint64,address,address,string,uint64,uint64,string,address)void': [version: string, akitaDao: bigint | number, controlledAddress: string, admin: string, domain: string, escrowFactory: bigint | number, revocationApp: bigint | number, nickname: string, referrer: string];
         'register(string)void': [escrow: string];
         'update(string)void': [version: string];
         'setDomain(string)void': [domain: string];
         'setRevocationApp(uint64)void': [app: bigint | number];
+        'setAkitaDAO(uint64)void': [akitaDao: bigint | number];
         'setNickname(string)void': [nickname: string];
         'setAvatar(uint64)void': [avatar: bigint | number];
         'setBanner(uint64)void': [banner: bigint | number];
@@ -665,11 +673,12 @@ export type AbstractedAccountArgs = {
  * The return type for each method
  */
 export type AbstractedAccountReturns = {
-    'create(string,address,address,string,uint64,uint64,string,address)void': void;
+    'create(string,uint64,address,address,string,uint64,uint64,string,address)void': void;
     'register(string)void': void;
     'update(string)void': void;
     'setDomain(string)void': void;
     'setRevocationApp(uint64)void': void;
+    'setAkitaDAO(uint64)void': void;
     'setNickname(string)void': void;
     'setAvatar(uint64)void': void;
     'setBanner(uint64)void': void;
@@ -713,10 +722,10 @@ export type AbstractedAccountTypes = {
     /**
      * Maps method signatures / names to their argument and return types.
      */
-    methods: Record<'create(string,address,address,string,uint64,uint64,string,address)void' | 'create', {
-        argsObj: AbstractedAccountArgs['obj']['create(string,address,address,string,uint64,uint64,string,address)void'];
-        argsTuple: AbstractedAccountArgs['tuple']['create(string,address,address,string,uint64,uint64,string,address)void'];
-        returns: AbstractedAccountReturns['create(string,address,address,string,uint64,uint64,string,address)void'];
+    methods: Record<'create(string,uint64,address,address,string,uint64,uint64,string,address)void' | 'create', {
+        argsObj: AbstractedAccountArgs['obj']['create(string,uint64,address,address,string,uint64,uint64,string,address)void'];
+        argsTuple: AbstractedAccountArgs['tuple']['create(string,uint64,address,address,string,uint64,uint64,string,address)void'];
+        returns: AbstractedAccountReturns['create(string,uint64,address,address,string,uint64,uint64,string,address)void'];
     }> & Record<'register(string)void' | 'register', {
         argsObj: AbstractedAccountArgs['obj']['register(string)void'];
         argsTuple: AbstractedAccountArgs['tuple']['register(string)void'];
@@ -733,6 +742,10 @@ export type AbstractedAccountTypes = {
         argsObj: AbstractedAccountArgs['obj']['setRevocationApp(uint64)void'];
         argsTuple: AbstractedAccountArgs['tuple']['setRevocationApp(uint64)void'];
         returns: AbstractedAccountReturns['setRevocationApp(uint64)void'];
+    }> & Record<'setAkitaDAO(uint64)void' | 'setAkitaDAO', {
+        argsObj: AbstractedAccountArgs['obj']['setAkitaDAO(uint64)void'];
+        argsTuple: AbstractedAccountArgs['tuple']['setAkitaDAO(uint64)void'];
+        returns: AbstractedAccountReturns['setAkitaDAO(uint64)void'];
     }> & Record<'setNickname(string)void' | 'setNickname', {
         argsObj: AbstractedAccountArgs['obj']['setNickname(string)void'];
         argsTuple: AbstractedAccountArgs['tuple']['setNickname(string)void'];
@@ -1054,12 +1067,12 @@ export type BoxKeysState = AbstractedAccountTypes['state']['box']['keys'];
 /**
  * Defines supported create method params for this smart contract
  */
-export type AbstractedAccountCreateCallParams = Expand<CallParams<AbstractedAccountArgs['obj']['create(string,address,address,string,uint64,uint64,string,address)void'] | AbstractedAccountArgs['tuple']['create(string,address,address,string,uint64,uint64,string,address)void']> & {
+export type AbstractedAccountCreateCallParams = Expand<CallParams<AbstractedAccountArgs['obj']['create(string,uint64,address,address,string,uint64,uint64,string,address)void'] | AbstractedAccountArgs['tuple']['create(string,uint64,address,address,string,uint64,uint64,string,address)void']> & {
     method: 'create';
 } & {
     onComplete?: OnApplicationComplete.NoOpOC;
-} & CreateSchema> | Expand<CallParams<AbstractedAccountArgs['obj']['create(string,address,address,string,uint64,uint64,string,address)void'] | AbstractedAccountArgs['tuple']['create(string,address,address,string,uint64,uint64,string,address)void']> & {
-    method: 'create(string,address,address,string,uint64,uint64,string,address)void';
+} & CreateSchema> | Expand<CallParams<AbstractedAccountArgs['obj']['create(string,uint64,address,address,string,uint64,uint64,string,address)void'] | AbstractedAccountArgs['tuple']['create(string,uint64,address,address,string,uint64,uint64,string,address)void']> & {
+    method: 'create(string,uint64,address,address,string,uint64,uint64,string,address)void';
 } & {
     onComplete?: OnApplicationComplete.NoOpOC;
 } & CreateSchema>;
@@ -1117,12 +1130,12 @@ export declare abstract class AbstractedAccountParamsFactory {
             onComplete?: OnApplicationComplete.NoOpOC;
         };
         /**
-         * Constructs create ABI call params for the AbstractedAccount smart contract using the create(string,address,address,string,uint64,uint64,string,address)void ABI method
+         * Constructs create ABI call params for the AbstractedAccount smart contract using the create(string,uint64,address,address,string,uint64,uint64,string,address)void ABI method
          *
          * @param params Parameters for the call
          * @returns An `AppClientMethodCallParams` object for the call
          */
-        create(params: CallParams<AbstractedAccountArgs["obj"]["create(string,address,address,string,uint64,uint64,string,address)void"] | AbstractedAccountArgs["tuple"]["create(string,address,address,string,uint64,uint64,string,address)void"]> & AppClientCompilationParams & {
+        create(params: CallParams<AbstractedAccountArgs["obj"]["create(string,uint64,address,address,string,uint64,uint64,string,address)void"] | AbstractedAccountArgs["tuple"]["create(string,uint64,address,address,string,uint64,uint64,string,address)void"]> & AppClientCompilationParams & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }): AppClientMethodCallParams & AppClientCompilationParams & {
             onComplete?: OnApplicationComplete.NoOpOC;
@@ -1192,6 +1205,15 @@ export declare abstract class AbstractedAccountParamsFactory {
      * @returns An `AppClientMethodCallParams` object for the call
      */
     static setRevocationApp(params: CallParams<AbstractedAccountArgs['obj']['setRevocationApp(uint64)void'] | AbstractedAccountArgs['tuple']['setRevocationApp(uint64)void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
+    /**
+     * Constructs a no op call for the setAkitaDAO(uint64)void ABI method
+     *
+     * Changes the Akita DAO associated with the contract
+     *
+     * @param params Parameters for the call
+     * @returns An `AppClientMethodCallParams` object for the call
+     */
+    static setAkitaDao(params: CallParams<AbstractedAccountArgs['obj']['setAkitaDAO(uint64)void'] | AbstractedAccountArgs['tuple']['setAkitaDAO(uint64)void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
     /**
      * Constructs a no op call for the setNickname(string)void ABI method
      *
@@ -1656,7 +1678,7 @@ export declare class AbstractedAccountFactory {
          */
         create: {
             /**
-             * Creates a new instance of the AbstractedAccount smart contract using the create(string,address,address,string,uint64,uint64,string,address)void ABI method.
+             * Creates a new instance of the AbstractedAccount smart contract using the create(string,uint64,address,address,string,uint64,uint64,string,address)void ABI method.
              *
             * Create an abstracted account application.
             This is not part of ARC58 and implementation specific.
@@ -1665,7 +1687,7 @@ export declare class AbstractedAccountFactory {
              * @param params The params for the smart contract call
              * @returns The create params
              */
-            create: (params: CallParams<AbstractedAccountArgs["obj"]["create(string,address,address,string,uint64,uint64,string,address)void"] | AbstractedAccountArgs["tuple"]["create(string,address,address,string,uint64,uint64,string,address)void"]> & AppClientCompilationParams & CreateSchema & {
+            create: (params: CallParams<AbstractedAccountArgs["obj"]["create(string,uint64,address,address,string,uint64,uint64,string,address)void"] | AbstractedAccountArgs["tuple"]["create(string,uint64,address,address,string,uint64,uint64,string,address)void"]> & AppClientCompilationParams & CreateSchema & {
                 onComplete?: OnApplicationComplete.NoOpOC;
             }) => Promise<{
                 deployTimeParams: import("@algorandfoundation/algokit-utils/types/app").TealTemplateParams | undefined;
@@ -1849,7 +1871,7 @@ export declare class AbstractedAccountFactory {
          */
         create: {
             /**
-             * Creates a new instance of the AbstractedAccount smart contract using the create(string,address,address,string,uint64,uint64,string,address)void ABI method.
+             * Creates a new instance of the AbstractedAccount smart contract using the create(string,uint64,address,address,string,uint64,uint64,string,address)void ABI method.
              *
             * Create an abstracted account application.
             This is not part of ARC58 and implementation specific.
@@ -1858,7 +1880,7 @@ export declare class AbstractedAccountFactory {
              * @param params The params for the smart contract call
              * @returns The create transaction
              */
-            create: (params: CallParams<AbstractedAccountArgs["obj"]["create(string,address,address,string,uint64,uint64,string,address)void"] | AbstractedAccountArgs["tuple"]["create(string,address,address,string,uint64,uint64,string,address)void"]> & AppClientCompilationParams & CreateSchema & {
+            create: (params: CallParams<AbstractedAccountArgs["obj"]["create(string,uint64,address,address,string,uint64,uint64,string,address)void"] | AbstractedAccountArgs["tuple"]["create(string,uint64,address,address,string,uint64,uint64,string,address)void"]> & AppClientCompilationParams & CreateSchema & {
                 onComplete?: OnApplicationComplete.NoOpOC;
             }) => Promise<{
                 transactions: Transaction[];
@@ -1876,7 +1898,7 @@ export declare class AbstractedAccountFactory {
          */
         create: {
             /**
-             * Creates a new instance of the AbstractedAccount smart contract using an ABI method call using the create(string,address,address,string,uint64,uint64,string,address)void ABI method.
+             * Creates a new instance of the AbstractedAccount smart contract using an ABI method call using the create(string,uint64,address,address,string,uint64,uint64,string,address)void ABI method.
              *
             * Create an abstracted account application.
             This is not part of ARC58 and implementation specific.
@@ -1885,11 +1907,11 @@ export declare class AbstractedAccountFactory {
              * @param params The params for the smart contract call
              * @returns The create result
              */
-            create: (params: CallParams<AbstractedAccountArgs["obj"]["create(string,address,address,string,uint64,uint64,string,address)void"] | AbstractedAccountArgs["tuple"]["create(string,address,address,string,uint64,uint64,string,address)void"]> & AppClientCompilationParams & CreateSchema & SendParams & {
+            create: (params: CallParams<AbstractedAccountArgs["obj"]["create(string,uint64,address,address,string,uint64,uint64,string,address)void"] | AbstractedAccountArgs["tuple"]["create(string,uint64,address,address,string,uint64,uint64,string,address)void"]> & AppClientCompilationParams & CreateSchema & SendParams & {
                 onComplete?: OnApplicationComplete.NoOpOC;
             }) => Promise<{
                 result: {
-                    return: (undefined | AbstractedAccountReturns["create(string,address,address,string,uint64,uint64,string,address)void"]);
+                    return: (undefined | AbstractedAccountReturns["create(string,uint64,address,address,string,uint64,uint64,string,address)void"]);
                     compiledApproval?: import("@algorandfoundation/algokit-utils/types/app").CompiledTeal | undefined;
                     compiledClear?: import("@algorandfoundation/algokit-utils/types/app").CompiledTeal | undefined;
                     appId: bigint;
@@ -2094,6 +2116,17 @@ export declare class AbstractedAccountClient {
          * @returns The call params
          */
         setRevocationApp: (params: CallParams<AbstractedAccountArgs["obj"]["setRevocationApp(uint64)void"] | AbstractedAccountArgs["tuple"]["setRevocationApp(uint64)void"]> & {
+            onComplete?: OnApplicationComplete.NoOpOC;
+        }) => Promise<AppCallMethodCall>;
+        /**
+         * Makes a call to the AbstractedAccount smart contract using the `setAkitaDAO(uint64)void` ABI method.
+         *
+         * Changes the Akita DAO associated with the contract
+         *
+         * @param params The params for the smart contract call
+         * @returns The call params
+         */
+        setAkitaDao: (params: CallParams<AbstractedAccountArgs["obj"]["setAkitaDAO(uint64)void"] | AbstractedAccountArgs["tuple"]["setAkitaDAO(uint64)void"]> & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<AppCallMethodCall>;
         /**
@@ -2575,6 +2608,21 @@ export declare class AbstractedAccountClient {
          * @returns The call transaction
          */
         setRevocationApp: (params: CallParams<AbstractedAccountArgs["obj"]["setRevocationApp(uint64)void"] | AbstractedAccountArgs["tuple"]["setRevocationApp(uint64)void"]> & {
+            onComplete?: OnApplicationComplete.NoOpOC;
+        }) => Promise<{
+            transactions: Transaction[];
+            methodCalls: Map<number, import("algosdk").ABIMethod>;
+            signers: Map<number, TransactionSigner>;
+        }>;
+        /**
+         * Makes a call to the AbstractedAccount smart contract using the `setAkitaDAO(uint64)void` ABI method.
+         *
+         * Changes the Akita DAO associated with the contract
+         *
+         * @param params The params for the smart contract call
+         * @returns The call transaction
+         */
+        setAkitaDao: (params: CallParams<AbstractedAccountArgs["obj"]["setAkitaDAO(uint64)void"] | AbstractedAccountArgs["tuple"]["setAkitaDAO(uint64)void"]> & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<{
             transactions: Transaction[];
@@ -3229,6 +3277,26 @@ export declare class AbstractedAccountClient {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<{
             return: (undefined | AbstractedAccountReturns["setRevocationApp(uint64)void"]);
+            groupId: string;
+            txIds: string[];
+            returns?: ABIReturn[] | undefined | undefined;
+            confirmations: modelsv2.PendingTransactionResponse[];
+            transactions: Transaction[];
+            confirmation: modelsv2.PendingTransactionResponse;
+            transaction: Transaction;
+        }>;
+        /**
+         * Makes a call to the AbstractedAccount smart contract using the `setAkitaDAO(uint64)void` ABI method.
+         *
+         * Changes the Akita DAO associated with the contract
+         *
+         * @param params The params for the smart contract call
+         * @returns The call result
+         */
+        setAkitaDao: (params: CallParams<AbstractedAccountArgs["obj"]["setAkitaDAO(uint64)void"] | AbstractedAccountArgs["tuple"]["setAkitaDAO(uint64)void"]> & SendParams & {
+            onComplete?: OnApplicationComplete.NoOpOC;
+        }) => Promise<{
+            return: (undefined | AbstractedAccountReturns["setAkitaDAO(uint64)void"]);
             groupId: string;
             txIds: string[];
             returns?: ABIReturn[] | undefined | undefined;
@@ -4290,6 +4358,16 @@ export type AbstractedAccountComposer<TReturns extends [...any[]] = []> = {
      * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
      */
     setRevocationApp(params?: CallParams<AbstractedAccountArgs['obj']['setRevocationApp(uint64)void'] | AbstractedAccountArgs['tuple']['setRevocationApp(uint64)void']>): AbstractedAccountComposer<[...TReturns, AbstractedAccountReturns['setRevocationApp(uint64)void'] | undefined]>;
+    /**
+     * Calls the setAkitaDAO(uint64)void ABI method.
+     *
+     * Changes the Akita DAO associated with the contract
+     *
+     * @param args The arguments for the contract call
+     * @param params Any additional parameters for the call
+     * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
+     */
+    setAkitaDao(params?: CallParams<AbstractedAccountArgs['obj']['setAkitaDAO(uint64)void'] | AbstractedAccountArgs['tuple']['setAkitaDAO(uint64)void']>): AbstractedAccountComposer<[...TReturns, AbstractedAccountReturns['setAkitaDAO(uint64)void'] | undefined]>;
     /**
      * Calls the setNickname(string)void ABI method.
      *

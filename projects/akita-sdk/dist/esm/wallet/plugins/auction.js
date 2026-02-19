@@ -1,9 +1,12 @@
-import { BaseSDK } from "../../base";
-import { AuctionPluginFactory } from "../../generated/AuctionPluginClient";
-import { getTxns } from "../utils";
-export class AuctionPluginSDK extends BaseSDK {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AuctionPluginSDK = void 0;
+const base_1 = require("../../base");
+const AuctionPluginClient_1 = require("../../generated/AuctionPluginClient");
+const utils_1 = require("../utils");
+class AuctionPluginSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: AuctionPluginFactory, ...params });
+        super({ factory: AuctionPluginClient_1.AuctionPluginFactory, ...params });
     }
     new(args) {
         const methodName = 'new';
@@ -11,7 +14,7 @@ export class AuctionPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -38,7 +41,7 @@ export class AuctionPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer, } = args;
@@ -65,7 +68,7 @@ export class AuctionPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -92,7 +95,7 @@ export class AuctionPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -119,7 +122,7 @@ export class AuctionPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -141,4 +144,5 @@ export class AuctionPluginSDK extends BaseSDK {
         });
     }
 }
+exports.AuctionPluginSDK = AuctionPluginSDK;
 //# sourceMappingURL=auction.js.map

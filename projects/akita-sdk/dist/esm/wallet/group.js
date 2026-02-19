@@ -1,10 +1,13 @@
-import { AllowancesToTuple } from './utils';
-import { NewEscrowFeeAmount } from './constants';
-import { isPluginSDKReturn } from '../types';
-import { MAX_UINT64 } from '../constants';
-import { ALGORAND_ZERO_ADDRESS_STRING } from 'algosdk';
-import { microAlgo } from '@algorandfoundation/algokit-utils';
-import { prepareGroupWithCost } from '../simulate/prepare';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WalletGroupComposer = void 0;
+const utils_1 = require("./utils");
+const constants_1 = require("./constants");
+const types_1 = require("../types");
+const constants_2 = require("../constants");
+const algosdk_1 = require("algosdk");
+const algokit_utils_1 = require("@algorandfoundation/algokit-utils");
+const prepare_1 = require("../simulate/prepare");
 /**
  * Fluent composer returned by `wallet.group()` that queues wallet operations
  * and resolves them as a single atomic group at `send()` time.
@@ -12,7 +15,7 @@ import { prepareGroupWithCost } from '../simulate/prepare';
  * Tracks internal state like new escrow creation across operations so that
  * only the first addPlugin with a given escrow pays the NewEscrowFeeAmount.
  */
-export class WalletGroupComposer {
+class WalletGroupComposer {
     constructor(wallet) {
         this.resolvers = [];
         this.postProcessors = [];
@@ -32,18 +35,18 @@ export class WalletGroupComposer {
     // ---------------------------------------------------------------------------
     addPlugin(params) {
         this.resolvers.push(async () => {
-            const { sender, signer, name = '', client, caller: rawCaller, global = false, methods = [], escrow = '', admin = false, delegationType = 0n, lastValid = MAX_UINT64, cooldown = 0n, useRounds = false, useExecutionKey = false, coverFees = false, canReclaim = true, defaultToEscrow = false, allowances = [] } = params;
+            const { sender, signer, name = '', client, caller: rawCaller, global = false, methods = [], escrow = '', admin = false, delegationType = 0n, lastValid = constants_2.MAX_UINT64, cooldown = 0n, useRounds = false, useExecutionKey = false, coverFees = false, canReclaim = true, defaultToEscrow = false, allowances = [] } = params;
             let caller = rawCaller;
             const sendParams = this.getSendParams({ sender, signer });
             const plugin = client.appId;
             if (global) {
-                caller = ALGORAND_ZERO_ADDRESS_STRING;
+                caller = algosdk_1.ALGORAND_ZERO_ADDRESS_STRING;
             }
             // Transform methods
             let transformedMethods = [];
             if (methods.length > 0) {
                 transformedMethods = methods.reduce((acc, method) => {
-                    if (isPluginSDKReturn(method.name)) {
+                    if ((0, types_1.isPluginSDKReturn)(method.name)) {
                         const selectors = method.name().selectors ?? [];
                         selectors.forEach((selector) => acc.push([selector, method.cooldown]));
                     }
@@ -64,7 +67,7 @@ export class WalletGroupComposer {
             const controlledAddress = await this.wallet.client.state.global.controlledAddress();
             const hasExternalControlledAddress = controlledAddress !== this.wallet.client.appAddress.toString();
             const externalControlledFee = hasExternalControlledAddress ? 1000n : 0n;
-            const extraFee = microAlgo((isNewEscrow ? NewEscrowFeeAmount : 0n) + externalControlledFee);
+            const extraFee = (0, algokit_utils_1.microAlgo)((isNewEscrow ? constants_1.NewEscrowFeeAmount : 0n) + externalControlledFee);
             const args = {
                 plugin,
                 caller: caller,
@@ -102,7 +105,7 @@ export class WalletGroupComposer {
                     ...sendParams,
                     args: {
                         escrow,
-                        allowances: AllowancesToTuple(allowances)
+                        allowances: (0, utils_1.AllowancesToTuple)(allowances)
                     }
                 });
             }
@@ -227,7 +230,7 @@ export class WalletGroupComposer {
         this.resolvers.push(async () => {
             this.group.arc58AddAllowances({
                 ...this.getSendParams({ sender, signer }),
-                args: { escrow, allowances: AllowancesToTuple(allowances) }
+                args: { escrow, allowances: (0, utils_1.AllowancesToTuple)(allowances) }
             });
         });
         return this;
@@ -265,10 +268,10 @@ export class WalletGroupComposer {
         // Get suggested params for fee calculation
         const suggestedParams = await this.wallet.client.algorand.getSuggestedParams();
         // Set max fees for all transactions to allow prepareGroupWithCost to work
-        const maxFees = new Map(Array.from({ length }, (_, i) => [i, microAlgo(BigInt(suggestedParams.minFee) * 272n)]));
+        const maxFees = new Map(Array.from({ length }, (_, i) => [i, (0, algokit_utils_1.microAlgo)(BigInt(suggestedParams.minFee) * 272n)]));
         // Use prepareGroupWithCost to simulate the group, populate resources,
         // and calculate exact fees for inner transactions
-        const { atc: populatedAtc } = await prepareGroupWithCost(atc, this.wallet.client.algorand.client.algod, {
+        const { atc: populatedAtc } = await (0, prepare_1.prepareGroupWithCost)(atc, this.wallet.client.algorand.client.algod, {
             coverAppCallInnerTransactionFees: true,
             populateAppCallResources: true
         }, {
@@ -289,4 +292,5 @@ export class WalletGroupComposer {
         return result;
     }
 }
+exports.WalletGroupComposer = WalletGroupComposer;
 //# sourceMappingURL=group.js.map

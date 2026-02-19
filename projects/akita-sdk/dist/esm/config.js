@@ -1,13 +1,31 @@
+"use strict";
 /**
  * Configuration module for Akita SDK
  * Handles network detection and environment-based app ID resolution
  */
-import { getAppIdFromNetwork } from "./networks";
-export { getNetworkAppIds, LOCALNET_APP_IDS, TESTNET_APP_IDS, MAINNET_APP_IDS, NETWORK_APP_IDS } from "./networks";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SDK_TO_ENV_VAR = exports.ENV_VAR_NAMES = exports.NETWORK_APP_IDS = exports.MAINNET_APP_IDS = exports.TESTNET_APP_IDS = exports.LOCALNET_APP_IDS = exports.getNetworkAppIds = void 0;
+exports.getNetworkFromEnv = getNetworkFromEnv;
+exports.getEnvVar = getEnvVar;
+exports.getAppIdFromEnv = getAppIdFromEnv;
+exports.getConfigFromEnv = getConfigFromEnv;
+exports.detectNetworkFromClient = detectNetworkFromClient;
+exports.setCurrentNetwork = setCurrentNetwork;
+exports.getCurrentNetwork = getCurrentNetwork;
+exports.getAppIdForSDK = getAppIdForSDK;
+exports.resolveAppId = resolveAppId;
+exports.resolveAppIdWithClient = resolveAppIdWithClient;
+const networks_1 = require("./networks");
+var networks_2 = require("./networks");
+Object.defineProperty(exports, "getNetworkAppIds", { enumerable: true, get: function () { return networks_2.getNetworkAppIds; } });
+Object.defineProperty(exports, "LOCALNET_APP_IDS", { enumerable: true, get: function () { return networks_2.LOCALNET_APP_IDS; } });
+Object.defineProperty(exports, "TESTNET_APP_IDS", { enumerable: true, get: function () { return networks_2.TESTNET_APP_IDS; } });
+Object.defineProperty(exports, "MAINNET_APP_IDS", { enumerable: true, get: function () { return networks_2.MAINNET_APP_IDS; } });
+Object.defineProperty(exports, "NETWORK_APP_IDS", { enumerable: true, get: function () { return networks_2.NETWORK_APP_IDS; } });
 /**
  * Environment variable names for each SDK/contract
  */
-export const ENV_VAR_NAMES = {
+exports.ENV_VAR_NAMES = {
     // Network
     NETWORK: 'ALGORAND_NETWORK',
     // Core Contracts
@@ -94,10 +112,10 @@ export const ENV_VAR_NAMES = {
  * - ALGOD_NETWORK (common alternative)
  * - NEXT_PUBLIC_* variants (for Next.js client-side)
  */
-export function getNetworkFromEnv() {
+function getNetworkFromEnv() {
     // Check multiple env var names for compatibility
     const envVarNames = [
-        ENV_VAR_NAMES.NETWORK, // ALGORAND_NETWORK
+        exports.ENV_VAR_NAMES.NETWORK, // ALGORAND_NETWORK
         'ALGOD_NETWORK',
         'NEXT_PUBLIC_ALGORAND_NETWORK',
         'NEXT_PUBLIC_ALGOD_NETWORK',
@@ -114,7 +132,7 @@ export function getNetworkFromEnv() {
  * Gets an environment variable value
  * Works in both Node.js and browser environments
  */
-export function getEnvVar(name) {
+function getEnvVar(name) {
     // Node.js environment
     if (typeof process !== 'undefined' && process.env) {
         return process.env[name];
@@ -129,7 +147,7 @@ export function getEnvVar(name) {
  * Gets an app ID from environment variables
  * Returns undefined if the env var is not set or is not a valid bigint
  */
-export function getAppIdFromEnv(envVarName) {
+function getAppIdFromEnv(envVarName) {
     const value = getEnvVar(envVarName);
     if (!value)
         return undefined;
@@ -144,36 +162,36 @@ export function getAppIdFromEnv(envVarName) {
 /**
  * Gets the full configuration from environment variables
  */
-export function getConfigFromEnv() {
+function getConfigFromEnv() {
     return {
         network: getNetworkFromEnv(),
         // Core Contracts
-        daoAppId: getAppIdFromEnv(ENV_VAR_NAMES.DAO_APP_ID),
-        walletAppId: getAppIdFromEnv(ENV_VAR_NAMES.WALLET_APP_ID),
-        escrowFactoryAppId: getAppIdFromEnv(ENV_VAR_NAMES.ESCROW_FACTORY_APP_ID),
-        walletFactoryAppId: getAppIdFromEnv(ENV_VAR_NAMES.WALLET_FACTORY_APP_ID),
-        subscriptionsAppId: getAppIdFromEnv(ENV_VAR_NAMES.SUBSCRIPTIONS_APP_ID),
-        stakingPoolFactoryAppId: getAppIdFromEnv(ENV_VAR_NAMES.STAKING_POOL_FACTORY_APP_ID),
-        stakingAppId: getAppIdFromEnv(ENV_VAR_NAMES.STAKING_APP_ID),
-        rewardsAppId: getAppIdFromEnv(ENV_VAR_NAMES.REWARDS_APP_ID),
+        daoAppId: getAppIdFromEnv(exports.ENV_VAR_NAMES.DAO_APP_ID),
+        walletAppId: getAppIdFromEnv(exports.ENV_VAR_NAMES.WALLET_APP_ID),
+        escrowFactoryAppId: getAppIdFromEnv(exports.ENV_VAR_NAMES.ESCROW_FACTORY_APP_ID),
+        walletFactoryAppId: getAppIdFromEnv(exports.ENV_VAR_NAMES.WALLET_FACTORY_APP_ID),
+        subscriptionsAppId: getAppIdFromEnv(exports.ENV_VAR_NAMES.SUBSCRIPTIONS_APP_ID),
+        stakingPoolFactoryAppId: getAppIdFromEnv(exports.ENV_VAR_NAMES.STAKING_POOL_FACTORY_APP_ID),
+        stakingAppId: getAppIdFromEnv(exports.ENV_VAR_NAMES.STAKING_APP_ID),
+        rewardsAppId: getAppIdFromEnv(exports.ENV_VAR_NAMES.REWARDS_APP_ID),
         // Social System
-        socialAppId: getAppIdFromEnv(ENV_VAR_NAMES.SOCIAL_APP_ID),
-        socialGraphAppId: getAppIdFromEnv(ENV_VAR_NAMES.SOCIAL_GRAPH_APP_ID),
-        socialImpactAppId: getAppIdFromEnv(ENV_VAR_NAMES.SOCIAL_IMPACT_APP_ID),
-        socialModerationAppId: getAppIdFromEnv(ENV_VAR_NAMES.SOCIAL_MODERATION_APP_ID),
+        socialAppId: getAppIdFromEnv(exports.ENV_VAR_NAMES.SOCIAL_APP_ID),
+        socialGraphAppId: getAppIdFromEnv(exports.ENV_VAR_NAMES.SOCIAL_GRAPH_APP_ID),
+        socialImpactAppId: getAppIdFromEnv(exports.ENV_VAR_NAMES.SOCIAL_IMPACT_APP_ID),
+        socialModerationAppId: getAppIdFromEnv(exports.ENV_VAR_NAMES.SOCIAL_MODERATION_APP_ID),
         // Factories
-        auctionFactoryAppId: getAppIdFromEnv(ENV_VAR_NAMES.AUCTION_FACTORY_APP_ID),
-        marketplaceAppId: getAppIdFromEnv(ENV_VAR_NAMES.MARKETPLACE_APP_ID),
-        raffleFactoryAppId: getAppIdFromEnv(ENV_VAR_NAMES.RAFFLE_FACTORY_APP_ID),
-        pollFactoryAppId: getAppIdFromEnv(ENV_VAR_NAMES.POLL_FACTORY_APP_ID),
-        prizeBoxFactoryAppId: getAppIdFromEnv(ENV_VAR_NAMES.PRIZE_BOX_FACTORY_APP_ID),
+        auctionFactoryAppId: getAppIdFromEnv(exports.ENV_VAR_NAMES.AUCTION_FACTORY_APP_ID),
+        marketplaceAppId: getAppIdFromEnv(exports.ENV_VAR_NAMES.MARKETPLACE_APP_ID),
+        raffleFactoryAppId: getAppIdFromEnv(exports.ENV_VAR_NAMES.RAFFLE_FACTORY_APP_ID),
+        pollFactoryAppId: getAppIdFromEnv(exports.ENV_VAR_NAMES.POLL_FACTORY_APP_ID),
+        prizeBoxFactoryAppId: getAppIdFromEnv(exports.ENV_VAR_NAMES.PRIZE_BOX_FACTORY_APP_ID),
         // Gates & Other
-        gateAppId: getAppIdFromEnv(ENV_VAR_NAMES.GATE_APP_ID),
-        hyperSwapAppId: getAppIdFromEnv(ENV_VAR_NAMES.HYPER_SWAP_APP_ID),
-        metaMerklesAppId: getAppIdFromEnv(ENV_VAR_NAMES.META_MERKLES_APP_ID),
+        gateAppId: getAppIdFromEnv(exports.ENV_VAR_NAMES.GATE_APP_ID),
+        hyperSwapAppId: getAppIdFromEnv(exports.ENV_VAR_NAMES.HYPER_SWAP_APP_ID),
+        metaMerklesAppId: getAppIdFromEnv(exports.ENV_VAR_NAMES.META_MERKLES_APP_ID),
         // Assets
-        aktaAssetId: getAppIdFromEnv(ENV_VAR_NAMES.AKTA_ASSET_ID),
-        bonesAssetId: getAppIdFromEnv(ENV_VAR_NAMES.BONES_ASSET_ID),
+        aktaAssetId: getAppIdFromEnv(exports.ENV_VAR_NAMES.AKTA_ASSET_ID),
+        bonesAssetId: getAppIdFromEnv(exports.ENV_VAR_NAMES.BONES_ASSET_ID),
     };
 }
 // ============================================================================
@@ -206,7 +224,7 @@ const LOCALNET_URL_PATTERNS = [
  * Priority: explicitly set network > environment variable > URL detection
  * Throws if network cannot be determined
  */
-export function detectNetworkFromClient(algorand) {
+function detectNetworkFromClient(algorand) {
     // First check if network was explicitly set via setCurrentNetwork()
     // This is the recommended approach for Next.js apps where env vars are statically inlined
     const explicitNetwork = getCurrentNetwork();
@@ -265,14 +283,14 @@ let _currentNetwork = undefined;
  * Sets the current network context
  * Call this before initializing SDKs to avoid auto-detection
  */
-export function setCurrentNetwork(network) {
+function setCurrentNetwork(network) {
     _currentNetwork = network;
 }
 /**
  * Gets the current network context
  * Returns undefined if not explicitly set
  */
-export function getCurrentNetwork() {
+function getCurrentNetwork() {
     return _currentNetwork;
 }
 // ============================================================================
@@ -281,34 +299,34 @@ export function getCurrentNetwork() {
 /**
  * Mapping of SDK class names to their corresponding environment variable names
  */
-export const SDK_TO_ENV_VAR = {
+exports.SDK_TO_ENV_VAR = {
     // Core SDKs
-    AkitaDaoSDK: ENV_VAR_NAMES.DAO_APP_ID,
-    WalletSDK: ENV_VAR_NAMES.WALLET_APP_ID,
-    EscrowFactorySDK: ENV_VAR_NAMES.ESCROW_FACTORY_APP_ID,
-    WalletFactorySDK: ENV_VAR_NAMES.WALLET_FACTORY_APP_ID,
-    SubscriptionsSDK: ENV_VAR_NAMES.SUBSCRIPTIONS_APP_ID,
-    StakingPoolFactorySDK: ENV_VAR_NAMES.STAKING_POOL_FACTORY_APP_ID,
-    StakingSDK: ENV_VAR_NAMES.STAKING_APP_ID,
-    RewardsSDK: ENV_VAR_NAMES.REWARDS_APP_ID,
+    AkitaDaoSDK: exports.ENV_VAR_NAMES.DAO_APP_ID,
+    WalletSDK: exports.ENV_VAR_NAMES.WALLET_APP_ID,
+    EscrowFactorySDK: exports.ENV_VAR_NAMES.ESCROW_FACTORY_APP_ID,
+    WalletFactorySDK: exports.ENV_VAR_NAMES.WALLET_FACTORY_APP_ID,
+    SubscriptionsSDK: exports.ENV_VAR_NAMES.SUBSCRIPTIONS_APP_ID,
+    StakingPoolFactorySDK: exports.ENV_VAR_NAMES.STAKING_POOL_FACTORY_APP_ID,
+    StakingSDK: exports.ENV_VAR_NAMES.STAKING_APP_ID,
+    RewardsSDK: exports.ENV_VAR_NAMES.REWARDS_APP_ID,
     // Factories
-    AuctionFactorySDK: ENV_VAR_NAMES.AUCTION_FACTORY_APP_ID,
-    MarketplaceSDK: ENV_VAR_NAMES.MARKETPLACE_APP_ID,
-    RaffleFactorySDK: ENV_VAR_NAMES.RAFFLE_FACTORY_APP_ID,
-    PollFactorySDK: ENV_VAR_NAMES.POLL_FACTORY_APP_ID,
-    PrizeBoxFactorySDK: ENV_VAR_NAMES.PRIZE_BOX_FACTORY_APP_ID,
+    AuctionFactorySDK: exports.ENV_VAR_NAMES.AUCTION_FACTORY_APP_ID,
+    MarketplaceSDK: exports.ENV_VAR_NAMES.MARKETPLACE_APP_ID,
+    RaffleFactorySDK: exports.ENV_VAR_NAMES.RAFFLE_FACTORY_APP_ID,
+    PollFactorySDK: exports.ENV_VAR_NAMES.POLL_FACTORY_APP_ID,
+    PrizeBoxFactorySDK: exports.ENV_VAR_NAMES.PRIZE_BOX_FACTORY_APP_ID,
     // Gates & Other
-    GateSDK: ENV_VAR_NAMES.GATE_APP_ID,
-    HyperSwapSDK: ENV_VAR_NAMES.HYPER_SWAP_APP_ID,
-    MetaMerklesSDK: ENV_VAR_NAMES.META_MERKLES_APP_ID,
+    GateSDK: exports.ENV_VAR_NAMES.GATE_APP_ID,
+    HyperSwapSDK: exports.ENV_VAR_NAMES.HYPER_SWAP_APP_ID,
+    MetaMerklesSDK: exports.ENV_VAR_NAMES.META_MERKLES_APP_ID,
 };
 /**
  * Gets the app ID for an SDK from environment variables
  * @param sdkName - The name of the SDK class (e.g., 'AkitaDaoSDK')
  * @returns The app ID from environment, or undefined if not found
  */
-export function getAppIdForSDK(sdkName) {
-    const envVarName = SDK_TO_ENV_VAR[sdkName];
+function getAppIdForSDK(sdkName) {
+    const envVarName = exports.SDK_TO_ENV_VAR[sdkName];
     if (!envVarName)
         return undefined;
     return getAppIdFromEnv(envVarName);
@@ -329,7 +347,7 @@ export function getAppIdForSDK(sdkName) {
  * @returns The resolved app ID
  * @throws Error if no app ID can be resolved
  */
-export function resolveAppId(providedAppId, envVarName, sdkName = 'SDK', network) {
+function resolveAppId(providedAppId, envVarName, sdkName = 'SDK', network) {
     // 1. Use provided app ID if available
     if (providedAppId !== undefined && providedAppId > 0n) {
         return providedAppId;
@@ -342,7 +360,7 @@ export function resolveAppId(providedAppId, envVarName, sdkName = 'SDK', network
     // 3. Try to get from baked-in network config
     const targetNetwork = network ?? getCurrentNetwork();
     if (targetNetwork !== undefined) {
-        const networkAppId = getAppIdFromNetwork(targetNetwork, envVarName);
+        const networkAppId = (0, networks_1.getAppIdFromNetwork)(targetNetwork, envVarName);
         if (networkAppId !== undefined) {
             return networkAppId;
         }
@@ -366,7 +384,7 @@ export function resolveAppId(providedAppId, envVarName, sdkName = 'SDK', network
  * Resolves app ID with network detection from AlgorandClient
  * This is the preferred method when you have an AlgorandClient instance
  */
-export function resolveAppIdWithClient(algorand, providedAppId, envVarName, sdkName = 'SDK') {
+function resolveAppIdWithClient(algorand, providedAppId, envVarName, sdkName = 'SDK') {
     const network = detectNetworkFromClient(algorand);
     setCurrentNetwork(network);
     return resolveAppId(providedAppId, envVarName, sdkName, network);

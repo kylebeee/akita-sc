@@ -2,6 +2,7 @@ export const ERR_ADMIN_CANNOT_BE_CONTROLLED = 'Admin and controlled address cann
 export const ERR_BAD_DEPLOYER = 'This contract must be deployed from a factory'
 export const ERR_ONLY_ADMIN_CAN_UPDATE = 'Only an admin can update the application'
 export const ERR_ONLY_ADMIN_CAN_CHANGE_REVOKE = 'Only an admin can change the revocation app'
+export const ERR_ONLY_ADMIN_CAN_CHANGE_AKITA_DAO = 'Only an admin can change the Akita DAO'
 export const ERR_ONLY_ADMIN_CAN_CHANGE_ADMIN = 'Only an admin can change the admin account'
 export const ERR_ONLY_ADMIN_CAN_REKEY = 'Only an admin can rekey the account'
 export const ERR_ONLY_ADMIN_CAN_ADD_PLUGIN = 'Only an admin can add a plugin'

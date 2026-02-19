@@ -1,9 +1,12 @@
-import { BaseSDK } from "../../base";
-import { PaySiloPluginFactory } from "../../generated/PaySiloPluginClient";
-import { getTxns } from "../utils";
-export class PaySiloPluginSDK extends BaseSDK {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PaySiloPluginSDK = void 0;
+const base_1 = require("../../base");
+const PaySiloPluginClient_1 = require("../../generated/PaySiloPluginClient");
+const utils_1 = require("../utils");
+class PaySiloPluginSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: PaySiloPluginFactory, ...params });
+        super({ factory: PaySiloPluginClient_1.PaySiloPluginFactory, ...params });
     }
     pay(args) {
         const methodName = 'pay';
@@ -11,7 +14,7 @@ export class PaySiloPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -33,4 +36,5 @@ export class PaySiloPluginSDK extends BaseSDK {
         });
     }
 }
+exports.PaySiloPluginSDK = PaySiloPluginSDK;
 //# sourceMappingURL=pay-silo.js.map

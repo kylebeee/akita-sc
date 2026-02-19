@@ -84,6 +84,7 @@ import {
   ERR_MISSING_REKEY_BACK,
   ERR_ONLY_ADMIN_CAN_ADD_PLUGIN,
   ERR_ONLY_ADMIN_CAN_CHANGE_ADMIN,
+  ERR_ONLY_ADMIN_CAN_CHANGE_AKITA_DAO,
   ERR_ONLY_ADMIN_CAN_CHANGE_NICKNAME,
   ERR_ONLY_ADMIN_CAN_CHANGE_REVOKE,
   ERR_ONLY_ADMIN_CAN_UPDATE,
@@ -626,6 +627,7 @@ export class AbstractedAccount extends Contract {
   @abimethod({ onCreate: 'require' })
   create(
     version: string,
+    akitaDAO: uint64,
     controlledAddress: Account,
     admin: Account,
     domain: string,
@@ -638,6 +640,7 @@ export class AbstractedAccount extends Contract {
     assert(admin !== controlledAddress)
 
     this.version.value = version
+    this.akitaDAO.value = Application(akitaDAO)
     this.admin.value = admin
     this.domain.value = domain
     this.controlledAddress.value =
@@ -708,6 +711,16 @@ export class AbstractedAccount extends Contract {
   setRevocationApp(app: uint64): void {
     assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_CHANGE_REVOKE)
     this.revocation.value = Application(app)
+  }
+
+  /**
+   * Changes the Akita DAO associated with the contract
+   *
+   * @param akitaDAO The app ID of the new Akita DAO
+  */
+  setAkitaDAO(akitaDAO: Application): void {
+    assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_CHANGE_AKITA_DAO)
+    this.akitaDAO.value = akitaDAO
   }
 
   /**

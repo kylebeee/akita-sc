@@ -1,15 +1,33 @@
-import { microAlgo } from "@algorandfoundation/algokit-utils";
-import { BaseSDK } from "../base";
-import { PrizeBoxFactory, } from '../generated/PrizeBoxClient';
-import { PrizeBoxFactoryFactory, } from '../generated/PrizeBoxFactoryClient';
-export * from "./types";
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PrizeBoxFactorySDK = exports.PrizeBoxSDK = void 0;
+exports.newPrizeBox = newPrizeBox;
+const algokit_utils_1 = require("@algorandfoundation/algokit-utils");
+const base_1 = require("../base");
+const PrizeBoxClient_1 = require("../generated/PrizeBoxClient");
+const PrizeBoxFactoryClient_1 = require("../generated/PrizeBoxFactoryClient");
+__exportStar(require("./types"), exports);
 /**
  * SDK for interacting with an individual PrizeBox contract.
  * PrizeBoxes hold multiple assets that can be transferred as a bundle.
  */
-export class PrizeBoxSDK extends BaseSDK {
+class PrizeBoxSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: PrizeBoxFactory, ...params });
+        super({ factory: PrizeBoxClient_1.PrizeBoxFactory, ...params });
     }
     // ========== Read Methods ==========
     /**
@@ -38,7 +56,7 @@ export class PrizeBoxSDK extends BaseSDK {
         const sendParams = this.getRequiredSendParams({ sender, signer });
         const payment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(100000), // Asset opt-in MBR
+            amount: (0, algokit_utils_1.microAlgo)(100000), // Asset opt-in MBR
             receiver: this.client.appAddress,
         });
         await this.client.send.optin({
@@ -85,13 +103,14 @@ export class PrizeBoxSDK extends BaseSDK {
         });
     }
 }
+exports.PrizeBoxSDK = PrizeBoxSDK;
 /**
  * SDK for interacting with the PrizeBox Factory contract.
  * Used to create new prize boxes.
  */
-export class PrizeBoxFactorySDK extends BaseSDK {
+class PrizeBoxFactorySDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: PrizeBoxFactoryFactory, ...params });
+        super({ factory: PrizeBoxFactoryClient_1.PrizeBoxFactoryFactory, ...params });
     }
     /**
      * Creates a new prize box and returns a PrizeBoxSDK instance.
@@ -103,7 +122,7 @@ export class PrizeBoxFactorySDK extends BaseSDK {
         const cost = this.cost();
         const payment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(cost),
+            amount: (0, algokit_utils_1.microAlgo)(cost),
             receiver: this.client.appAddress,
         });
         const { return: appId } = await this.client.send.mint({
@@ -149,10 +168,11 @@ export class PrizeBoxFactorySDK extends BaseSDK {
         return 278500n;
     }
 }
+exports.PrizeBoxFactorySDK = PrizeBoxFactorySDK;
 /**
  * Convenience function to create a new prize box and return the SDK.
  */
-export async function newPrizeBox({ factoryParams, algorand, readerAccount, sendParams, ...mintParams }) {
+async function newPrizeBox({ factoryParams, algorand, readerAccount, sendParams, ...mintParams }) {
     const factory = new PrizeBoxFactorySDK({ factoryParams, algorand, readerAccount, sendParams });
     return await factory.mint(mintParams);
 }

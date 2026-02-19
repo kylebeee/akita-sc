@@ -1,7 +1,10 @@
-import { getArc56ReturnValue } from '@algorandfoundation/algokit-utils/types/app-arc56';
-import { AppClient as _AppClient, } from '@algorandfoundation/algokit-utils/types/app-client';
-import { AppFactory as _AppFactory } from '@algorandfoundation/algokit-utils/types/app-factory';
-export const APP_SPEC = { "name": "MockAkitaDAO", "structs": {}, "methods": [{ "name": "update", "args": [{ "type": "string", "name": "newVersion" }], "returns": { "type": "void" }, "actions": { "create": [], "call": ["UpdateApplication"] }, "readonly": false, "events": [], "recommendations": {} }, { "name": "ping", "args": [], "returns": { "type": "uint64" }, "actions": { "create": [], "call": ["NoOp"] }, "readonly": false, "events": [], "recommendations": {} }], "arcs": [22, 28], "networks": {}, "state": { "schema": { "global": { "ints": 0, "bytes": 0 }, "local": { "ints": 0, "bytes": 0 } }, "keys": { "global": {}, "local": {}, "box": {} }, "maps": { "global": {}, "local": {}, "box": {} } }, "bareActions": { "create": ["NoOp"], "call": [] }, "sourceInfo": { "approval": { "sourceInfo": [{ "pc": [72], "errorMessage": "OnCompletion must be NoOp && can only call when creating" }, { "pc": [34], "errorMessage": "OnCompletion must be NoOp && can only call when not creating" }, { "pc": [61], "errorMessage": "OnCompletion must be UpdateApplication && can only call when not creating" }, { "pc": [86], "errorMessage": "invalid number of bytes for (len+utf8[])" }], "pcOffsetMethod": "none" }, "clear": { "sourceInfo": [], "pcOffsetMethod": "none" } }, "source": { "approval": "I3ByYWdtYSB2ZXJzaW9uIDExCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYXJjNC9pbmRleC5kLnRzOjpDb250cmFjdC5hcHByb3ZhbFByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICAvLyBzbWFydF9jb250cmFjdHMvbW9ja3MvZGFvL21vY2suYWxnby50czo0CiAgICAvLyBleHBvcnQgY2xhc3MgTW9ja0FraXRhREFPIGV4dGVuZHMgQ29udHJhY3QgewogICAgdHhuIE51bUFwcEFyZ3MKICAgIGJ6IG1haW5fX19hbGdvdHNfXy5kZWZhdWx0Q3JlYXRlQDYKICAgIHB1c2hieXRlc3MgMHhlYTkxODBkZCAweDFkNWM1NjFiIC8vIG1ldGhvZCAidXBkYXRlKHN0cmluZyl2b2lkIiwgbWV0aG9kICJwaW5nKCl1aW50NjQiCiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAwCiAgICBtYXRjaCBtYWluX3VwZGF0ZV9yb3V0ZUAzIG1haW5fcGluZ19yb3V0ZUA0CiAgICBlcnIKCm1haW5fcGluZ19yb3V0ZUA0OgogICAgLy8gc21hcnRfY29udHJhY3RzL21vY2tzL2Rhby9tb2NrLmFsZ28udHM6OQogICAgLy8gcGluZygpOiB1aW50NjQgewogICAgdHhuIE9uQ29tcGxldGlvbgogICAgIQogICAgdHhuIEFwcGxpY2F0aW9uSUQKICAgICYmCiAgICBhc3NlcnQgLy8gT25Db21wbGV0aW9uIG11c3QgYmUgTm9PcCAmJiBjYW4gb25seSBjYWxsIHdoZW4gbm90IGNyZWF0aW5nCiAgICBwdXNoYnl0ZXMgMHgxNTFmN2M3NTAwMDAwMDAwMDAwMDA1MzkKICAgIGxvZwogICAgcHVzaGludCAxIC8vIDEKICAgIHJldHVybgoKbWFpbl91cGRhdGVfcm91dGVAMzoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9tb2Nrcy9kYW8vbW9jay5hbGdvLnRzOjYKICAgIC8vIEBhYmltZXRob2QoeyBhbGxvd0FjdGlvbnM6IFsnVXBkYXRlQXBwbGljYXRpb24nXSB9KQogICAgdHhuIE9uQ29tcGxldGlvbgogICAgcHVzaGludCA0IC8vIFVwZGF0ZUFwcGxpY2F0aW9uCiAgICA9PQogICAgdHhuIEFwcGxpY2F0aW9uSUQKICAgICYmCiAgICBhc3NlcnQgLy8gT25Db21wbGV0aW9uIG11c3QgYmUgVXBkYXRlQXBwbGljYXRpb24gJiYgY2FuIG9ubHkgY2FsbCB3aGVuIG5vdCBjcmVhdGluZwogICAgYiB1cGRhdGUKCm1haW5fX19hbGdvdHNfXy5kZWZhdWx0Q3JlYXRlQDY6CiAgICAvLyBzbWFydF9jb250cmFjdHMvbW9ja3MvZGFvL21vY2suYWxnby50czo0CiAgICAvLyBleHBvcnQgY2xhc3MgTW9ja0FraXRhREFPIGV4dGVuZHMgQ29udHJhY3QgewogICAgdHhuIE9uQ29tcGxldGlvbgogICAgIQogICAgdHhuIEFwcGxpY2F0aW9uSUQKICAgICEKICAgICYmCiAgICByZXR1cm4gLy8gb24gZXJyb3I6IE9uQ29tcGxldGlvbiBtdXN0IGJlIE5vT3AgJiYgY2FuIG9ubHkgY2FsbCB3aGVuIGNyZWF0aW5nCgoKLy8gc21hcnRfY29udHJhY3RzL21vY2tzL2Rhby9tb2NrLmFsZ28udHM6Ok1vY2tBa2l0YURBTy51cGRhdGVbcm91dGluZ10oKSAtPiB2b2lkOgp1cGRhdGU6CiAgICAvLyBzbWFydF9jb250cmFjdHMvbW9ja3MvZGFvL21vY2suYWxnby50czo2CiAgICAvLyBAYWJpbWV0aG9kKHsgYWxsb3dBY3Rpb25zOiBbJ1VwZGF0ZUFwcGxpY2F0aW9uJ10gfSkKICAgIHR4bmEgQXBwbGljYXRpb25BcmdzIDEKICAgIGR1cAogICAgcHVzaGludCAwIC8vIDAKICAgIGV4dHJhY3RfdWludDE2CiAgICBwdXNoaW50IDIgLy8gMgogICAgKwogICAgc3dhcAogICAgbGVuCiAgICA9PQogICAgcmV0dXJuIC8vIG9uIGVycm9yOiBpbnZhbGlkIG51bWJlciBvZiBieXRlcyBmb3IgKGxlbit1dGY4W10pCg==", "clear": "I3ByYWdtYSB2ZXJzaW9uIDExCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYmFzZS1jb250cmFjdC5kLnRzOjpCYXNlQ29udHJhY3QuY2xlYXJTdGF0ZVByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICBwdXNoaW50IDEgLy8gMQogICAgcmV0dXJuCg==" }, "byteCode": { "approval": "CzEbQQA7ggIE6pGA3QQdXFYbNhoAjgIAGgABADEZFDEYEESADBUffHUAAAAAAAAFObCBAUMxGYEEEjEYEERCAAgxGRQxGBQQQzYaAUmBAFmBAghMFRJD", "clear": "C4EBQw==" }, "events": [], "templateVariables": {} };
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MockAkitaDaoClient = exports.MockAkitaDaoFactory = exports.MockAkitaDaoParamsFactory = exports.APP_SPEC = void 0;
+const app_arc56_1 = require("@algorandfoundation/algokit-utils/types/app-arc56");
+const app_client_1 = require("@algorandfoundation/algokit-utils/types/app-client");
+const app_factory_1 = require("@algorandfoundation/algokit-utils/types/app-factory");
+exports.APP_SPEC = { "name": "MockAkitaDAO", "structs": {}, "methods": [{ "name": "update", "args": [{ "type": "string", "name": "newVersion" }], "returns": { "type": "void" }, "actions": { "create": [], "call": ["UpdateApplication"] }, "readonly": false, "events": [], "recommendations": {} }, { "name": "ping", "args": [], "returns": { "type": "uint64" }, "actions": { "create": [], "call": ["NoOp"] }, "readonly": false, "events": [], "recommendations": {} }], "arcs": [22, 28], "networks": {}, "state": { "schema": { "global": { "ints": 0, "bytes": 0 }, "local": { "ints": 0, "bytes": 0 } }, "keys": { "global": {}, "local": {}, "box": {} }, "maps": { "global": {}, "local": {}, "box": {} } }, "bareActions": { "create": ["NoOp"], "call": [] }, "sourceInfo": { "approval": { "sourceInfo": [{ "pc": [72], "errorMessage": "OnCompletion must be NoOp && can only call when creating" }, { "pc": [34], "errorMessage": "OnCompletion must be NoOp && can only call when not creating" }, { "pc": [61], "errorMessage": "OnCompletion must be UpdateApplication && can only call when not creating" }, { "pc": [86], "errorMessage": "invalid number of bytes for (len+utf8[])" }], "pcOffsetMethod": "none" }, "clear": { "sourceInfo": [], "pcOffsetMethod": "none" } }, "source": { "approval": "I3ByYWdtYSB2ZXJzaW9uIDExCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYXJjNC9pbmRleC5kLnRzOjpDb250cmFjdC5hcHByb3ZhbFByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICAvLyBzbWFydF9jb250cmFjdHMvbW9ja3MvZGFvL21vY2suYWxnby50czo0CiAgICAvLyBleHBvcnQgY2xhc3MgTW9ja0FraXRhREFPIGV4dGVuZHMgQ29udHJhY3QgewogICAgdHhuIE51bUFwcEFyZ3MKICAgIGJ6IG1haW5fX19hbGdvdHNfXy5kZWZhdWx0Q3JlYXRlQDYKICAgIHB1c2hieXRlc3MgMHhlYTkxODBkZCAweDFkNWM1NjFiIC8vIG1ldGhvZCAidXBkYXRlKHN0cmluZyl2b2lkIiwgbWV0aG9kICJwaW5nKCl1aW50NjQiCiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAwCiAgICBtYXRjaCBtYWluX3VwZGF0ZV9yb3V0ZUAzIG1haW5fcGluZ19yb3V0ZUA0CiAgICBlcnIKCm1haW5fcGluZ19yb3V0ZUA0OgogICAgLy8gc21hcnRfY29udHJhY3RzL21vY2tzL2Rhby9tb2NrLmFsZ28udHM6OQogICAgLy8gcGluZygpOiB1aW50NjQgewogICAgdHhuIE9uQ29tcGxldGlvbgogICAgIQogICAgdHhuIEFwcGxpY2F0aW9uSUQKICAgICYmCiAgICBhc3NlcnQgLy8gT25Db21wbGV0aW9uIG11c3QgYmUgTm9PcCAmJiBjYW4gb25seSBjYWxsIHdoZW4gbm90IGNyZWF0aW5nCiAgICBwdXNoYnl0ZXMgMHgxNTFmN2M3NTAwMDAwMDAwMDAwMDA1MzkKICAgIGxvZwogICAgcHVzaGludCAxIC8vIDEKICAgIHJldHVybgoKbWFpbl91cGRhdGVfcm91dGVAMzoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9tb2Nrcy9kYW8vbW9jay5hbGdvLnRzOjYKICAgIC8vIEBhYmltZXRob2QoeyBhbGxvd0FjdGlvbnM6IFsnVXBkYXRlQXBwbGljYXRpb24nXSB9KQogICAgdHhuIE9uQ29tcGxldGlvbgogICAgcHVzaGludCA0IC8vIFVwZGF0ZUFwcGxpY2F0aW9uCiAgICA9PQogICAgdHhuIEFwcGxpY2F0aW9uSUQKICAgICYmCiAgICBhc3NlcnQgLy8gT25Db21wbGV0aW9uIG11c3QgYmUgVXBkYXRlQXBwbGljYXRpb24gJiYgY2FuIG9ubHkgY2FsbCB3aGVuIG5vdCBjcmVhdGluZwogICAgYiB1cGRhdGUKCm1haW5fX19hbGdvdHNfXy5kZWZhdWx0Q3JlYXRlQDY6CiAgICAvLyBzbWFydF9jb250cmFjdHMvbW9ja3MvZGFvL21vY2suYWxnby50czo0CiAgICAvLyBleHBvcnQgY2xhc3MgTW9ja0FraXRhREFPIGV4dGVuZHMgQ29udHJhY3QgewogICAgdHhuIE9uQ29tcGxldGlvbgogICAgIQogICAgdHhuIEFwcGxpY2F0aW9uSUQKICAgICEKICAgICYmCiAgICByZXR1cm4gLy8gb24gZXJyb3I6IE9uQ29tcGxldGlvbiBtdXN0IGJlIE5vT3AgJiYgY2FuIG9ubHkgY2FsbCB3aGVuIGNyZWF0aW5nCgoKLy8gc21hcnRfY29udHJhY3RzL21vY2tzL2Rhby9tb2NrLmFsZ28udHM6Ok1vY2tBa2l0YURBTy51cGRhdGVbcm91dGluZ10oKSAtPiB2b2lkOgp1cGRhdGU6CiAgICAvLyBzbWFydF9jb250cmFjdHMvbW9ja3MvZGFvL21vY2suYWxnby50czo2CiAgICAvLyBAYWJpbWV0aG9kKHsgYWxsb3dBY3Rpb25zOiBbJ1VwZGF0ZUFwcGxpY2F0aW9uJ10gfSkKICAgIHR4bmEgQXBwbGljYXRpb25BcmdzIDEKICAgIGR1cAogICAgcHVzaGludCAwIC8vIDAKICAgIGV4dHJhY3RfdWludDE2CiAgICBwdXNoaW50IDIgLy8gMgogICAgKwogICAgc3dhcAogICAgbGVuCiAgICA9PQogICAgcmV0dXJuIC8vIG9uIGVycm9yOiBpbnZhbGlkIG51bWJlciBvZiBieXRlcyBmb3IgKGxlbit1dGY4W10pCg==", "clear": "I3ByYWdtYSB2ZXJzaW9uIDExCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYmFzZS1jb250cmFjdC5kLnRzOjpCYXNlQ29udHJhY3QuY2xlYXJTdGF0ZVByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICBwdXNoaW50IDEgLy8gMQogICAgcmV0dXJuCg==" }, "byteCode": { "approval": "CzEbQQA7ggIE6pGA3QQdXFYbNhoAjgIAGgABADEZFDEYEESADBUffHUAAAAAAAAFObCBAUMxGYEEEjEYEERCAAgxGRQxGBQQQzYaAUmBAFmBAghMFRJD", "clear": "C4EBQw==" }, "events": [], "templateVariables": {} };
 class BinaryStateValue {
     constructor(value) {
         this.value = value;
@@ -16,7 +19,7 @@ class BinaryStateValue {
 /**
  * Exposes methods for constructing `AppClient` params objects for ABI calls to the MockAkitaDao smart contract
  */
-export class MockAkitaDaoParamsFactory {
+class MockAkitaDaoParamsFactory {
     /**
      * Gets available update ABI call param factories
      */
@@ -59,10 +62,11 @@ export class MockAkitaDaoParamsFactory {
         };
     }
 }
+exports.MockAkitaDaoParamsFactory = MockAkitaDaoParamsFactory;
 /**
  * A factory to create and deploy one or more instance of the MockAkitaDAO smart contract and to create one or more app clients to interact with those (or other) app instances
  */
-export class MockAkitaDaoFactory {
+class MockAkitaDaoFactory {
     /**
      * Creates a new instance of `MockAkitaDaoFactory`
      *
@@ -141,9 +145,9 @@ export class MockAkitaDaoFactory {
                 },
             },
         };
-        this.appFactory = new _AppFactory({
+        this.appFactory = new app_factory_1.AppFactory({
             ...params,
-            appSpec: APP_SPEC,
+            appSpec: exports.APP_SPEC,
         });
     }
     /** The name of the app (from the ARC-32 / ARC-56 app spec or override). */
@@ -152,7 +156,7 @@ export class MockAkitaDaoFactory {
     }
     /** The ARC-56 app spec being used */
     get appSpec() {
-        return APP_SPEC;
+        return exports.APP_SPEC;
     }
     /** A reference to the underlying `AlgorandClient` this app factory is using. */
     get algorand() {
@@ -195,10 +199,11 @@ export class MockAkitaDaoFactory {
         return { result: result.result, appClient: new MockAkitaDaoClient(result.appClient) };
     }
 }
+exports.MockAkitaDaoFactory = MockAkitaDaoFactory;
 /**
  * A client to make calls to the MockAkitaDAO smart contract
  */
-export class MockAkitaDaoClient {
+class MockAkitaDaoClient {
     constructor(appClientOrParams) {
         /**
          * Get parameters to create transactions for the current app. A good mental model for this is that these parameters represent a deferred transaction creation.
@@ -317,9 +322,9 @@ export class MockAkitaDaoClient {
          * Methods to access state for the current MockAkitaDAO app
          */
         this.state = {};
-        this.appClient = appClientOrParams instanceof _AppClient ? appClientOrParams : new _AppClient({
+        this.appClient = appClientOrParams instanceof app_client_1.AppClient ? appClientOrParams : new app_client_1.AppClient({
             ...appClientOrParams,
-            appSpec: APP_SPEC,
+            appSpec: exports.APP_SPEC,
         });
     }
     /**
@@ -327,7 +332,7 @@ export class MockAkitaDaoClient {
      * @returns The typed return value or undefined if there was no value
      */
     decodeReturnValue(method, returnValue) {
-        return returnValue !== undefined ? getArc56ReturnValue(returnValue, this.appClient.getABIMethod(method), APP_SPEC.structs) : undefined;
+        return returnValue !== undefined ? (0, app_arc56_1.getArc56ReturnValue)(returnValue, this.appClient.getABIMethod(method), exports.APP_SPEC.structs) : undefined;
     }
     /**
      * Returns a new `MockAkitaDaoClient` client, resolving the app by creator address and name
@@ -335,7 +340,7 @@ export class MockAkitaDaoClient {
      * @param params The parameters to create the app client
      */
     static async fromCreatorAndName(params) {
-        return new MockAkitaDaoClient(await _AppClient.fromCreatorAndName({ ...params, appSpec: APP_SPEC }));
+        return new MockAkitaDaoClient(await app_client_1.AppClient.fromCreatorAndName({ ...params, appSpec: exports.APP_SPEC }));
     }
     /**
      * Returns an `MockAkitaDaoClient` instance for the current network based on
@@ -345,7 +350,7 @@ export class MockAkitaDaoClient {
      * @param params The parameters to create the app client
      */
     static async fromNetwork(params) {
-        return new MockAkitaDaoClient(await _AppClient.fromNetwork({ ...params, appSpec: APP_SPEC }));
+        return new MockAkitaDaoClient(await app_client_1.AppClient.fromNetwork({ ...params, appSpec: exports.APP_SPEC }));
     }
     /** The ID of the app instance this client is linked to. */
     get appId() {
@@ -433,4 +438,5 @@ export class MockAkitaDaoClient {
         };
     }
 }
+exports.MockAkitaDaoClient = MockAkitaDaoClient;
 //# sourceMappingURL=MockAkitaDAOClient.js.map

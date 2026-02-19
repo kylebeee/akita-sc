@@ -1,9 +1,12 @@
-import { BaseSDK } from "../../base";
-import { RewardsPluginFactory } from "../../generated/RewardsPluginClient";
-import { getTxns } from "../utils";
-export class RewardsPluginSDK extends BaseSDK {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RewardsPluginSDK = void 0;
+const base_1 = require("../../base");
+const RewardsPluginClient_1 = require("../../generated/RewardsPluginClient");
+const utils_1 = require("../utils");
+class RewardsPluginSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: RewardsPluginFactory, ...params });
+        super({ factory: RewardsPluginClient_1.RewardsPluginFactory, ...params });
     }
     static getMaxClaimsPerTransaction() {
         const totalRefs = (1 + RewardsPluginSDK.MAX_OPUP_COUNT) * RewardsPluginSDK.REFS_PER_TXN;
@@ -25,7 +28,7 @@ export class RewardsPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const numClaims = args.rewards?.length ?? 0;
@@ -50,6 +53,7 @@ export class RewardsPluginSDK extends BaseSDK {
         });
     }
 }
+exports.RewardsPluginSDK = RewardsPluginSDK;
 /**
  * Each claim consumes foreign references across multiple types (COMBINED limit of 8 per txn):
  *   - Boxes: allocation box on rewards contract (2 slots: box + foreignApp for non-zero app)

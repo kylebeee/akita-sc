@@ -1,9 +1,12 @@
-import { BaseSDK } from "../../base";
-import { DualStakePluginFactory } from "../../generated/DualStakePluginClient";
-import { getTxns } from "../utils";
-export class DualStakePluginSDK extends BaseSDK {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DualStakePluginSDK = void 0;
+const base_1 = require("../../base");
+const DualStakePluginClient_1 = require("../../generated/DualStakePluginClient");
+const utils_1 = require("../utils");
+class DualStakePluginSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: DualStakePluginFactory, ...params });
+        super({ factory: DualStakePluginClient_1.DualStakePluginFactory, ...params });
     }
     mint(args) {
         const methodName = 'mint';
@@ -11,7 +14,7 @@ export class DualStakePluginSDK extends BaseSDK {
             return (_spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -38,7 +41,7 @@ export class DualStakePluginSDK extends BaseSDK {
             return (_spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -60,4 +63,5 @@ export class DualStakePluginSDK extends BaseSDK {
         });
     }
 }
+exports.DualStakePluginSDK = DualStakePluginSDK;
 //# sourceMappingURL=dual-stake.js.map

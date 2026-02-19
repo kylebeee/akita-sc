@@ -1,8 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.estimateFallbackCost = estimateFallbackCost;
+exports.estimateSimpleCost = estimateSimpleCost;
 /**
  * Estimate transaction costs when simulation fails.
  * This provides a conservative estimate based on transaction structure.
  */
-export function estimateFallbackCost(txnCount, params) {
+function estimateFallbackCost(txnCount, params) {
     const { fundsRequest = [] } = params;
     // Base fee: 1000 microAlgo per transaction
     const baseFee = 1000n;
@@ -41,7 +45,7 @@ export function estimateFallbackCost(txnCount, params) {
 /**
  * Estimate costs for a simple transaction count when params aren't available.
  */
-export function estimateSimpleCost(txnCount) {
+function estimateSimpleCost(txnCount) {
     const baseFee = 1000n;
     const networkFees = BigInt(txnCount) * baseFee;
     return {

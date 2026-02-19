@@ -1,9 +1,12 @@
-import { BaseSDK } from "../../base";
-import { StakingPoolPluginFactory } from "../../generated/StakingPoolPluginClient";
-import { getTxns } from "../utils";
-export class StakingPoolPluginSDK extends BaseSDK {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.StakingPoolPluginSDK = void 0;
+const base_1 = require("../../base");
+const StakingPoolPluginClient_1 = require("../../generated/StakingPoolPluginClient");
+const utils_1 = require("../utils");
+class StakingPoolPluginSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: StakingPoolPluginFactory, ...params });
+        super({ factory: StakingPoolPluginClient_1.StakingPoolPluginFactory, ...params });
     }
     newPool(args) {
         const methodName = 'newPool';
@@ -11,7 +14,7 @@ export class StakingPoolPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -38,7 +41,7 @@ export class StakingPoolPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -65,7 +68,7 @@ export class StakingPoolPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -92,7 +95,7 @@ export class StakingPoolPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -119,7 +122,7 @@ export class StakingPoolPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -146,7 +149,7 @@ export class StakingPoolPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -168,4 +171,5 @@ export class StakingPoolPluginSDK extends BaseSDK {
         });
     }
 }
+exports.StakingPoolPluginSDK = StakingPoolPluginSDK;
 //# sourceMappingURL=staking-pool.js.map

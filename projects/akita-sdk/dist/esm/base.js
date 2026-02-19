@@ -1,15 +1,18 @@
-import { DEFAULT_READER, DEFAULT_SEND_PARAMS } from "./constants";
-import { resolveAppIdWithClient, detectNetworkFromClient } from "./config";
-import { hasSenderSigner } from "./types";
-import { makeEmptyTransactionSigner } from "algosdk";
-export class BaseSDK {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BaseSDK = void 0;
+const constants_1 = require("./constants");
+const config_1 = require("./config");
+const types_1 = require("./types");
+const algosdk_1 = require("algosdk");
+class BaseSDK {
     constructor({ factoryParams, algorand, factory, readerAccount, sendParams }, envVarName) {
-        this.readerAccount = DEFAULT_READER;
-        this.sendParams = DEFAULT_SEND_PARAMS;
+        this.readerAccount = constants_1.DEFAULT_READER;
+        this.sendParams = constants_1.DEFAULT_SEND_PARAMS;
         // Detect network from AlgorandClient
-        this.network = detectNetworkFromClient(algorand);
+        this.network = (0, config_1.detectNetworkFromClient)(algorand);
         // Resolve app ID from provided value, environment, or network config
-        const resolvedAppId = resolveAppIdWithClient(algorand, factoryParams.appId, envVarName || this.constructor.envVarName || '', this.constructor.name);
+        const resolvedAppId = (0, config_1.resolveAppIdWithClient)(algorand, factoryParams.appId, envVarName || this.constructor.envVarName || '', this.constructor.name);
         this.appId = resolvedAppId;
         this.algorand = algorand;
         if (readerAccount) {
@@ -45,7 +48,7 @@ export class BaseSDK {
     }
     getRequiredSendParams(params = {}) {
         const sendParams = this.getSendParams(params);
-        if (!hasSenderSigner(sendParams)) {
+        if (!(0, types_1.hasSenderSigner)(sendParams)) {
             throw new Error('Sender and signer must be provided either explicitly or through defaults at SDK instantiation');
         }
         return sendParams;
@@ -54,10 +57,11 @@ export class BaseSDK {
         return {
             ...this.sendParams,
             ...(sender !== undefined ? { sender } : { sender: this.readerAccount }),
-            signer: makeEmptyTransactionSigner()
+            signer: (0, algosdk_1.makeEmptyTransactionSigner)()
         };
     }
 }
+exports.BaseSDK = BaseSDK;
 /**
  * Override this in subclasses to specify the environment variable name for the app ID
  */

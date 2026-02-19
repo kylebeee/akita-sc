@@ -1,9 +1,12 @@
-import { BaseSDK } from "../../base";
-import { SubscriptionsPluginFactory } from "../../generated/SubscriptionsPluginClient";
-import { getTxns } from "../utils";
-export class SubscriptionsPluginSDK extends BaseSDK {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SubscriptionsPluginSDK = void 0;
+const base_1 = require("../../base");
+const SubscriptionsPluginClient_1 = require("../../generated/SubscriptionsPluginClient");
+const utils_1 = require("../utils");
+class SubscriptionsPluginSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: SubscriptionsPluginFactory, ...params });
+        super({ factory: SubscriptionsPluginClient_1.SubscriptionsPluginFactory, ...params });
     }
     optIn(args) {
         const methodName = 'optIn';
@@ -11,7 +14,7 @@ export class SubscriptionsPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -38,7 +41,7 @@ export class SubscriptionsPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -64,7 +67,7 @@ export class SubscriptionsPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -90,7 +93,7 @@ export class SubscriptionsPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer, rekeyBack: rekeyBackArg, ...rest } = args;
@@ -117,7 +120,7 @@ export class SubscriptionsPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -144,7 +147,7 @@ export class SubscriptionsPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -171,7 +174,7 @@ export class SubscriptionsPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -198,7 +201,7 @@ export class SubscriptionsPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -225,7 +228,7 @@ export class SubscriptionsPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer, asset = 0n, index = 0n, args: gateArgs = [], ...rest } = args;
@@ -252,7 +255,7 @@ export class SubscriptionsPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer, args: gateArgs = [], ...rest } = args;
@@ -279,7 +282,7 @@ export class SubscriptionsPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -306,7 +309,7 @@ export class SubscriptionsPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -328,4 +331,5 @@ export class SubscriptionsPluginSDK extends BaseSDK {
         });
     }
 }
+exports.SubscriptionsPluginSDK = SubscriptionsPluginSDK;
 //# sourceMappingURL=subscriptions.js.map

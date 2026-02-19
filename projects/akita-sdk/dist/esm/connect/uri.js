@@ -1,8 +1,12 @@
+"use strict";
 /**
  * Encode/decode helpers for the liquid:// connect URI scheme.
  *
  * URI format: liquid://<signaling-server-host>?requestId=<uuid>
  */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.encodeConnectUri = encodeConnectUri;
+exports.decodeConnectUri = decodeConnectUri;
 /**
  * Encode a connect URI from its components.
  *
@@ -10,7 +14,7 @@
  * encodeConnectUri({ origin: "signal.akita.community", requestId: "abc-123" })
  * // => "liquid://signal.akita.community?requestId=abc-123"
  */
-export function encodeConnectUri({ origin, requestId }) {
+function encodeConnectUri({ origin, requestId }) {
     return `liquid://${origin}?requestId=${encodeURIComponent(requestId)}`;
 }
 /**
@@ -18,7 +22,7 @@ export function encodeConnectUri({ origin, requestId }) {
  *
  * @throws {Error} If the URI is not a valid liquid:// connect URI or is missing requestId.
  */
-export function decodeConnectUri(uri) {
+function decodeConnectUri(uri) {
     const trimmed = uri.trim();
     if (!trimmed.toLowerCase().startsWith('liquid://')) {
         throw new Error(`Invalid connect URI: expected liquid:// scheme, got "${trimmed}"`);

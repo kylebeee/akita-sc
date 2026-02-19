@@ -1,16 +1,34 @@
-import { microAlgo } from "@algorandfoundation/algokit-utils";
-import { BaseSDK } from "../base";
-import { ENV_VAR_NAMES } from "../config";
-import { EscrowFactory, } from '../generated/EscrowClient';
-import { EscrowFactoryFactory, } from '../generated/EscrowFactoryClient';
-export * from "./types";
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EscrowFactorySDK = exports.EscrowSDK = void 0;
+exports.newEscrow = newEscrow;
+const algokit_utils_1 = require("@algorandfoundation/algokit-utils");
+const base_1 = require("../base");
+const config_1 = require("../config");
+const EscrowClient_1 = require("../generated/EscrowClient");
+const EscrowFactoryClient_1 = require("../generated/EscrowFactoryClient");
+__exportStar(require("./types"), exports);
 /**
  * SDK for interacting with an individual Escrow contract.
  * Escrows are minimal contracts that hold funds and can be rekeyed.
  */
-export class EscrowSDK extends BaseSDK {
+class EscrowSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: EscrowFactory, ...params });
+        super({ factory: EscrowClient_1.EscrowFactory, ...params });
     }
     // ========== Read Methods ==========
     /**
@@ -33,13 +51,14 @@ export class EscrowSDK extends BaseSDK {
         });
     }
 }
+exports.EscrowSDK = EscrowSDK;
 /**
  * SDK for interacting with the Escrow Factory contract.
  * Used to create, register, and delete escrows.
  */
-export class EscrowFactorySDK extends BaseSDK {
+class EscrowFactorySDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: EscrowFactoryFactory, ...params }, ENV_VAR_NAMES.ESCROW_FACTORY_APP_ID);
+        super({ factory: EscrowFactoryClient_1.EscrowFactoryFactory, ...params }, config_1.ENV_VAR_NAMES.ESCROW_FACTORY_APP_ID);
     }
     // ========== Factory Methods ==========
     /**
@@ -52,7 +71,7 @@ export class EscrowFactorySDK extends BaseSDK {
         const cost = await this.cost();
         const payment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(cost),
+            amount: (0, algokit_utils_1.microAlgo)(cost),
             receiver: this.client.appAddress,
         });
         const { return: appId } = await this.client.send.new({
@@ -94,7 +113,7 @@ export class EscrowFactorySDK extends BaseSDK {
         const cost = await this.registerCost();
         const payment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(cost),
+            amount: (0, algokit_utils_1.microAlgo)(cost),
             receiver: this.client.appAddress,
         });
         await this.client.send.register({
@@ -151,10 +170,11 @@ export class EscrowFactorySDK extends BaseSDK {
         return creators ?? [];
     }
 }
+exports.EscrowFactorySDK = EscrowFactorySDK;
 /**
  * Convenience function to create a new escrow and return the SDK.
  */
-export async function newEscrow({ factoryParams, algorand, readerAccount, sendParams, ...escrowParams }) {
+async function newEscrow({ factoryParams, algorand, readerAccount, sendParams, ...escrowParams }) {
     const factory = new EscrowFactorySDK({ factoryParams, algorand, readerAccount, sendParams });
     return await factory.new(escrowParams);
 }

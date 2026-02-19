@@ -1,4 +1,7 @@
-export var ProposalActionEnum;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DAOProposalVotesMBR = exports.EMPTY_CID = exports.ProposalActionEnum = void 0;
+var ProposalActionEnum;
 (function (ProposalActionEnum) {
     ProposalActionEnum[ProposalActionEnum["UpgradeApp"] = 10] = "UpgradeApp";
     ProposalActionEnum[ProposalActionEnum["AddPlugin"] = 20] = "AddPlugin";
@@ -12,7 +15,7 @@ export var ProposalActionEnum;
     ProposalActionEnum[ProposalActionEnum["NewEscrow"] = 70] = "NewEscrow";
     ProposalActionEnum[ProposalActionEnum["ToggleEscrowLock"] = 71] = "ToggleEscrowLock";
     ProposalActionEnum[ProposalActionEnum["UpdateFields"] = 80] = "UpdateFields";
-})(ProposalActionEnum || (ProposalActionEnum = {}));
-export const EMPTY_CID = Buffer.from('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-export const DAOProposalVotesMBR = 22500n;
+})(ProposalActionEnum || (exports.ProposalActionEnum = ProposalActionEnum = {}));
+exports.EMPTY_CID = Buffer.from('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+exports.DAOProposalVotesMBR = 22500n;
 //# sourceMappingURL=constants.js.map

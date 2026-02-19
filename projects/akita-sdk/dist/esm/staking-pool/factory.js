@@ -1,16 +1,20 @@
-import { StakingPoolFactoryFactory } from '../generated/StakingPoolFactoryClient';
-import { StakingPoolSDK } from './index';
-import { BaseSDK } from '../base';
-import { ENV_VAR_NAMES } from '../config';
-import { emptySigner } from '../constants';
-import { microAlgo, microAlgos } from '@algorandfoundation/algokit-utils';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.StakingPoolFactorySDK = void 0;
+exports.newStakingPool = newStakingPool;
+const StakingPoolFactoryClient_1 = require("../generated/StakingPoolFactoryClient");
+const index_1 = require("./index");
+const base_1 = require("../base");
+const config_1 = require("../config");
+const constants_1 = require("../constants");
+const algokit_utils_1 = require("@algorandfoundation/algokit-utils");
 /**
  * SDK for interacting with the Staking Pool Factory contract.
  * Used to create new staking pools and manage pool templates.
  */
-export class StakingPoolFactorySDK extends BaseSDK {
+class StakingPoolFactorySDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: StakingPoolFactoryFactory, ...params }, ENV_VAR_NAMES.STAKING_POOL_FACTORY_APP_ID);
+        super({ factory: StakingPoolFactoryClient_1.StakingPoolFactoryFactory, ...params }, config_1.ENV_VAR_NAMES.STAKING_POOL_FACTORY_APP_ID);
     }
     /**
      * Creates a new staking pool via the factory and returns a StakingPoolSDK instance.
@@ -21,7 +25,7 @@ export class StakingPoolFactorySDK extends BaseSDK {
         const poolCost = await this.cost();
         const payment = this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(poolCost),
+            amount: (0, algokit_utils_1.microAlgo)(poolCost),
             receiver: this.client.appAddress,
         });
         const group = this.client.newGroup();
@@ -43,12 +47,12 @@ export class StakingPoolFactorySDK extends BaseSDK {
         group.opUp({
             ...sendParams,
             args: {},
-            maxFee: microAlgos(1000),
+            maxFee: (0, algokit_utils_1.microAlgos)(1000),
         });
         group.opUp({
             ...sendParams,
             args: {},
-            maxFee: microAlgos(1000),
+            maxFee: (0, algokit_utils_1.microAlgos)(1000),
             note: '1'
         });
         const result = await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
@@ -57,7 +61,7 @@ export class StakingPoolFactorySDK extends BaseSDK {
         if (appId === undefined) {
             throw new Error('Failed to create new staking pool');
         }
-        return new StakingPoolSDK({
+        return new index_1.StakingPoolSDK({
             algorand: this.algorand,
             factoryParams: {
                 appId,
@@ -73,7 +77,7 @@ export class StakingPoolFactorySDK extends BaseSDK {
      * @returns StakingPoolSDK for the specified pool
      */
     get({ appId }) {
-        return new StakingPoolSDK({
+        return new index_1.StakingPoolSDK({
             algorand: this.algorand,
             factoryParams: {
                 appId,
@@ -88,7 +92,7 @@ export class StakingPoolFactorySDK extends BaseSDK {
     async cost(params) {
         const sendParams = this.getSendParams({
             sender: this.readerAccount,
-            signer: emptySigner,
+            signer: constants_1.emptySigner,
             ...params
         });
         const cost = await this.client.newPoolCost({
@@ -124,11 +128,12 @@ export class StakingPoolFactorySDK extends BaseSDK {
         return await this.client.mbr({ args: { winningTickets } });
     }
 }
+exports.StakingPoolFactorySDK = StakingPoolFactorySDK;
 /**
  * Convenience function to create a new staking pool and return the SDK.
  * Creates a factory SDK, creates the pool, and returns the pool SDK.
  */
-export async function newStakingPool({ factoryParams, algorand, readerAccount, sendParams, ...poolParams }) {
+async function newStakingPool({ factoryParams, algorand, readerAccount, sendParams, ...poolParams }) {
     const factory = new StakingPoolFactorySDK({ factoryParams, algorand, readerAccount, sendParams });
     return await factory.new(poolParams);
 }

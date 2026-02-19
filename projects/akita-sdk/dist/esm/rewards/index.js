@@ -1,8 +1,25 @@
-import { microAlgo } from "@algorandfoundation/algokit-utils";
-import { BaseSDK } from "../base";
-import { ENV_VAR_NAMES } from "../config";
-import { RewardsFactory, } from '../generated/RewardsClient';
-export * from "./types";
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RewardsSDK = void 0;
+const algokit_utils_1 = require("@algorandfoundation/algokit-utils");
+const base_1 = require("../base");
+const config_1 = require("../config");
+const RewardsClient_1 = require("../generated/RewardsClient");
+__exportStar(require("./types"), exports);
 /** Base references available per transaction */
 const BASE_REFERENCES = 8;
 /** References added by each opUp call */
@@ -11,9 +28,9 @@ const REFERENCES_PER_OPUP = 8;
  * SDK for interacting with the Rewards contract.
  * Use this to create disbursements, manage allocations, and claim/reclaim rewards.
  */
-export class RewardsSDK extends BaseSDK {
+class RewardsSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: RewardsFactory, ...params }, ENV_VAR_NAMES.REWARDS_APP_ID);
+        super({ factory: RewardsClient_1.RewardsFactory, ...params }, config_1.ENV_VAR_NAMES.REWARDS_APP_ID);
     }
     // ========== OpUp Helpers ==========
     /**
@@ -118,7 +135,7 @@ export class RewardsSDK extends BaseSDK {
         // Asset opt-in costs 100,000 microAlgo
         const payment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(100000),
+            amount: (0, algokit_utils_1.microAlgo)(100000),
             receiver: this.client.appAddress,
         });
         await this.client.send.optIn({
@@ -139,7 +156,7 @@ export class RewardsSDK extends BaseSDK {
         const mbrData = await this.mbr({ title, note });
         const mbrPayment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(mbrData.disbursements),
+            amount: (0, algokit_utils_1.microAlgo)(mbrData.disbursements),
             receiver: this.client.appAddress,
         });
         const { return: disbursementId } = await this.client.send.createDisbursement({
@@ -200,7 +217,7 @@ export class RewardsSDK extends BaseSDK {
         const totalAmount = this.sumAllocations(allocations);
         const payment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(mbrAmount + totalAmount),
+            amount: (0, algokit_utils_1.microAlgo)(mbrAmount + totalAmount),
             receiver: this.client.appAddress,
         });
         // Each allocation needs ~1 box reference, plus 1 for disbursement box
@@ -246,7 +263,7 @@ export class RewardsSDK extends BaseSDK {
         const totalAmount = this.sumAllocations(allocations);
         const mbrPayment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(mbrAmount),
+            amount: (0, algokit_utils_1.microAlgo)(mbrAmount),
             receiver: this.client.appAddress,
         });
         const assetXfer = await this.client.algorand.createTransaction.assetTransfer({
@@ -308,7 +325,7 @@ export class RewardsSDK extends BaseSDK {
         const totalAmount = this.sumAllocations(allocations);
         const mbrPayment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(mbrAmount + totalAmount),
+            amount: (0, algokit_utils_1.microAlgo)(mbrAmount + totalAmount),
             receiver: this.client.appAddress,
         });
         // Each allocation needs ~1 box reference, plus 1 for disbursement box
@@ -361,7 +378,7 @@ export class RewardsSDK extends BaseSDK {
         const totalAmount = this.sumAllocations(allocations);
         const mbrPayment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(mbrAmount),
+            amount: (0, algokit_utils_1.microAlgo)(mbrAmount),
             receiver: this.client.appAddress,
         });
         const assetXfer = await this.client.algorand.createTransaction.assetTransfer({
@@ -425,7 +442,7 @@ export class RewardsSDK extends BaseSDK {
             await this.client.send.claimRewards({
                 ...sendParams,
                 // Extra fee for inner transactions (2 per claim: MBR refund + reward transfer)
-                extraFee: microAlgo(2000 * rewards.length),
+                extraFee: (0, algokit_utils_1.microAlgo)(2000 * rewards.length),
                 args: {
                     rewards: formattedRewards,
                 },
@@ -435,7 +452,7 @@ export class RewardsSDK extends BaseSDK {
             const group = this.client.newGroup();
             group.claimRewards({
                 ...sendParams,
-                extraFee: microAlgo(2000 * rewards.length),
+                extraFee: (0, algokit_utils_1.microAlgo)(2000 * rewards.length),
                 args: {
                     rewards: formattedRewards,
                 },
@@ -460,7 +477,7 @@ export class RewardsSDK extends BaseSDK {
             await this.client.send.reclaimRewards({
                 ...sendParams,
                 // Extra fee for inner transactions (2 per reclaim: asset transfer + MBR refund)
-                extraFee: microAlgo(2000 * reclaims.length),
+                extraFee: (0, algokit_utils_1.microAlgo)(2000 * reclaims.length),
                 args: {
                     id,
                     reclaims: formattedReclaims,
@@ -471,7 +488,7 @@ export class RewardsSDK extends BaseSDK {
             const group = this.client.newGroup();
             group.reclaimRewards({
                 ...sendParams,
-                extraFee: microAlgo(2000 * reclaims.length),
+                extraFee: (0, algokit_utils_1.microAlgo)(2000 * reclaims.length),
                 args: {
                     id,
                     reclaims: formattedReclaims,
@@ -492,4 +509,5 @@ export class RewardsSDK extends BaseSDK {
         });
     }
 }
+exports.RewardsSDK = RewardsSDK;
 //# sourceMappingURL=index.js.map

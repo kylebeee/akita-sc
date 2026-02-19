@@ -1,9 +1,12 @@
-import { BaseSDK } from "../../base";
-import { PayPluginFactory } from "../../generated/PayPluginClient";
-import { getTxns } from "../utils";
-export class PayPluginSDK extends BaseSDK {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PayPluginSDK = void 0;
+const base_1 = require("../../base");
+const PayPluginClient_1 = require("../../generated/PayPluginClient");
+const utils_1 = require("../utils");
+class PayPluginSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: PayPluginFactory, ...params });
+        super({ factory: PayPluginClient_1.PayPluginFactory, ...params });
     }
     pay(args) {
         const methodName = 'pay';
@@ -12,7 +15,7 @@ export class PayPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer, payments } = args;
@@ -39,4 +42,5 @@ export class PayPluginSDK extends BaseSDK {
         });
     }
 }
+exports.PayPluginSDK = PayPluginSDK;
 //# sourceMappingURL=pay.js.map

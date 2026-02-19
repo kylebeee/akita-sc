@@ -1,9 +1,12 @@
-import { BaseSDK } from "../../base";
-import { HyperSwapPluginFactory } from "../../generated/HyperSwapPluginClient";
-import { getTxns } from "../utils";
-export class HyperSwapPluginSDK extends BaseSDK {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.HyperSwapPluginSDK = void 0;
+const base_1 = require("../../base");
+const HyperSwapPluginClient_1 = require("../../generated/HyperSwapPluginClient");
+const utils_1 = require("../utils");
+class HyperSwapPluginSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: HyperSwapPluginFactory, ...params });
+        super({ factory: HyperSwapPluginClient_1.HyperSwapPluginFactory, ...params });
     }
     offer(args) {
         const methodName = 'offer';
@@ -11,7 +14,7 @@ export class HyperSwapPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -38,7 +41,7 @@ export class HyperSwapPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -65,7 +68,7 @@ export class HyperSwapPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -92,7 +95,7 @@ export class HyperSwapPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -119,7 +122,7 @@ export class HyperSwapPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -146,7 +149,7 @@ export class HyperSwapPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -168,4 +171,5 @@ export class HyperSwapPluginSDK extends BaseSDK {
         });
     }
 }
+exports.HyperSwapPluginSDK = HyperSwapPluginSDK;
 //# sourceMappingURL=hyper-swap.js.map

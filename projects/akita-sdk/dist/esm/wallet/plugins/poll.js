@@ -1,9 +1,12 @@
-import { BaseSDK } from "../../base";
-import { PollPluginContractFactory } from "../../generated/PollPluginContractClient";
-import { getTxns } from "../utils";
-export class PollPluginSDK extends BaseSDK {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PollPluginSDK = void 0;
+const base_1 = require("../../base");
+const PollPluginContractClient_1 = require("../../generated/PollPluginContractClient");
+const utils_1 = require("../utils");
+class PollPluginSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: PollPluginContractFactory, ...params });
+        super({ factory: PollPluginContractClient_1.PollPluginContractFactory, ...params });
     }
     new(args) {
         const methodName = 'new';
@@ -11,7 +14,7 @@ export class PollPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -38,7 +41,7 @@ export class PollPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -65,7 +68,7 @@ export class PollPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -87,4 +90,5 @@ export class PollPluginSDK extends BaseSDK {
         });
     }
 }
+exports.PollPluginSDK = PollPluginSDK;
 //# sourceMappingURL=poll.js.map

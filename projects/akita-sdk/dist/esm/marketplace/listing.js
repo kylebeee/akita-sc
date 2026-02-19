@@ -1,13 +1,16 @@
-import { BaseSDK } from "../base";
-import { ListingFactory, } from '../generated/ListingClient';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ListingSDK = void 0;
+const base_1 = require("../base");
+const ListingClient_1 = require("../generated/ListingClient");
 /**
  * SDK for interacting with an individual Listing contract.
  * Use this to manage listing state and change prices.
  * Note: Purchases and delisting should be done through the MarketplaceSDK.
  */
-export class ListingSDK extends BaseSDK {
+class ListingSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: ListingFactory, ...params });
+        super({ factory: ListingClient_1.ListingFactory, ...params });
     }
     // ========== Read Methods ==========
     /**
@@ -60,4 +63,5 @@ export class ListingSDK extends BaseSDK {
         });
     }
 }
+exports.ListingSDK = ListingSDK;
 //# sourceMappingURL=listing.js.map

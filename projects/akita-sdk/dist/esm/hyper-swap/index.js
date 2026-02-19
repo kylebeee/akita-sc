@@ -1,15 +1,32 @@
-import { microAlgo } from "@algorandfoundation/algokit-utils";
-import { BaseSDK } from "../base";
-import { ENV_VAR_NAMES } from "../config";
-import { HyperSwapFactory, } from '../generated/HyperSwapClient';
-export * from "./types";
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.HyperSwapSDK = void 0;
+const algokit_utils_1 = require("@algorandfoundation/algokit-utils");
+const base_1 = require("../base");
+const config_1 = require("../config");
+const HyperSwapClient_1 = require("../generated/HyperSwapClient");
+__exportStar(require("./types"), exports);
 /**
  * SDK for interacting with the HyperSwap contract.
  * HyperSwap enables atomic multi-party trades using merkle tree proofs.
  */
-export class HyperSwapSDK extends BaseSDK {
+class HyperSwapSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: HyperSwapFactory, ...params }, ENV_VAR_NAMES.HYPER_SWAP_APP_ID);
+        super({ factory: HyperSwapClient_1.HyperSwapFactory, ...params }, config_1.ENV_VAR_NAMES.HYPER_SWAP_APP_ID);
     }
     // ========== Read Methods ==========
     /**
@@ -54,7 +71,7 @@ export class HyperSwapSDK extends BaseSDK {
         const sendParams = this.getRequiredSendParams({ sender, signer });
         const payment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(100000), // Asset opt-in MBR
+            amount: (0, algokit_utils_1.microAlgo)(100000), // Asset opt-in MBR
             receiver: this.client.appAddress,
         });
         await this.client.send.optIn({
@@ -75,7 +92,7 @@ export class HyperSwapSDK extends BaseSDK {
         const totalMbr = mbrData.offers + mbrData.participants + (metaMerklesCost * 2n);
         const payment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(totalMbr),
+            amount: (0, algokit_utils_1.microAlgo)(totalMbr),
             receiver: this.client.appAddress,
         });
         await this.client.send.offer({
@@ -98,7 +115,7 @@ export class HyperSwapSDK extends BaseSDK {
         const mbrData = await this.mbr();
         const mbrPayment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(mbrData.participants),
+            amount: (0, algokit_utils_1.microAlgo)(mbrData.participants),
             receiver: this.client.appAddress,
         });
         await this.client.send.accept({
@@ -122,7 +139,7 @@ export class HyperSwapSDK extends BaseSDK {
             // MBR includes potential arc59 costs if receiver not opted in
             const mbrPayment = await this.client.algorand.createTransaction.payment({
                 ...sendParams,
-                amount: microAlgo(mbrData.hashes + 200000n), // Extra for potential arc59
+                amount: (0, algokit_utils_1.microAlgo)(mbrData.hashes + 200000n), // Extra for potential arc59
                 receiver: this.client.appAddress,
             });
             const assetXfer = await this.client.algorand.createTransaction.assetTransfer({
@@ -147,7 +164,7 @@ export class HyperSwapSDK extends BaseSDK {
         else {
             const payment = await this.client.algorand.createTransaction.payment({
                 ...sendParams,
-                amount: microAlgo(BigInt(amount) + mbrData.hashes),
+                amount: (0, algokit_utils_1.microAlgo)(BigInt(amount) + mbrData.hashes),
                 receiver: this.client.appAddress,
             });
             await this.client.send.escrow({
@@ -209,4 +226,5 @@ export class HyperSwapSDK extends BaseSDK {
         });
     }
 }
+exports.HyperSwapSDK = HyperSwapSDK;
 //# sourceMappingURL=index.js.map

@@ -1,15 +1,19 @@
-import { microAlgo } from "@algorandfoundation/algokit-utils";
-import { BaseSDK } from "../base";
-import { ENV_VAR_NAMES } from "../config";
-import { RaffleFactoryFactory, } from '../generated/RaffleFactoryClient';
-import { RaffleSDK } from "./index";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RaffleFactorySDK = void 0;
+exports.newRaffle = newRaffle;
+const algokit_utils_1 = require("@algorandfoundation/algokit-utils");
+const base_1 = require("../base");
+const config_1 = require("../config");
+const RaffleFactoryClient_1 = require("../generated/RaffleFactoryClient");
+const index_1 = require("./index");
 /**
  * SDK for interacting with the Raffle Factory contract.
  * Used to create new raffles and manage raffle lifecycle.
  */
-export class RaffleFactorySDK extends BaseSDK {
+class RaffleFactorySDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: RaffleFactoryFactory, ...params }, ENV_VAR_NAMES.RAFFLE_FACTORY_APP_ID);
+        super({ factory: RaffleFactoryClient_1.RaffleFactoryFactory, ...params }, config_1.ENV_VAR_NAMES.RAFFLE_FACTORY_APP_ID);
     }
     /**
      * Creates a new raffle with an ASA prize and returns a RaffleSDK instance.
@@ -22,7 +26,7 @@ export class RaffleFactorySDK extends BaseSDK {
         const cost = this.cost({ isPrizeBox: false, isAlgoTicket, weightsListCount });
         const payment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(cost),
+            amount: (0, algokit_utils_1.microAlgo)(cost),
             receiver: this.client.appAddress,
         });
         const assetXfer = await this.client.algorand.createTransaction.assetTransfer({
@@ -86,7 +90,7 @@ export class RaffleFactorySDK extends BaseSDK {
         if (appId === undefined) {
             throw new Error('Failed to create new raffle');
         }
-        return new RaffleSDK({
+        return new index_1.RaffleSDK({
             algorand: this.algorand,
             factoryParams: {
                 appId,
@@ -106,7 +110,7 @@ export class RaffleFactorySDK extends BaseSDK {
         const cost = this.cost({ isPrizeBox: true, isAlgoTicket, weightsListCount });
         const payment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(cost),
+            amount: (0, algokit_utils_1.microAlgo)(cost),
             receiver: this.client.appAddress,
         });
         const { return: appId } = await this.client.send.newPrizeBoxRaffle({
@@ -127,7 +131,7 @@ export class RaffleFactorySDK extends BaseSDK {
         if (appId === undefined) {
             throw new Error('Failed to create new prize box raffle');
         }
-        return new RaffleSDK({
+        return new index_1.RaffleSDK({
             algorand: this.algorand,
             factoryParams: {
                 appId,
@@ -142,7 +146,7 @@ export class RaffleFactorySDK extends BaseSDK {
      * @returns RaffleSDK for the specified raffle
      */
     get({ appId }) {
-        return new RaffleSDK({
+        return new index_1.RaffleSDK({
             algorand: this.algorand,
             factoryParams: {
                 appId,
@@ -208,11 +212,12 @@ export class RaffleFactorySDK extends BaseSDK {
         });
     }
 }
+exports.RaffleFactorySDK = RaffleFactorySDK;
 /**
  * Convenience function to create a new raffle and return the SDK.
  * Creates a factory SDK, creates the raffle, and returns the raffle SDK.
  */
-export async function newRaffle({ factoryParams, algorand, readerAccount, sendParams, ...raffleParams }) {
+async function newRaffle({ factoryParams, algorand, readerAccount, sendParams, ...raffleParams }) {
     const factory = new RaffleFactorySDK({ factoryParams, algorand, readerAccount, sendParams });
     return await factory.newRaffle(raffleParams);
 }

@@ -1,23 +1,29 @@
-import algosdk from "algosdk";
-import { extractAccountDeltas } from "./deltas";
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.prepareGroupWithCost = prepareGroupWithCost;
+const algosdk_1 = __importDefault(require("algosdk"));
+const deltas_1 = require("./deltas");
 const MAX_APP_CALL_FOREIGN_REFERENCES = 8;
 const MAX_APP_CALL_ACCOUNT_REFERENCES = 4;
 /**
  * Get execution info from a single simulate call.
  */
 async function getGroupExecutionInfo(atc, algod, sendParams, additionalAtcContext) {
-    const simulateRequest = new algosdk.modelsv2.SimulateRequest({
+    const simulateRequest = new algosdk_1.default.modelsv2.SimulateRequest({
         txnGroups: [],
         allowUnnamedResources: true,
         allowEmptySignatures: true,
         fixSigners: true,
     });
-    const nullSigner = algosdk.makeEmptyTransactionSigner();
+    const nullSigner = algosdk_1.default.makeEmptyTransactionSigner();
     const emptySignerAtc = atc.clone();
     const appCallIndexesWithoutMaxFees = [];
     emptySignerAtc['transactions'].forEach((t, i) => {
         t.signer = nullSigner;
-        if (sendParams.coverAppCallInnerTransactionFees && t.txn.type === algosdk.TransactionType.appl) {
+        if (sendParams.coverAppCallInnerTransactionFees && t.txn.type === algosdk_1.default.TransactionType.appl) {
             if (!additionalAtcContext?.suggestedParams) {
                 throw Error(`Please provide additionalAtcContext.suggestedParams when coverAppCallInnerTransactionFees is enabled`);
             }
@@ -55,7 +61,7 @@ async function getGroupExecutionInfo(atc, algod, sendParams, additionalAtcContex
                 const parentPerByteFee = perByteTxnFee * BigInt(originalTxn.toByte().length + 75);
                 const parentMinFee = parentPerByteFee < minTxnFee ? minTxnFee : parentPerByteFee;
                 const parentFeeDelta = parentMinFee - originalTxn.fee;
-                if (originalTxn.type === algosdk.TransactionType.appl) {
+                if (originalTxn.type === algosdk_1.default.TransactionType.appl) {
                     const calculateInnerFeeDelta = (itxns, acc = 0n) => {
                         // Surplus inner transaction fees do not pool up to the parent transaction.
                         // Additionally surplus inner transaction fees only pool from sibling transactions that are sent prior to a given inner transaction, hence why we iterate in reverse order.
@@ -83,7 +89,7 @@ async function getGroupExecutionInfo(atc, algod, sendParams, additionalAtcContex
  * Combined prepare + cost calculation using a single simulate.
  * This replaces the need for prepareGroupForSending + SimulateBuilder separately.
  */
-export async function prepareGroupWithCost(atc, algod, sendParams = {}, additionalAtcContext = {}, simulateAccount, simulateOptions) {
+async function prepareGroupWithCost(atc, algod, sendParams = {}, additionalAtcContext = {}, simulateAccount, simulateOptions) {
     const executionInfo = await getGroupExecutionInfo(atc, algod, sendParams, additionalAtcContext);
     const group = atc.buildGroup();
     // Calculate additional fees needed for inner transactions
@@ -94,7 +100,7 @@ export async function prepareGroupWithCost(atc, algod, sendParams = {}, addition
             const txnInGroup = group[groupIndex].txn;
             const maxFee = additionalAtcContext?.maxFees?.get(i)?.microAlgo;
             const immutableFee = maxFee !== undefined && maxFee === txnInGroup.fee;
-            const priorityMultiplier = txn.requiredFeeDelta > 0n && (immutableFee || txnInGroup.type !== algosdk.TransactionType.appl) ? 1000n : 1n;
+            const priorityMultiplier = txn.requiredFeeDelta > 0n && (immutableFee || txnInGroup.type !== algosdk_1.default.TransactionType.appl) ? 1000n : 1n;
             return {
                 ...txn,
                 groupIndex,
@@ -130,7 +136,7 @@ export async function prepareGroupWithCost(atc, algod, sendParams = {}, addition
         : [0n, new Map()];
     executionInfo.txns.forEach(({ unnamedResourcesAccessed: r }, i) => {
         // Populate Transaction App Call Resources
-        if (sendParams.populateAppCallResources && r !== undefined && group[i].txn.type === algosdk.TransactionType.appl) {
+        if (sendParams.populateAppCallResources && r !== undefined && group[i].txn.type === algosdk_1.default.TransactionType.appl) {
             if (r.boxes || r.extraBoxRefs)
                 throw Error('Unexpected boxes at the transaction level');
             if (r.appLocals)
@@ -158,7 +164,7 @@ export async function prepareGroupWithCost(atc, algod, sendParams = {}, addition
         if (sendParams.coverAppCallInnerTransactionFees) {
             const additionalTransactionFee = additionalTransactionFees.get(i);
             if (additionalTransactionFee !== undefined) {
-                if (group[i].txn.type !== algosdk.TransactionType.appl) {
+                if (group[i].txn.type !== algosdk_1.default.TransactionType.appl) {
                     throw Error(`An additional fee of ${additionalTransactionFee} µALGO is required for non app call transaction ${i}`);
                 }
                 const transactionFee = group[i].txn.fee + additionalTransactionFee;
@@ -174,7 +180,7 @@ export async function prepareGroupWithCost(atc, algod, sendParams = {}, addition
     if (sendParams.populateAppCallResources) {
         const populateGroupResource = (txns, reference, type) => {
             const isApplBelowLimit = (t) => {
-                if (t.txn.type !== algosdk.TransactionType.appl)
+                if (t.txn.type !== algosdk_1.default.TransactionType.appl)
                     return false;
                 const accounts = t.txn.applicationCall?.accounts?.length ?? 0;
                 const assets = t.txn.applicationCall?.foreignAssets?.length ?? 0;
@@ -192,9 +198,9 @@ export async function prepareGroupWithCost(atc, algod, sendParams = {}, addition
                     // account is in the foreign accounts array
                     t.txn.applicationCall?.accounts?.map((a) => a.toString()).includes(account.toString()) ||
                         // account is available as an app account
-                        t.txn.applicationCall?.foreignApps?.map((a) => algosdk.getApplicationAddress(a).toString()).includes(account.toString()) ||
+                        t.txn.applicationCall?.foreignApps?.map((a) => algosdk_1.default.getApplicationAddress(a).toString()).includes(account.toString()) ||
                         // account is available since it's in one of the fields
-                        Object.values(t.txn).some((f) => algosdk.stringifyJSON(f, (_, v) => (v instanceof algosdk.Address ? v.toString() : v))?.includes(account.toString())));
+                        Object.values(t.txn).some((f) => algosdk_1.default.stringifyJSON(f, (_, v) => (v instanceof algosdk_1.default.Address ? v.toString() : v))?.includes(account.toString())));
                 });
                 if (txnIndex > -1) {
                     if (type === 'assetHolding') {
@@ -257,7 +263,7 @@ export async function prepareGroupWithCost(atc, algod, sendParams = {}, addition
             }
             // Find the txn index to put the reference(s)
             const txnIndex = txns.findIndex((t) => {
-                if (t.txn.type !== algosdk.TransactionType.appl)
+                if (t.txn.type !== algosdk_1.default.TransactionType.appl)
                     return false;
                 const accounts = t.txn.applicationCall?.accounts?.length ?? 0;
                 if (type === 'account')
@@ -365,7 +371,7 @@ export async function prepareGroupWithCost(atc, algod, sendParams = {}, addition
             });
             if (g.extraBoxRefs) {
                 for (let i = 0; i < g.extraBoxRefs; i += 1) {
-                    const ref = new algosdk.modelsv2.BoxReference({ app: 0, name: new Uint8Array(0) });
+                    const ref = new algosdk_1.default.modelsv2.BoxReference({ app: 0, name: new Uint8Array(0) });
                     populateGroupResource(group, ref, 'box');
                 }
             }
@@ -374,14 +380,14 @@ export async function prepareGroupWithCost(atc, algod, sendParams = {}, addition
     // Calculate expected cost from simulation response (includes inner transactions)
     const expectedCost = calculateExpectedCostFromSimulation(executionInfo.simulateResponse, group, simulateOptions);
     if (simulateAccount) {
-        expectedCost.accountDeltas = extractAccountDeltas(executionInfo.simulateResponse, simulateAccount);
+        expectedCost.accountDeltas = (0, deltas_1.extractAccountDeltas)(executionInfo.simulateResponse, simulateAccount);
     }
     // Build new ATC with modified transactions
-    const newAtc = new algosdk.AtomicTransactionComposer();
+    const newAtc = new algosdk_1.default.AtomicTransactionComposer();
     group.forEach((t) => {
         t.txn.group = undefined;
         // Clean up any malformed box references that might have undefined appIndex
-        if (t.txn.type === algosdk.TransactionType.appl) {
+        if (t.txn.type === algosdk_1.default.TransactionType.appl) {
             const tx = t.txn;
             if (tx.applicationCall?.boxes) {
                 tx.applicationCall.boxes = tx.applicationCall.boxes

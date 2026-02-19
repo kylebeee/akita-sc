@@ -1,24 +1,28 @@
-import { AbstractedAccountFactoryFactory } from '../generated/AbstractedAccountFactoryClient';
-import { WalletSDK } from './index';
-import { BaseSDK } from '../base';
-import { ENV_VAR_NAMES } from '../config';
-import { emptySigner } from '../constants';
-import { ALGORAND_ZERO_ADDRESS_STRING, Address } from 'algosdk';
-import { microAlgo } from '@algorandfoundation/algokit-utils';
-export class WalletFactorySDK extends BaseSDK {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WalletFactorySDK = void 0;
+exports.newWallet = newWallet;
+const AbstractedAccountFactoryClient_1 = require("../generated/AbstractedAccountFactoryClient");
+const index_1 = require("./index");
+const base_1 = require("../base");
+const config_1 = require("../config");
+const constants_1 = require("../constants");
+const algosdk_1 = require("algosdk");
+const algokit_utils_1 = require("@algorandfoundation/algokit-utils");
+class WalletFactorySDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: AbstractedAccountFactoryFactory, ...params }, ENV_VAR_NAMES.WALLET_FACTORY_APP_ID);
+        super({ factory: AbstractedAccountFactoryClient_1.AbstractedAccountFactoryFactory, ...params }, config_1.ENV_VAR_NAMES.WALLET_FACTORY_APP_ID);
     }
-    async new({ sender, signer, controlledAddress = ALGORAND_ZERO_ADDRESS_STRING, admin = '', nickname, referrer = ALGORAND_ZERO_ADDRESS_STRING }) {
+    async new({ sender, signer, controlledAddress = algosdk_1.ALGORAND_ZERO_ADDRESS_STRING, admin = '', nickname, referrer = algosdk_1.ALGORAND_ZERO_ADDRESS_STRING }) {
         const sendParams = this.getRequiredSendParams({ sender, signer });
         const cost = await this.cost();
         const payment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
             receiver: this.client.appAddress,
-            amount: microAlgo(cost),
+            amount: (0, algokit_utils_1.microAlgo)(cost),
         });
         if (!admin) {
-            admin = sendParams.sender instanceof Address
+            admin = sendParams.sender instanceof algosdk_1.Address
                 ? sendParams.sender.toString()
                 : sendParams.sender;
         }
@@ -41,7 +45,7 @@ export class WalletFactorySDK extends BaseSDK {
         if (!appId) {
             throw new Error('Failed to create new wallet');
         }
-        return new WalletSDK({
+        return new index_1.WalletSDK({
             algorand: this.algorand,
             factoryParams: {
                 appId,
@@ -51,7 +55,7 @@ export class WalletFactorySDK extends BaseSDK {
         });
     }
     async get({ appId }) {
-        return new WalletSDK({
+        return new index_1.WalletSDK({
             algorand: this.algorand,
             factoryParams: {
                 appId,
@@ -63,7 +67,7 @@ export class WalletFactorySDK extends BaseSDK {
     async cost(params) {
         const sendParams = this.getSendParams({
             sender: this.readerAccount,
-            signer: emptySigner,
+            signer: constants_1.emptySigner,
             ...params
         });
         const { return: cost } = await this.client.send.cost({
@@ -76,7 +80,8 @@ export class WalletFactorySDK extends BaseSDK {
         return cost;
     }
 }
-export async function newWallet({ factoryParams, algorand, readerAccount, sendParams, sender, signer, controlledAddress = ALGORAND_ZERO_ADDRESS_STRING, admin = '', nickname, referrer = ALGORAND_ZERO_ADDRESS_STRING }) {
+exports.WalletFactorySDK = WalletFactorySDK;
+async function newWallet({ factoryParams, algorand, readerAccount, sendParams, sender, signer, controlledAddress = algosdk_1.ALGORAND_ZERO_ADDRESS_STRING, admin = '', nickname, referrer = algosdk_1.ALGORAND_ZERO_ADDRESS_STRING }) {
     const factory = new WalletFactorySDK({ factoryParams, algorand, readerAccount, sendParams });
     const sdk = await factory.new({ sender, signer, controlledAddress, admin, nickname, referrer });
     await sdk.register({ escrow: '' });

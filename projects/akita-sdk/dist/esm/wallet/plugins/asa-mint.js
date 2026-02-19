@@ -1,12 +1,18 @@
-import { BaseSDK } from "../../base";
-import { AsaMintPluginFactory } from "../../generated/AsaMintPluginClient";
-import algosdk from "algosdk";
-import { microAlgo } from "@algorandfoundation/algokit-utils";
-import { getTxns } from "../utils";
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AsaMintPluginSDK = void 0;
+const base_1 = require("../../base");
+const AsaMintPluginClient_1 = require("../../generated/AsaMintPluginClient");
+const algosdk_1 = __importDefault(require("algosdk"));
+const algokit_utils_1 = require("@algorandfoundation/algokit-utils");
+const utils_1 = require("../utils");
 const assetCreateCost = 100000;
-export class AsaMintPluginSDK extends BaseSDK {
+class AsaMintPluginSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: AsaMintPluginFactory, ...params });
+        super({ factory: AsaMintPluginClient_1.AsaMintPluginFactory, ...params });
     }
     mint(args) {
         const methodName = 'mint';
@@ -15,7 +21,7 @@ export class AsaMintPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer, assets } = args;
@@ -27,8 +33,8 @@ export class AsaMintPluginSDK extends BaseSDK {
                 const rekeyBack = args.rekeyBack ?? true;
                 const mbrPayment = this.client.algorand.createTransaction.payment({
                     ...sendParams,
-                    amount: microAlgo(assetCreateCost * assets.length),
-                    receiver: spendingAddress ? spendingAddress : algosdk.getApplicationAddress(wallet),
+                    amount: (0, algokit_utils_1.microAlgo)(assetCreateCost * assets.length),
+                    receiver: spendingAddress ? spendingAddress : algosdk_1.default.getApplicationAddress(wallet),
                 });
                 const assetsTuple = assets.map(asset => [
                     asset.assetName,
@@ -54,4 +60,5 @@ export class AsaMintPluginSDK extends BaseSDK {
         });
     }
 }
+exports.AsaMintPluginSDK = AsaMintPluginSDK;
 //# sourceMappingURL=asa-mint.js.map

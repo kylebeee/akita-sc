@@ -1,9 +1,12 @@
-import { BaseSDK } from "../../base";
-import { AkitaDaoPluginFactory } from "../../generated/AkitaDAOPluginClient";
-import { getTxns } from "../utils";
-export class DAOPluginSDK extends BaseSDK {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DAOPluginSDK = void 0;
+const base_1 = require("../../base");
+const AkitaDAOPluginClient_1 = require("../../generated/AkitaDAOPluginClient");
+const utils_1 = require("../utils");
+class DAOPluginSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: AkitaDaoPluginFactory, ...params });
+        super({ factory: AkitaDAOPluginClient_1.AkitaDaoPluginFactory, ...params });
     }
     setup(args) {
         const methodName = 'setup';
@@ -11,7 +14,7 @@ export class DAOPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -38,7 +41,7 @@ export class DAOPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -65,7 +68,7 @@ export class DAOPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -92,7 +95,7 @@ export class DAOPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -119,7 +122,7 @@ export class DAOPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -141,4 +144,5 @@ export class DAOPluginSDK extends BaseSDK {
         });
     }
 }
+exports.DAOPluginSDK = DAOPluginSDK;
 //# sourceMappingURL=dao.js.map

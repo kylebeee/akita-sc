@@ -1,9 +1,12 @@
-import { BaseSDK } from "../../base";
-import { NfdPluginFactory } from "../../generated/NFDPluginClient";
-import { getTxns } from "../utils";
-export class NFDPluginSDK extends BaseSDK {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.NFDPluginSDK = void 0;
+const base_1 = require("../../base");
+const NFDPluginClient_1 = require("../../generated/NFDPluginClient");
+const utils_1 = require("../utils");
+class NFDPluginSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: NfdPluginFactory, ...params });
+        super({ factory: NFDPluginClient_1.NfdPluginFactory, ...params });
     }
     deleteFields(args) {
         const methodName = 'deleteFields';
@@ -11,7 +14,7 @@ export class NFDPluginSDK extends BaseSDK {
             return (_spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -38,7 +41,7 @@ export class NFDPluginSDK extends BaseSDK {
             return (_spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -65,7 +68,7 @@ export class NFDPluginSDK extends BaseSDK {
             return (_spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -92,7 +95,7 @@ export class NFDPluginSDK extends BaseSDK {
             return (_spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -119,7 +122,7 @@ export class NFDPluginSDK extends BaseSDK {
             return (_spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -146,7 +149,7 @@ export class NFDPluginSDK extends BaseSDK {
             return (_spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -173,7 +176,7 @@ export class NFDPluginSDK extends BaseSDK {
             return (_spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -200,7 +203,7 @@ export class NFDPluginSDK extends BaseSDK {
             return (_spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -227,7 +230,7 @@ export class NFDPluginSDK extends BaseSDK {
             return (_spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -254,7 +257,7 @@ export class NFDPluginSDK extends BaseSDK {
             return (_spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -281,7 +284,7 @@ export class NFDPluginSDK extends BaseSDK {
             return (_spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -308,7 +311,7 @@ export class NFDPluginSDK extends BaseSDK {
             return (_spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -335,7 +338,7 @@ export class NFDPluginSDK extends BaseSDK {
             return (_spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -362,7 +365,7 @@ export class NFDPluginSDK extends BaseSDK {
             return (_spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -384,4 +387,5 @@ export class NFDPluginSDK extends BaseSDK {
         });
     }
 }
+exports.NFDPluginSDK = NFDPluginSDK;
 //# sourceMappingURL=nfd.js.map

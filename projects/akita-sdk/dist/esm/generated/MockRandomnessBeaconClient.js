@@ -1,7 +1,10 @@
-import { getArc56ReturnValue } from '@algorandfoundation/algokit-utils/types/app-arc56';
-import { AppClient as _AppClient, } from '@algorandfoundation/algokit-utils/types/app-client';
-import { AppFactory as _AppFactory } from '@algorandfoundation/algokit-utils/types/app-factory';
-export const APP_SPEC = { "name": "MockRandomnessBeacon", "structs": {}, "methods": [{ "name": "get", "args": [{ "type": "uint64", "name": "round" }, { "type": "byte[]", "name": "userData" }], "returns": { "type": "byte[]" }, "actions": { "create": [], "call": ["NoOp"] }, "readonly": false, "desc": "Returns mock random bytes for testing.\nGenerates deterministic bytes based on round number for reproducible tests.", "events": [], "recommendations": {} }], "arcs": [22, 28], "desc": "Mock VRF beacon for testing purposes.\nReturns a predictable seed value based on the round number.", "networks": {}, "state": { "schema": { "global": { "ints": 0, "bytes": 0 }, "local": { "ints": 0, "bytes": 0 } }, "keys": { "global": {}, "local": {}, "box": {} }, "maps": { "global": {}, "local": {}, "box": {} } }, "bareActions": { "create": ["NoOp"], "call": [] }, "sourceInfo": { "approval": { "sourceInfo": [{ "pc": [37], "errorMessage": "OnCompletion must be NoOp && can only call when creating" }, { "pc": [26], "errorMessage": "OnCompletion must be NoOp && can only call when not creating" }, { "pc": [59], "errorMessage": "invalid number of bytes for (len+uint8[])" }, { "pc": [45], "errorMessage": "invalid number of bytes for uint64" }], "pcOffsetMethod": "none" }, "clear": { "sourceInfo": [], "pcOffsetMethod": "none" } }, "source": { "approval": "I3ByYWdtYSB2ZXJzaW9uIDExCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYXJjNC9pbmRleC5kLnRzOjpDb250cmFjdC5hcHByb3ZhbFByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICAvLyBzbWFydF9jb250cmFjdHMvdXRpbHMvdHlwZXMvbW9jay1yYW5kb21uZXNzLWJlYWNvbi5hbGdvLnRzOjcKICAgIC8vIGV4cG9ydCBjbGFzcyBNb2NrUmFuZG9tbmVzc0JlYWNvbiBleHRlbmRzIENvbnRyYWN0IHsKICAgIHR4biBOdW1BcHBBcmdzCiAgICBieiBtYWluX19fYWxnb3RzX18uZGVmYXVsdENyZWF0ZUA1CiAgICBwdXNoYnl0ZXMgMHgxODkzOTJjNSAvLyBtZXRob2QgImdldCh1aW50NjQsYnl0ZVtdKWJ5dGVbXSIKICAgIHR4bmEgQXBwbGljYXRpb25BcmdzIDAKICAgIG1hdGNoIG1haW5fZ2V0X3JvdXRlQDMKICAgIGVycgoKbWFpbl9nZXRfcm91dGVAMzoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy91dGlscy90eXBlcy9tb2NrLXJhbmRvbW5lc3MtYmVhY29uLmFsZ28udHM6MTIKICAgIC8vIGdldChyb3VuZDogdWludDY0LCB1c2VyRGF0YTogYnl0ZXMpOiBieXRlcyB7CiAgICB0eG4gT25Db21wbGV0aW9uCiAgICAhCiAgICB0eG4gQXBwbGljYXRpb25JRAogICAgJiYKICAgIGFzc2VydCAvLyBPbkNvbXBsZXRpb24gbXVzdCBiZSBOb09wICYmIGNhbiBvbmx5IGNhbGwgd2hlbiBub3QgY3JlYXRpbmcKICAgIGIgZ2V0CgptYWluX19fYWxnb3RzX18uZGVmYXVsdENyZWF0ZUA1OgogICAgLy8gc21hcnRfY29udHJhY3RzL3V0aWxzL3R5cGVzL21vY2stcmFuZG9tbmVzcy1iZWFjb24uYWxnby50czo3CiAgICAvLyBleHBvcnQgY2xhc3MgTW9ja1JhbmRvbW5lc3NCZWFjb24gZXh0ZW5kcyBDb250cmFjdCB7CiAgICB0eG4gT25Db21wbGV0aW9uCiAgICAhCiAgICB0eG4gQXBwbGljYXRpb25JRAogICAgIQogICAgJiYKICAgIHJldHVybiAvLyBvbiBlcnJvcjogT25Db21wbGV0aW9uIG11c3QgYmUgTm9PcCAmJiBjYW4gb25seSBjYWxsIHdoZW4gY3JlYXRpbmcKCgovLyBzbWFydF9jb250cmFjdHMvdXRpbHMvdHlwZXMvbW9jay1yYW5kb21uZXNzLWJlYWNvbi5hbGdvLnRzOjpNb2NrUmFuZG9tbmVzc0JlYWNvbi5nZXRbcm91dGluZ10oKSAtPiB2b2lkOgpnZXQ6CiAgICAvLyBzbWFydF9jb250cmFjdHMvdXRpbHMvdHlwZXMvbW9jay1yYW5kb21uZXNzLWJlYWNvbi5hbGdvLnRzOjEyCiAgICAvLyBnZXQocm91bmQ6IHVpbnQ2NCwgdXNlckRhdGE6IGJ5dGVzKTogYnl0ZXMgewogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQogICAgbGVuCiAgICBwdXNoaW50IDggLy8gOAogICAgPT0KICAgIGFzc2VydCAvLyBpbnZhbGlkIG51bWJlciBvZiBieXRlcyBmb3IgdWludDY0CiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAyCiAgICBkdXAKICAgIHB1c2hpbnQgMCAvLyAwCiAgICBleHRyYWN0X3VpbnQxNgogICAgcHVzaGludCAyIC8vIDIKICAgICsKICAgIHN3YXAKICAgIGxlbgogICAgPT0KICAgIGFzc2VydCAvLyBpbnZhbGlkIG51bWJlciBvZiBieXRlcyBmb3IgKGxlbit1aW50OFtdKQogICAgcHVzaGJ5dGVzIDB4MTUxZjdjNzUwMDIwMDEwMjAzMDQwNTA2MDcwODA5MGEwYjBjMGQwZTBmMTAxMTEyMTMxNDE1MTYxNzE4MTkxYTFiMWMxZDFlMWYyMAogICAgbG9nCiAgICBwdXNoaW50IDEgLy8gMQogICAgcmV0dXJuCg==", "clear": "I3ByYWdtYSB2ZXJzaW9uIDExCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYmFzZS1jb250cmFjdC5kLnRzOjpCYXNlQ29udHJhY3QuY2xlYXJTdGF0ZVByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICBwdXNoaW50IDEgLy8gMQogICAgcmV0dXJuCg==" }, "byteCode": { "approval": "CzEbQQAYgAQYk5LFNhoAjgEAAQAxGRQxGBBEQgAIMRkUMRgUEEM2GgEVgQgSRDYaAkmBAFmBAghMFRJEgCYVH3x1ACABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fILCBAUM=", "clear": "C4EBQw==" }, "events": [], "templateVariables": {} };
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MockRandomnessBeaconClient = exports.MockRandomnessBeaconFactory = exports.MockRandomnessBeaconParamsFactory = exports.APP_SPEC = void 0;
+const app_arc56_1 = require("@algorandfoundation/algokit-utils/types/app-arc56");
+const app_client_1 = require("@algorandfoundation/algokit-utils/types/app-client");
+const app_factory_1 = require("@algorandfoundation/algokit-utils/types/app-factory");
+exports.APP_SPEC = { "name": "MockRandomnessBeacon", "structs": {}, "methods": [{ "name": "get", "args": [{ "type": "uint64", "name": "round" }, { "type": "byte[]", "name": "userData" }], "returns": { "type": "byte[]" }, "actions": { "create": [], "call": ["NoOp"] }, "readonly": false, "desc": "Returns mock random bytes for testing.\nGenerates deterministic bytes based on round number for reproducible tests.", "events": [], "recommendations": {} }], "arcs": [22, 28], "desc": "Mock VRF beacon for testing purposes.\nReturns a predictable seed value based on the round number.", "networks": {}, "state": { "schema": { "global": { "ints": 0, "bytes": 0 }, "local": { "ints": 0, "bytes": 0 } }, "keys": { "global": {}, "local": {}, "box": {} }, "maps": { "global": {}, "local": {}, "box": {} } }, "bareActions": { "create": ["NoOp"], "call": [] }, "sourceInfo": { "approval": { "sourceInfo": [{ "pc": [37], "errorMessage": "OnCompletion must be NoOp && can only call when creating" }, { "pc": [26], "errorMessage": "OnCompletion must be NoOp && can only call when not creating" }, { "pc": [59], "errorMessage": "invalid number of bytes for (len+uint8[])" }, { "pc": [45], "errorMessage": "invalid number of bytes for uint64" }], "pcOffsetMethod": "none" }, "clear": { "sourceInfo": [], "pcOffsetMethod": "none" } }, "source": { "approval": "I3ByYWdtYSB2ZXJzaW9uIDExCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYXJjNC9pbmRleC5kLnRzOjpDb250cmFjdC5hcHByb3ZhbFByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICAvLyBzbWFydF9jb250cmFjdHMvdXRpbHMvdHlwZXMvbW9jay1yYW5kb21uZXNzLWJlYWNvbi5hbGdvLnRzOjcKICAgIC8vIGV4cG9ydCBjbGFzcyBNb2NrUmFuZG9tbmVzc0JlYWNvbiBleHRlbmRzIENvbnRyYWN0IHsKICAgIHR4biBOdW1BcHBBcmdzCiAgICBieiBtYWluX19fYWxnb3RzX18uZGVmYXVsdENyZWF0ZUA1CiAgICBwdXNoYnl0ZXMgMHgxODkzOTJjNSAvLyBtZXRob2QgImdldCh1aW50NjQsYnl0ZVtdKWJ5dGVbXSIKICAgIHR4bmEgQXBwbGljYXRpb25BcmdzIDAKICAgIG1hdGNoIG1haW5fZ2V0X3JvdXRlQDMKICAgIGVycgoKbWFpbl9nZXRfcm91dGVAMzoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy91dGlscy90eXBlcy9tb2NrLXJhbmRvbW5lc3MtYmVhY29uLmFsZ28udHM6MTIKICAgIC8vIGdldChyb3VuZDogdWludDY0LCB1c2VyRGF0YTogYnl0ZXMpOiBieXRlcyB7CiAgICB0eG4gT25Db21wbGV0aW9uCiAgICAhCiAgICB0eG4gQXBwbGljYXRpb25JRAogICAgJiYKICAgIGFzc2VydCAvLyBPbkNvbXBsZXRpb24gbXVzdCBiZSBOb09wICYmIGNhbiBvbmx5IGNhbGwgd2hlbiBub3QgY3JlYXRpbmcKICAgIGIgZ2V0CgptYWluX19fYWxnb3RzX18uZGVmYXVsdENyZWF0ZUA1OgogICAgLy8gc21hcnRfY29udHJhY3RzL3V0aWxzL3R5cGVzL21vY2stcmFuZG9tbmVzcy1iZWFjb24uYWxnby50czo3CiAgICAvLyBleHBvcnQgY2xhc3MgTW9ja1JhbmRvbW5lc3NCZWFjb24gZXh0ZW5kcyBDb250cmFjdCB7CiAgICB0eG4gT25Db21wbGV0aW9uCiAgICAhCiAgICB0eG4gQXBwbGljYXRpb25JRAogICAgIQogICAgJiYKICAgIHJldHVybiAvLyBvbiBlcnJvcjogT25Db21wbGV0aW9uIG11c3QgYmUgTm9PcCAmJiBjYW4gb25seSBjYWxsIHdoZW4gY3JlYXRpbmcKCgovLyBzbWFydF9jb250cmFjdHMvdXRpbHMvdHlwZXMvbW9jay1yYW5kb21uZXNzLWJlYWNvbi5hbGdvLnRzOjpNb2NrUmFuZG9tbmVzc0JlYWNvbi5nZXRbcm91dGluZ10oKSAtPiB2b2lkOgpnZXQ6CiAgICAvLyBzbWFydF9jb250cmFjdHMvdXRpbHMvdHlwZXMvbW9jay1yYW5kb21uZXNzLWJlYWNvbi5hbGdvLnRzOjEyCiAgICAvLyBnZXQocm91bmQ6IHVpbnQ2NCwgdXNlckRhdGE6IGJ5dGVzKTogYnl0ZXMgewogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQogICAgbGVuCiAgICBwdXNoaW50IDggLy8gOAogICAgPT0KICAgIGFzc2VydCAvLyBpbnZhbGlkIG51bWJlciBvZiBieXRlcyBmb3IgdWludDY0CiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAyCiAgICBkdXAKICAgIHB1c2hpbnQgMCAvLyAwCiAgICBleHRyYWN0X3VpbnQxNgogICAgcHVzaGludCAyIC8vIDIKICAgICsKICAgIHN3YXAKICAgIGxlbgogICAgPT0KICAgIGFzc2VydCAvLyBpbnZhbGlkIG51bWJlciBvZiBieXRlcyBmb3IgKGxlbit1aW50OFtdKQogICAgcHVzaGJ5dGVzIDB4MTUxZjdjNzUwMDIwMDEwMjAzMDQwNTA2MDcwODA5MGEwYjBjMGQwZTBmMTAxMTEyMTMxNDE1MTYxNzE4MTkxYTFiMWMxZDFlMWYyMAogICAgbG9nCiAgICBwdXNoaW50IDEgLy8gMQogICAgcmV0dXJuCg==", "clear": "I3ByYWdtYSB2ZXJzaW9uIDExCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYmFzZS1jb250cmFjdC5kLnRzOjpCYXNlQ29udHJhY3QuY2xlYXJTdGF0ZVByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICBwdXNoaW50IDEgLy8gMQogICAgcmV0dXJuCg==" }, "byteCode": { "approval": "CzEbQQAYgAQYk5LFNhoAjgEAAQAxGRQxGBBEQgAIMRkUMRgUEEM2GgEVgQgSRDYaAkmBAFmBAghMFRJEgCYVH3x1ACABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fILCBAUM=", "clear": "C4EBQw==" }, "events": [], "templateVariables": {} };
 class BinaryStateValue {
     constructor(value) {
         this.value = value;
@@ -16,7 +19,7 @@ class BinaryStateValue {
 /**
  * Exposes methods for constructing `AppClient` params objects for ABI calls to the MockRandomnessBeacon smart contract
  */
-export class MockRandomnessBeaconParamsFactory {
+class MockRandomnessBeaconParamsFactory {
     /**
      * Constructs a no op call for the get(uint64,byte[])byte[] ABI method
      *
@@ -35,10 +38,11 @@ export class MockRandomnessBeaconParamsFactory {
         };
     }
 }
+exports.MockRandomnessBeaconParamsFactory = MockRandomnessBeaconParamsFactory;
 /**
  * A factory to create and deploy one or more instance of the MockRandomnessBeacon smart contract and to create one or more app clients to interact with those (or other) app instances
  */
-export class MockRandomnessBeaconFactory {
+class MockRandomnessBeaconFactory {
     /**
      * Creates a new instance of `MockRandomnessBeaconFactory`
      *
@@ -103,9 +107,9 @@ export class MockRandomnessBeaconFactory {
                 },
             },
         };
-        this.appFactory = new _AppFactory({
+        this.appFactory = new app_factory_1.AppFactory({
             ...params,
-            appSpec: APP_SPEC,
+            appSpec: exports.APP_SPEC,
         });
     }
     /** The name of the app (from the ARC-32 / ARC-56 app spec or override). */
@@ -114,7 +118,7 @@ export class MockRandomnessBeaconFactory {
     }
     /** The ARC-56 app spec being used */
     get appSpec() {
-        return APP_SPEC;
+        return exports.APP_SPEC;
     }
     /** A reference to the underlying `AlgorandClient` this app factory is using. */
     get algorand() {
@@ -156,10 +160,11 @@ export class MockRandomnessBeaconFactory {
         return { result: result.result, appClient: new MockRandomnessBeaconClient(result.appClient) };
     }
 }
+exports.MockRandomnessBeaconFactory = MockRandomnessBeaconFactory;
 /**
  * A client to make calls to the MockRandomnessBeacon smart contract
  */
-export class MockRandomnessBeaconClient {
+class MockRandomnessBeaconClient {
     constructor(appClientOrParams) {
         /**
          * Get parameters to create transactions for the current app. A good mental model for this is that these parameters represent a deferred transaction creation.
@@ -247,9 +252,9 @@ export class MockRandomnessBeaconClient {
          * Methods to access state for the current MockRandomnessBeacon app
          */
         this.state = {};
-        this.appClient = appClientOrParams instanceof _AppClient ? appClientOrParams : new _AppClient({
+        this.appClient = appClientOrParams instanceof app_client_1.AppClient ? appClientOrParams : new app_client_1.AppClient({
             ...appClientOrParams,
-            appSpec: APP_SPEC,
+            appSpec: exports.APP_SPEC,
         });
     }
     /**
@@ -257,7 +262,7 @@ export class MockRandomnessBeaconClient {
      * @returns The typed return value or undefined if there was no value
      */
     decodeReturnValue(method, returnValue) {
-        return returnValue !== undefined ? getArc56ReturnValue(returnValue, this.appClient.getABIMethod(method), APP_SPEC.structs) : undefined;
+        return returnValue !== undefined ? (0, app_arc56_1.getArc56ReturnValue)(returnValue, this.appClient.getABIMethod(method), exports.APP_SPEC.structs) : undefined;
     }
     /**
      * Returns a new `MockRandomnessBeaconClient` client, resolving the app by creator address and name
@@ -265,7 +270,7 @@ export class MockRandomnessBeaconClient {
      * @param params The parameters to create the app client
      */
     static async fromCreatorAndName(params) {
-        return new MockRandomnessBeaconClient(await _AppClient.fromCreatorAndName({ ...params, appSpec: APP_SPEC }));
+        return new MockRandomnessBeaconClient(await app_client_1.AppClient.fromCreatorAndName({ ...params, appSpec: exports.APP_SPEC }));
     }
     /**
      * Returns an `MockRandomnessBeaconClient` instance for the current network based on
@@ -275,7 +280,7 @@ export class MockRandomnessBeaconClient {
      * @param params The parameters to create the app client
      */
     static async fromNetwork(params) {
-        return new MockRandomnessBeaconClient(await _AppClient.fromNetwork({ ...params, appSpec: APP_SPEC }));
+        return new MockRandomnessBeaconClient(await app_client_1.AppClient.fromNetwork({ ...params, appSpec: exports.APP_SPEC }));
     }
     /** The ID of the app instance this client is linked to. */
     get appId() {
@@ -354,4 +359,5 @@ export class MockRandomnessBeaconClient {
         };
     }
 }
+exports.MockRandomnessBeaconClient = MockRandomnessBeaconClient;
 //# sourceMappingURL=MockRandomnessBeaconClient.js.map

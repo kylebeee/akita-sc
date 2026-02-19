@@ -1,9 +1,12 @@
-import { BaseSDK } from "../../base";
-import { UpdateAkitaDaoPluginFactory } from "../../generated/UpdateAkitaDAOPluginClient";
-import { getTxns } from "../utils";
-export class UpdateAkitaDAOPluginSDK extends BaseSDK {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UpdateAkitaDAOPluginSDK = void 0;
+const base_1 = require("../../base");
+const UpdateAkitaDAOPluginClient_1 = require("../../generated/UpdateAkitaDAOPluginClient");
+const utils_1 = require("../utils");
+class UpdateAkitaDAOPluginSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: UpdateAkitaDaoPluginFactory, ...params });
+        super({ factory: UpdateAkitaDAOPluginClient_1.UpdateAkitaDaoPluginFactory, ...params });
     }
     deleteBoxedContract(args) {
         const methodName = 'deleteBoxedContract';
@@ -12,7 +15,7 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -40,7 +43,7 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: methodNames.map(methodName => this.client.appClient.getABIMethod(methodName).getSelector()),
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer, appId, version, data } = args;
@@ -93,7 +96,7 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer, appId, newAkitaDaoAppId } = args;
@@ -121,7 +124,7 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer, appId, newEscrow } = args;
@@ -149,7 +152,7 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: methodNames.map(methodName => this.client.appClient.getABIMethod(methodName).getSelector()),
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer, factoryAppId, version, data } = args;
@@ -198,4 +201,5 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK {
         });
     }
 }
+exports.UpdateAkitaDAOPluginSDK = UpdateAkitaDAOPluginSDK;
 //# sourceMappingURL=update-akita-dao.js.map

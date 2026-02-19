@@ -1,5 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AddPluginDefaults = void 0;
+exports.isFlatAllowance = isFlatAllowance;
+exports.isWindowAllowance = isWindowAllowance;
+exports.isDripAllowance = isDripAllowance;
+exports.isValidPluginSDK = isValidPluginSDK;
+exports.getPluginAppId = getPluginAppId;
 // Default values for addPlugin method
-export const AddPluginDefaults = {
+exports.AddPluginDefaults = {
     escrow: '',
     name: '',
     useExecutionKey: false,
@@ -10,19 +18,19 @@ export const AddPluginDefaults = {
     canReclaim: true,
 };
 // allowance info type guards
-export function isFlatAllowance(info) {
+function isFlatAllowance(info) {
     return info.type === 'flat';
 }
-export function isWindowAllowance(info) {
+function isWindowAllowance(info) {
     return info.type === 'window';
 }
-export function isDripAllowance(info) {
+function isDripAllowance(info) {
     return info.type === 'drip';
 }
 /**
  * Type guard to check if an object is a valid AkitaSDK instance for use with plugins
  */
-export function isValidPluginSDK(sdk) {
+function isValidPluginSDK(sdk) {
     return (sdk &&
         typeof sdk === 'object' &&
         typeof sdk.appId === 'bigint' &&
@@ -34,7 +42,7 @@ export function isValidPluginSDK(sdk) {
 /**
  * Extract the app ID from a plugin SDK instance in a type-safe way
  */
-export function getPluginAppId(plugin) {
+function getPluginAppId(plugin) {
     return plugin.appId;
 }
 //# sourceMappingURL=types.js.map

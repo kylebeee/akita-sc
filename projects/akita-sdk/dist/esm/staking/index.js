@@ -1,16 +1,33 @@
-import { microAlgo } from "@algorandfoundation/algokit-utils";
-import { BaseSDK } from "../base";
-import { ENV_VAR_NAMES } from "../config";
-import { StakingFactory } from '../generated/StakingClient';
-import { StakingType } from "./types";
-export * from './types';
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.StakingSDK = void 0;
+const algokit_utils_1 = require("@algorandfoundation/algokit-utils");
+const base_1 = require("../base");
+const config_1 = require("../config");
+const StakingClient_1 = require("../generated/StakingClient");
+const types_1 = require("./types");
+__exportStar(require("./types"), exports);
 /**
  * SDK for interacting with the global Staking contract.
  * Handles all staking operations including soft, hard, lock, and heartbeat staking.
  */
-export class StakingSDK extends BaseSDK {
+class StakingSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: StakingFactory, ...params }, ENV_VAR_NAMES.STAKING_APP_ID);
+        super({ factory: StakingClient_1.StakingFactory, ...params }, config_1.ENV_VAR_NAMES.STAKING_APP_ID);
     }
     async softCheck({ address, asset }) {
         const { return: result } = await this.client.send.softCheck({
@@ -184,7 +201,7 @@ export class StakingSDK extends BaseSDK {
         const sendParams = this.getRequiredSendParams({ sender, signer });
         // For escrowed staking (Hard/Lock), the payment includes the amount being staked
         // For non-escrowed staking (Soft/Heartbeat), only the MBR cost is required
-        const isEscrowed = type === StakingType.Hard || type === StakingType.Lock;
+        const isEscrowed = type === types_1.StakingType.Hard || type === types_1.StakingType.Lock;
         let expiration;
         if (isEscrowed) {
             // ensure args.expiration is in the future
@@ -198,7 +215,7 @@ export class StakingSDK extends BaseSDK {
         }
         const cost = await this.stakeCost(asset, type);
         if (asset === 0n) {
-            const total = microAlgo(isEscrowed ? cost + amount : cost);
+            const total = (0, algokit_utils_1.microAlgo)(isEscrowed ? cost + amount : cost);
             const payment = this.client.algorand.createTransaction.payment({
                 ...sendParams,
                 amount: total,
@@ -217,7 +234,7 @@ export class StakingSDK extends BaseSDK {
         else {
             const payment = this.client.algorand.createTransaction.payment({
                 ...sendParams,
-                amount: microAlgo(cost),
+                amount: (0, algokit_utils_1.microAlgo)(cost),
                 receiver: this.client.appAddress,
             });
             const assetXfer = this.client.algorand.createTransaction.assetTransfer({
@@ -269,7 +286,7 @@ export class StakingSDK extends BaseSDK {
         const sendParams = this.getRequiredSendParams({ sender, signer });
         const payment = this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(0), // May need adjustment based on operation
+            amount: (0, algokit_utils_1.microAlgo)(0), // May need adjustment based on operation
             receiver: this.client.appAddress,
         });
         await this.client.send.updateSettings({
@@ -286,7 +303,7 @@ export class StakingSDK extends BaseSDK {
         const cost = await this.optInCost();
         const payment = this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(cost),
+            amount: (0, algokit_utils_1.microAlgo)(cost),
             receiver: this.client.appAddress,
         });
         await this.client.send.optIn({
@@ -308,4 +325,5 @@ export class StakingSDK extends BaseSDK {
         });
     }
 }
+exports.StakingSDK = StakingSDK;
 //# sourceMappingURL=index.js.map

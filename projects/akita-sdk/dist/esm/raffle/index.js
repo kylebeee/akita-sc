@@ -1,17 +1,34 @@
-import { microAlgo } from "@algorandfoundation/algokit-utils";
-import { BaseSDK } from "../base";
-import { RaffleFactory, } from '../generated/RaffleClient';
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RaffleSDK = void 0;
+const algokit_utils_1 = require("@algorandfoundation/algokit-utils");
+const base_1 = require("../base");
+const RaffleClient_1 = require("../generated/RaffleClient");
 /** The number of entries stored in each weights box */
 const CHUNK_SIZE = 4096n;
-export * from "./factory";
-export * from "./types";
+__exportStar(require("./factory"), exports);
+__exportStar(require("./types"), exports);
 /**
  * SDK for interacting with an individual Raffle contract.
  * Use this to manage raffle entries, draw winners, and claim prizes.
  */
-export class RaffleSDK extends BaseSDK {
+class RaffleSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: RaffleFactory, ...params });
+        super({ factory: RaffleClient_1.RaffleFactory, ...params });
     }
     // ========== Read Methods ==========
     /**
@@ -186,7 +203,7 @@ export class RaffleSDK extends BaseSDK {
             const { ticketAsset } = rest;
             const payment = await this.client.algorand.createTransaction.payment({
                 ...sendParams,
-                amount: microAlgo(mbrCost),
+                amount: (0, algokit_utils_1.microAlgo)(mbrCost),
                 receiver: this.client.appAddress,
             });
             const assetXfer = await this.client.algorand.createTransaction.assetTransfer({
@@ -208,7 +225,7 @@ export class RaffleSDK extends BaseSDK {
         else {
             const payment = await this.client.algorand.createTransaction.payment({
                 ...sendParams,
-                amount: microAlgo(BigInt(amount) + mbrCost),
+                amount: (0, algokit_utils_1.microAlgo)(BigInt(amount) + mbrCost),
                 receiver: this.client.appAddress,
             });
             group.enter({
@@ -254,7 +271,7 @@ export class RaffleSDK extends BaseSDK {
         else {
             const payment = await this.client.algorand.createTransaction.payment({
                 ...sendParams,
-                amount: microAlgo(amount),
+                amount: (0, algokit_utils_1.microAlgo)(amount),
                 receiver: this.client.appAddress,
             });
             group.add({
@@ -332,4 +349,5 @@ export class RaffleSDK extends BaseSDK {
         return returnAmount;
     }
 }
+exports.RaffleSDK = RaffleSDK;
 //# sourceMappingURL=index.js.map

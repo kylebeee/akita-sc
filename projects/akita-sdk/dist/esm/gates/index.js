@@ -1,111 +1,128 @@
-import { BaseSDK } from "../base";
-import { ENV_VAR_NAMES } from "../config";
-import { GateFactory, GateFilterEntryWithArgsFromTuple } from '../generated/GateClient';
-import { microAlgo } from "@algorandfoundation/algokit-utils";
-import { emptySigner } from "../constants";
-import { getABIDecodedValue, getABIEncodedValue } from "@algorandfoundation/algokit-utils/types/app-arc56";
-import { encodeUint64 } from "algosdk";
-import { APP_SPEC as AkitaReferrerAppSpec } from '../generated/AkitaReferrerGateClient';
-import { APP_SPEC as AssetAppSpec } from '../generated/AssetGateClient';
-import { APP_SPEC as MerkleAddressAppSpec } from '../generated/MerkleAddressGateClient';
-import { APP_SPEC as MerkleAssetAppSpec } from '../generated/MerkleAssetGateClient';
-import { APP_SPEC as NFDAppSpec } from '../generated/NFDGateClient';
-import { APP_SPEC as NFDRootAppSpec } from '../generated/NFDGateClient';
-import { APP_SPEC as PollAppSpec } from '../generated/PollGateClient';
-import { APP_SPEC as SocialActivityAppSpec } from '../generated/SocialActivityGateClient';
-import { APP_SPEC as SocialFollowerCountAppSpec } from '../generated/SocialFollowerCountGateClient';
-import { APP_SPEC as SocialFollowerIndexGateAppSpec } from '../generated/SocialFollowerIndexGateClient';
-import { APP_SPEC as SocialImpactGateAppSpec } from '../generated/SocialImpactGateClient';
-import { APP_SPEC as SocialModeratorGateAppSpec } from '../generated/SocialModeratorGateClient';
-import { APP_SPEC as StakingAmountGateAppSpec } from '../generated/StakingAmountGateClient';
-import { APP_SPEC as StakingPowerGateAppSpec } from '../generated/StakingPowerGateClient';
-import { APP_SPEC as SubscriptionGateAppSpec } from '../generated/SubscriptionGateClient';
-import { APP_SPEC as SubscriptionStreakGateAppSpec } from '../generated/SubscriptionStreakGateClient';
-export * from './types';
-export class GateSDK extends BaseSDK {
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GateSDK = void 0;
+const base_1 = require("../base");
+const config_1 = require("../config");
+const GateClient_1 = require("../generated/GateClient");
+const algokit_utils_1 = require("@algorandfoundation/algokit-utils");
+const constants_1 = require("../constants");
+const app_arc56_1 = require("@algorandfoundation/algokit-utils/types/app-arc56");
+const algosdk_1 = require("algosdk");
+const AkitaReferrerGateClient_1 = require("../generated/AkitaReferrerGateClient");
+const AssetGateClient_1 = require("../generated/AssetGateClient");
+const MerkleAddressGateClient_1 = require("../generated/MerkleAddressGateClient");
+const MerkleAssetGateClient_1 = require("../generated/MerkleAssetGateClient");
+const NFDGateClient_1 = require("../generated/NFDGateClient");
+const NFDGateClient_2 = require("../generated/NFDGateClient");
+const PollGateClient_1 = require("../generated/PollGateClient");
+const SocialActivityGateClient_1 = require("../generated/SocialActivityGateClient");
+const SocialFollowerCountGateClient_1 = require("../generated/SocialFollowerCountGateClient");
+const SocialFollowerIndexGateClient_1 = require("../generated/SocialFollowerIndexGateClient");
+const SocialImpactGateClient_1 = require("../generated/SocialImpactGateClient");
+const SocialModeratorGateClient_1 = require("../generated/SocialModeratorGateClient");
+const StakingAmountGateClient_1 = require("../generated/StakingAmountGateClient");
+const StakingPowerGateClient_1 = require("../generated/StakingPowerGateClient");
+const SubscriptionGateClient_1 = require("../generated/SubscriptionGateClient");
+const SubscriptionStreakGateClient_1 = require("../generated/SubscriptionStreakGateClient");
+__exportStar(require("./types"), exports);
+class GateSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: GateFactory, ...params }, ENV_VAR_NAMES.GATE_APP_ID);
+        super({ factory: GateClient_1.GateFactory, ...params }, config_1.ENV_VAR_NAMES.GATE_APP_ID);
         this.contractIdToType = new Map();
         this.gateEncodings = {
             akita_referrer: {
                 registerShape: 'AkitaReferrerGateRegistryInfo',
                 checkShape: 'uint64',
-                structs: AkitaReferrerAppSpec.structs
+                structs: AkitaReferrerGateClient_1.APP_SPEC.structs
             },
             asset: {
                 registerShape: 'AssetGateRegistryInfo',
                 checkShape: 'None',
-                structs: AssetAppSpec.structs
+                structs: AssetGateClient_1.APP_SPEC.structs
             },
             merkle_address: {
                 registerShape: 'MerkleAddressGateRegistryInfo',
                 checkShape: 'Proof',
-                structs: MerkleAddressAppSpec.structs
+                structs: MerkleAddressGateClient_1.APP_SPEC.structs
             },
             merkle_asset: {
                 registerShape: 'MerkleAssetGateRegistryInfo',
                 checkShape: 'MerkleAssetGateCheckParams',
-                structs: MerkleAssetAppSpec.structs
+                structs: MerkleAssetGateClient_1.APP_SPEC.structs
             },
             nfd: {
                 registerShape: 'None',
                 checkShape: 'uint64',
-                structs: NFDAppSpec.structs
+                structs: NFDGateClient_1.APP_SPEC.structs
             },
             nfd_root: {
                 registerShape: 'NFDRootGateRegistryInfo',
                 checkShape: 'string',
-                structs: NFDRootAppSpec.structs
+                structs: NFDGateClient_2.APP_SPEC.structs
             },
             poll: {
                 registerShape: 'PollGateRegistryInfo',
                 checkShape: 'None',
-                structs: PollAppSpec.structs
+                structs: PollGateClient_1.APP_SPEC.structs
             },
             social_activity: {
                 registerShape: 'SocialActivityGateRegistryInfo',
                 checkShape: 'None',
-                structs: SocialActivityAppSpec.structs
+                structs: SocialActivityGateClient_1.APP_SPEC.structs
             },
             social_follower_count: {
                 registerShape: 'SocialFollowerCountGateRegistryInfo',
                 checkShape: 'None',
-                structs: SocialFollowerCountAppSpec.structs
+                structs: SocialFollowerCountGateClient_1.APP_SPEC.structs
             },
             social_follower_index: {
                 registerShape: 'SocialFollowerIndexGateRegistryInfo',
                 checkShape: 'uint64',
-                structs: SocialFollowerIndexGateAppSpec.structs
+                structs: SocialFollowerIndexGateClient_1.APP_SPEC.structs
             },
             social_impact: {
                 registerShape: 'SocialImpactGateRegistryInfo',
                 checkShape: 'None',
-                structs: SocialImpactGateAppSpec.structs
+                structs: SocialImpactGateClient_1.APP_SPEC.structs
             },
             social_moderator: {
                 registerShape: 'SocialModeratorGateRegistryInfo',
                 checkShape: 'None',
-                structs: SocialModeratorGateAppSpec.structs
+                structs: SocialModeratorGateClient_1.APP_SPEC.structs
             },
             staking_amount: {
                 registerShape: 'StakingAmountGateRegistryInfo',
                 checkShape: 'None',
-                structs: StakingAmountGateAppSpec.structs
+                structs: StakingAmountGateClient_1.APP_SPEC.structs
             },
             staking_power: {
                 registerShape: 'StakingPowerGateRegistryInfo',
                 checkShape: 'None',
-                structs: StakingPowerGateAppSpec.structs
+                structs: StakingPowerGateClient_1.APP_SPEC.structs
             },
             subscription: {
                 registerShape: 'SubscriptionGateRegistryInfo',
                 checkShape: 'None',
-                structs: SubscriptionGateAppSpec.structs
+                structs: SubscriptionGateClient_1.APP_SPEC.structs
             },
             subscription_streak: {
                 registerShape: 'SubscriptionGateRegistryInfo',
                 checkShape: 'None',
-                structs: SubscriptionStreakGateAppSpec.structs
+                structs: SubscriptionStreakGateClient_1.APP_SPEC.structs
             }
         };
         this.build = {
@@ -157,12 +174,12 @@ export class GateSDK extends BaseSDK {
             switch (type) {
                 case 'akita_referrer': {
                     const { referrer } = arg;
-                    data = getABIEncodedValue({ referrer }, name, this.gateEncodings[type].structs);
+                    data = (0, app_arc56_1.getABIEncodedValue)({ referrer }, name, this.gateEncodings[type].structs);
                     break;
                 }
                 case 'asset': {
                     const { asset, op, value } = arg;
-                    data = getABIEncodedValue({ asset, op, value }, name, this.gateEncodings[type].structs);
+                    data = (0, app_arc56_1.getABIEncodedValue)({ asset, op, value }, name, this.gateEncodings[type].structs);
                     break;
                 }
                 case 'social_activity':
@@ -170,18 +187,18 @@ export class GateSDK extends BaseSDK {
                 case 'social_impact':
                 case 'social_moderator': {
                     const { op, value } = arg;
-                    data = getABIEncodedValue({ op, value }, name, this.gateEncodings[type].structs);
+                    data = (0, app_arc56_1.getABIEncodedValue)({ op, value }, name, this.gateEncodings[type].structs);
                     break;
                 }
                 case 'merkle_address':
                 case 'merkle_asset': {
                     const { creator, name: listName } = arg;
-                    data = getABIEncodedValue({ creator, name: listName }, name, this.gateEncodings[type].structs);
+                    data = (0, app_arc56_1.getABIEncodedValue)({ creator, name: listName }, name, this.gateEncodings[type].structs);
                     break;
                 }
                 case 'nfd': {
                     const { appId } = arg;
-                    data = getABIEncodedValue({ appId }, name, this.gateEncodings[type].structs);
+                    data = (0, app_arc56_1.getABIEncodedValue)({ appId }, name, this.gateEncodings[type].structs);
                     break;
                 }
                 case 'nfd_root': {
@@ -191,32 +208,32 @@ export class GateSDK extends BaseSDK {
                 }
                 case 'poll': {
                     const { poll } = arg;
-                    data = getABIEncodedValue({ poll }, name, this.gateEncodings[type].structs);
+                    data = (0, app_arc56_1.getABIEncodedValue)({ poll }, name, this.gateEncodings[type].structs);
                     break;
                 }
                 case 'social_follower_index': {
                     const { user, op, value } = arg;
-                    data = getABIEncodedValue({ user, op, value }, name, this.gateEncodings[type].structs);
+                    data = (0, app_arc56_1.getABIEncodedValue)({ user, op, value }, name, this.gateEncodings[type].structs);
                     break;
                 }
                 case 'staking_amount': {
                     const { op, asset, stakingType, amount, includeEscrowed } = arg;
-                    data = getABIEncodedValue({ op, asset, stakingType, amount, includeEscrowed }, name, this.gateEncodings[type].structs);
+                    data = (0, app_arc56_1.getABIEncodedValue)({ op, asset, stakingType, amount, includeEscrowed }, name, this.gateEncodings[type].structs);
                     break;
                 }
                 case 'staking_power': {
                     const { op, asset, power } = arg;
-                    data = getABIEncodedValue({ op, asset, power }, name, this.gateEncodings[type].structs);
+                    data = (0, app_arc56_1.getABIEncodedValue)({ op, asset, power }, name, this.gateEncodings[type].structs);
                     break;
                 }
                 case 'subscription': {
                     const { merchant, id } = arg;
-                    data = getABIEncodedValue({ merchant, id }, name, this.gateEncodings[type].structs);
+                    data = (0, app_arc56_1.getABIEncodedValue)({ merchant, id }, name, this.gateEncodings[type].structs);
                     break;
                 }
                 case 'subscription_streak': {
                     const { merchant, id, op, streak } = arg;
-                    data = getABIEncodedValue({ merchant, id, op, streak }, name, this.gateEncodings[type].structs);
+                    data = (0, app_arc56_1.getABIEncodedValue)({ merchant, id, op, streak }, name, this.gateEncodings[type].structs);
                     break;
                 }
                 default: {
@@ -235,15 +252,15 @@ export class GateSDK extends BaseSDK {
         const structs = this.gateEncodings[type].structs;
         switch (type) {
             case 'asset': {
-                const decoded = getABIDecodedValue(encoded, registrationName, structs);
+                const decoded = (0, app_arc56_1.getABIDecodedValue)(encoded, registrationName, structs);
                 return { type, ...decoded };
             }
             case 'merkle_address': {
-                const decoded = getABIDecodedValue(encoded, registrationName, structs);
+                const decoded = (0, app_arc56_1.getABIDecodedValue)(encoded, registrationName, structs);
                 return { type, ...decoded };
             }
             case 'merkle_asset': {
-                const decoded = getABIDecodedValue(encoded, registrationName, structs);
+                const decoded = (0, app_arc56_1.getABIDecodedValue)(encoded, registrationName, structs);
                 return { type, ...decoded };
             }
             case 'nfd_root': {
@@ -253,27 +270,27 @@ export class GateSDK extends BaseSDK {
             case 'social_follower_count':
             case 'social_impact':
             case 'social_moderator': {
-                const decoded = getABIDecodedValue(encoded, registrationName, structs);
+                const decoded = (0, app_arc56_1.getABIDecodedValue)(encoded, registrationName, structs);
                 return { type, ...decoded };
             }
             case 'social_follower_index': {
-                const decoded = getABIDecodedValue(encoded, registrationName, structs);
+                const decoded = (0, app_arc56_1.getABIDecodedValue)(encoded, registrationName, structs);
                 return { type, ...decoded };
             }
             case 'staking_amount': {
-                const { type: stakingType, ...decoded } = getABIDecodedValue(encoded, registrationName, structs);
+                const { type: stakingType, ...decoded } = (0, app_arc56_1.getABIDecodedValue)(encoded, registrationName, structs);
                 return { type, stakingType, ...decoded };
             }
             case 'staking_power': {
-                const decoded = getABIDecodedValue(encoded, registrationName, structs);
+                const decoded = (0, app_arc56_1.getABIDecodedValue)(encoded, registrationName, structs);
                 return { type, ...decoded };
             }
             case 'subscription': {
-                const decoded = getABIDecodedValue(encoded, registrationName, structs);
+                const decoded = (0, app_arc56_1.getABIDecodedValue)(encoded, registrationName, structs);
                 return { type, ...decoded };
             }
             case 'subscription_streak': {
-                const decoded = getABIDecodedValue(encoded, registrationName, structs);
+                const decoded = (0, app_arc56_1.getABIDecodedValue)(encoded, registrationName, structs);
                 return { type, ...decoded };
             }
             default: {
@@ -294,22 +311,22 @@ export class GateSDK extends BaseSDK {
             switch (type) {
                 case 'akita_referrer': {
                     const { wallet } = arg;
-                    data = encodeUint64(wallet);
+                    data = (0, algosdk_1.encodeUint64)(wallet);
                     break;
                 }
                 case 'merkle_address': {
                     const { proof } = arg;
-                    data = getABIEncodedValue(proof, name, this.gateEncodings[type].structs);
+                    data = (0, app_arc56_1.getABIEncodedValue)(proof, name, this.gateEncodings[type].structs);
                     break;
                 }
                 case 'merkle_asset': {
                     const { asset, proof } = arg;
-                    data = getABIEncodedValue({ asset, proof }, name, this.gateEncodings[type].structs);
+                    data = (0, app_arc56_1.getABIEncodedValue)({ asset, proof }, name, this.gateEncodings[type].structs);
                     break;
                 }
                 case 'nfd': {
                     const { appId } = arg;
-                    data = encodeUint64(appId);
+                    data = (0, algosdk_1.encodeUint64)(appId);
                     break;
                 }
                 case 'nfd_root': {
@@ -319,7 +336,7 @@ export class GateSDK extends BaseSDK {
                 }
                 case 'social_follower_index': {
                     const { index } = arg;
-                    data = encodeUint64(index);
+                    data = (0, algosdk_1.encodeUint64)(index);
                     break;
                 }
                 default: {
@@ -338,7 +355,7 @@ export class GateSDK extends BaseSDK {
         const payment = this.client.algorand.createTransaction.payment({
             ...sendParams,
             receiver: this.client.appAddress,
-            amount: microAlgo(cost),
+            amount: (0, algokit_utils_1.microAlgo)(cost),
         });
         return this.client.send.register({
             ...sendParams,
@@ -364,7 +381,7 @@ export class GateSDK extends BaseSDK {
     async getGate({ sender, signer, gateId }) {
         const sendParams = this.getSendParams({
             sender: sender ?? this.readerAccount,
-            signer: signer ?? emptySigner
+            signer: signer ?? constants_1.emptySigner
         });
         const { return: gates } = await this.client.send.getGate({ ...sendParams, args: { gateId } });
         if (gates === undefined) {
@@ -372,7 +389,7 @@ export class GateSDK extends BaseSDK {
         }
         // decode the resulting args into a GateRegistrationArg[]
         const decodedGates = gates.map(gate => {
-            const obj = GateFilterEntryWithArgsFromTuple(gate);
+            const obj = (0, GateClient_1.GateFilterEntryWithArgsFromTuple)(gate);
             const gateType = this.getGateTypeFromContractId(obj.app);
             return this.decodeGateArgs(gateType, obj.args);
         });
@@ -381,7 +398,7 @@ export class GateSDK extends BaseSDK {
     async cost({ sender, signer, ...args }) {
         const sendParams = this.getSendParams({
             sender: sender ?? this.readerAccount,
-            signer: signer ?? emptySigner
+            signer: signer ?? constants_1.emptySigner
         });
         const { return: cost } = await this.client.send.cost({ ...sendParams, args });
         if (cost === undefined) {
@@ -390,4 +407,5 @@ export class GateSDK extends BaseSDK {
         return cost;
     }
 }
+exports.GateSDK = GateSDK;
 //# sourceMappingURL=index.js.map

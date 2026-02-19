@@ -1,15 +1,32 @@
-import { microAlgo } from "@algorandfoundation/algokit-utils";
-import { BaseSDK } from "../base";
-import { StakingPoolFactory } from '../generated/StakingPoolClient';
-export * from "./factory";
-export * from "./types";
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.StakingPoolSDK = void 0;
+const algokit_utils_1 = require("@algorandfoundation/algokit-utils");
+const base_1 = require("../base");
+const StakingPoolClient_1 = require("../generated/StakingPoolClient");
+__exportStar(require("./factory"), exports);
+__exportStar(require("./types"), exports);
 /**
  * SDK for interacting with an individual Staking Pool contract.
  * Use this to manage pool state, add rewards, and handle entries.
  */
-export class StakingPoolSDK extends BaseSDK {
+class StakingPoolSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: StakingPoolFactory, ...params });
+        super({ factory: StakingPoolClient_1.StakingPoolFactory, ...params });
     }
     // ========== Read Methods ==========
     /**
@@ -99,7 +116,7 @@ export class StakingPoolSDK extends BaseSDK {
         const cost = await this.client.optInCost({ args: { asset } });
         const payment = this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(cost),
+            amount: (0, algokit_utils_1.microAlgo)(cost),
             receiver: this.client.appAddress,
         });
         const group = this.client.newGroup();
@@ -125,7 +142,7 @@ export class StakingPoolSDK extends BaseSDK {
         const mbrData = await this.getMbr({ winningTickets: reward.winnerCount });
         const payment = this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(mbrData.rewards),
+            amount: (0, algokit_utils_1.microAlgo)(mbrData.rewards),
             receiver: this.client.appAddress,
         });
         const assetXfer = this.client.algorand.createTransaction.assetTransfer({
@@ -178,7 +195,7 @@ export class StakingPoolSDK extends BaseSDK {
         });
         const payment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(paymentAmount),
+            amount: (0, algokit_utils_1.microAlgo)(paymentAmount),
             receiver: this.client.appAddress,
         });
         // Transform entries to the expected format
@@ -191,7 +208,7 @@ export class StakingPoolSDK extends BaseSDK {
         if (isGated) {
             await this.client.send.gatedEnter({
                 ...sendParams,
-                extraFee: microAlgo(1000 * entries.length), // Cover inner transactions to Staking contract
+                extraFee: (0, algokit_utils_1.microAlgo)(1000 * entries.length), // Cover inner transactions to Staking contract
                 args: {
                     payment,
                     gateTxn,
@@ -202,7 +219,7 @@ export class StakingPoolSDK extends BaseSDK {
         else {
             await this.client.send.enter({
                 ...sendParams,
-                extraFee: microAlgo(1000 * entries.length), // Cover inner transactions to Staking contract
+                extraFee: (0, algokit_utils_1.microAlgo)(1000 * entries.length), // Cover inner transactions to Staking contract
                 args: {
                     payment,
                     entries: formattedEntries,
@@ -274,4 +291,5 @@ export class StakingPoolSDK extends BaseSDK {
         });
     }
 }
+exports.StakingPoolSDK = StakingPoolSDK;
 //# sourceMappingURL=index.js.map

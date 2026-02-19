@@ -1,15 +1,19 @@
-import { microAlgo } from "@algorandfoundation/algokit-utils";
-import { BaseSDK } from "../base";
-import { ENV_VAR_NAMES } from "../config";
-import { AuctionFactoryFactory, } from '../generated/AuctionFactoryClient';
-import { AuctionSDK } from "./index";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AuctionFactorySDK = void 0;
+exports.newAuction = newAuction;
+const algokit_utils_1 = require("@algorandfoundation/algokit-utils");
+const base_1 = require("../base");
+const config_1 = require("../config");
+const AuctionFactoryClient_1 = require("../generated/AuctionFactoryClient");
+const index_1 = require("./index");
 /**
  * SDK for interacting with the Auction Factory contract.
  * Used to create new auctions, delete completed auctions, and cancel pending auctions.
  */
-export class AuctionFactorySDK extends BaseSDK {
+class AuctionFactorySDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: AuctionFactoryFactory, ...params }, ENV_VAR_NAMES.AUCTION_FACTORY_APP_ID);
+        super({ factory: AuctionFactoryClient_1.AuctionFactoryFactory, ...params }, config_1.ENV_VAR_NAMES.AUCTION_FACTORY_APP_ID);
     }
     /**
      * Creates a new auction with an ASA prize and returns an AuctionSDK instance.
@@ -22,7 +26,7 @@ export class AuctionFactorySDK extends BaseSDK {
         const cost = await this.cost({ isPrizeBox, bidAssetId, weightsListCount });
         const payment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(cost),
+            amount: (0, algokit_utils_1.microAlgo)(cost),
             receiver: this.client.appAddress,
         });
         let appId;
@@ -136,7 +140,7 @@ export class AuctionFactorySDK extends BaseSDK {
         if (appId === undefined) {
             throw new Error('Failed to create new auction');
         }
-        return new AuctionSDK({
+        return new index_1.AuctionSDK({
             algorand: this.algorand,
             factoryParams: {
                 appId,
@@ -151,7 +155,7 @@ export class AuctionFactorySDK extends BaseSDK {
      * @returns AuctionSDK for the specified auction
      */
     get({ appId }) {
-        return new AuctionSDK({
+        return new index_1.AuctionSDK({
             algorand: this.algorand,
             factoryParams: {
                 appId,
@@ -171,7 +175,7 @@ export class AuctionFactorySDK extends BaseSDK {
         const cost = await this.client.optInCost({ args: { asset } });
         const payment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(cost),
+            amount: (0, algokit_utils_1.microAlgo)(cost),
             receiver: this.client.appAddress,
         });
         await this.client.send.optIn({
@@ -222,11 +226,12 @@ export class AuctionFactorySDK extends BaseSDK {
         });
     }
 }
+exports.AuctionFactorySDK = AuctionFactorySDK;
 /**
  * Convenience function to create a new auction and return the SDK.
  * Creates a factory SDK, creates the auction, and returns the auction SDK.
  */
-export async function newAuction({ factoryParams, algorand, readerAccount, sendParams, ...auctionParams }) {
+async function newAuction({ factoryParams, algorand, readerAccount, sendParams, ...auctionParams }) {
     const factory = new AuctionFactorySDK({ factoryParams, algorand, readerAccount, sendParams });
     return await factory.newAuction(auctionParams);
 }

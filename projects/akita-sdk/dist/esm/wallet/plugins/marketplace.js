@@ -1,9 +1,12 @@
-import { BaseSDK } from "../../base";
-import { MarketplacePluginFactory } from "../../generated/MarketplacePluginClient";
-import { getTxns } from "../utils";
-export class MarketplacePluginSDK extends BaseSDK {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MarketplacePluginSDK = void 0;
+const base_1 = require("../../base");
+const MarketplacePluginClient_1 = require("../../generated/MarketplacePluginClient");
+const utils_1 = require("../utils");
+class MarketplacePluginSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: MarketplacePluginFactory, ...params });
+        super({ factory: MarketplacePluginClient_1.MarketplacePluginFactory, ...params });
     }
     list(args) {
         const methodName = 'list';
@@ -11,7 +14,7 @@ export class MarketplacePluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -38,7 +41,7 @@ export class MarketplacePluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -65,7 +68,7 @@ export class MarketplacePluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -87,4 +90,5 @@ export class MarketplacePluginSDK extends BaseSDK {
         });
     }
 }
+exports.MarketplacePluginSDK = MarketplacePluginSDK;
 //# sourceMappingURL=marketplace.js.map

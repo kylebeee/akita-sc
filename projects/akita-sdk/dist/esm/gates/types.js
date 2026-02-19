@@ -1,4 +1,7 @@
-export var Operator;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.LogicalOperator = exports.Operator = void 0;
+var Operator;
 (function (Operator) {
     Operator[Operator["Equal"] = 10] = "Equal";
     Operator[Operator["NotEqual"] = 20] = "NotEqual";
@@ -9,13 +12,13 @@ export var Operator;
     Operator[Operator["IncludedIn"] = 70] = "IncludedIn";
     Operator[Operator["IncludedInRoot"] = 80] = "IncludedInRoot";
     Operator[Operator["NotIncludedIn"] = 90] = "NotIncludedIn";
-})(Operator || (Operator = {}));
-export var LogicalOperator;
+})(Operator || (exports.Operator = Operator = {}));
+var LogicalOperator;
 (function (LogicalOperator) {
     LogicalOperator[LogicalOperator["None"] = 0] = "None";
     LogicalOperator[LogicalOperator["And"] = 10] = "And";
     LogicalOperator[LogicalOperator["Or"] = 20] = "Or";
-})(LogicalOperator || (LogicalOperator = {}));
+})(LogicalOperator || (exports.LogicalOperator = LogicalOperator = {}));
 // export type GateFilter = {
 //   layer: uint64 // the comparison nesting level
 //   app: uint64 // the app id of the gate to use

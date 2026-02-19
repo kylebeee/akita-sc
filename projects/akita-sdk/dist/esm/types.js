@@ -1,8 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.hasSenderSigner = hasSenderSigner;
+exports.isPluginSDKReturn = isPluginSDKReturn;
 // Type guard function
-export function hasSenderSigner(params) {
+function hasSenderSigner(params) {
     return params.sender !== undefined && params.signer !== undefined;
 }
-export function isPluginSDKReturn(value) {
+function isPluginSDKReturn(value) {
     return typeof value === 'function';
 }
 //# sourceMappingURL=types.js.map

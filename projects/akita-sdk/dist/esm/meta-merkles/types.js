@@ -1,6 +1,9 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MerkleTreeType = exports.SchemaPart = void 0;
 // ========== Schema Part Constants ==========
 /** Schema part type enum for building leaf schemas */
-export var SchemaPart;
+var SchemaPart;
 (function (SchemaPart) {
     SchemaPart[SchemaPart["Uint8"] = 10] = "Uint8";
     SchemaPart[SchemaPart["Uint16"] = 11] = "Uint16";
@@ -19,9 +22,9 @@ export var SchemaPart;
     SchemaPart[SchemaPart["Bytes512"] = 27] = "Bytes512";
     SchemaPart[SchemaPart["String"] = 30] = "String";
     SchemaPart[SchemaPart["Address"] = 40] = "Address";
-})(SchemaPart || (SchemaPart = {}));
+})(SchemaPart || (exports.SchemaPart = SchemaPart = {}));
 /** Merkle tree type constants */
-export var MerkleTreeType;
+var MerkleTreeType;
 (function (MerkleTreeType) {
     MerkleTreeType[MerkleTreeType["Unspecified"] = 0] = "Unspecified";
     MerkleTreeType[MerkleTreeType["Collection"] = 1] = "Collection";
@@ -29,5 +32,5 @@ export var MerkleTreeType;
     MerkleTreeType[MerkleTreeType["Trade"] = 3] = "Trade";
     MerkleTreeType[MerkleTreeType["Whitelist"] = 4] = "Whitelist";
     MerkleTreeType[MerkleTreeType["Addresses"] = 5] = "Addresses";
-})(MerkleTreeType || (MerkleTreeType = {}));
+})(MerkleTreeType || (exports.MerkleTreeType = MerkleTreeType = {}));
 //# sourceMappingURL=types.js.map

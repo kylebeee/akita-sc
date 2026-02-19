@@ -1,25 +1,42 @@
-import { microAlgo } from "@algorandfoundation/algokit-utils";
-import { microAlgos } from "@algorandfoundation/algokit-utils";
-import { BaseSDK } from "../base";
-import { ENV_VAR_NAMES } from "../config";
-import { ServiceFromTuple, SubscriptionsFactory } from '../generated/SubscriptionsClient';
-import { ValueMap } from "../wallet/utils";
-import { bytesToHexColor, hexColorToBytes, validateHexColor } from "./utils";
-import { convertToUnixTimestamp } from "../utils";
-import { MAX_DESCRIPTION_CHUNK_SIZE, MAX_DESCRIPTION_LENGTH } from "./constants";
-export * from './constants';
-export * from './types';
-export * from './utils';
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SubscriptionsSDK = void 0;
+const algokit_utils_1 = require("@algorandfoundation/algokit-utils");
+const algokit_utils_2 = require("@algorandfoundation/algokit-utils");
+const base_1 = require("../base");
+const config_1 = require("../config");
+const SubscriptionsClient_1 = require("../generated/SubscriptionsClient");
+const utils_1 = require("../wallet/utils");
+const utils_2 = require("./utils");
+const utils_3 = require("../utils");
+const constants_1 = require("./constants");
+__exportStar(require("./constants"), exports);
+__exportStar(require("./types"), exports);
+__exportStar(require("./utils"), exports);
 const toBigInt = (value) => typeof value === 'bigint' ? value : BigInt(Math.floor(value));
 const toSeconds = (value, unit) => {
     const normalized = toBigInt(value);
     return unit === 'milliseconds' ? normalized / 1000n : normalized;
 };
-export class SubscriptionsSDK extends BaseSDK {
+class SubscriptionsSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: SubscriptionsFactory, ...params }, ENV_VAR_NAMES.SUBSCRIPTIONS_APP_ID);
+        super({ factory: SubscriptionsClient_1.SubscriptionsFactory, ...params }, config_1.ENV_VAR_NAMES.SUBSCRIPTIONS_APP_ID);
         this.serviceMapKeyGenerator = ({ address, id }) => (`${address}${id}`);
-        this.services = new ValueMap(this.serviceMapKeyGenerator);
+        this.services = new utils_1.ValueMap(this.serviceMapKeyGenerator);
     }
     /**
      * Get the cost to create a new service from the contract
@@ -86,10 +103,10 @@ export class SubscriptionsSDK extends BaseSDK {
             key,
             {
                 ...value,
-                highlightColor: bytesToHexColor(value.highlightColor)
+                highlightColor: (0, utils_2.bytesToHexColor)(value.highlightColor)
             }
         ]);
-        this.services = new ValueMap(this.serviceMapKeyGenerator, new Map(transformedEntries));
+        this.services = new utils_1.ValueMap(this.serviceMapKeyGenerator, new Map(transformedEntries));
         return this.services;
     }
     async getService({ sender, address, id }) {
@@ -97,7 +114,7 @@ export class SubscriptionsSDK extends BaseSDK {
         const result = (await this.client.getService({ ...sendParams, args: { address, id } }));
         return {
             ...result,
-            highlightColor: bytesToHexColor(result.highlightColor)
+            highlightColor: (0, utils_2.bytesToHexColor)(result.highlightColor)
         };
     }
     async getServicesByAddress({ sender, address, start = 0n, windowSize = 20n }) {
@@ -106,10 +123,10 @@ export class SubscriptionsSDK extends BaseSDK {
         // The return is an array of tuples, convert to Service objects
         const tuples = result;
         return tuples.map(tuple => {
-            const result = ServiceFromTuple(tuple);
+            const result = (0, SubscriptionsClient_1.ServiceFromTuple)(tuple);
             return {
                 ...result,
-                highlightColor: bytesToHexColor(result.highlightColor)
+                highlightColor: (0, utils_2.bytesToHexColor)(result.highlightColor)
             };
         });
     }
@@ -118,7 +135,7 @@ export class SubscriptionsSDK extends BaseSDK {
         const result = (await this.client.mustGetSubscription({ ...sendParams, args: { key: { address, id } } }));
         return {
             ...result,
-            lastPayment: convertToUnixTimestamp(result.lastPayment)
+            lastPayment: (0, utils_3.convertToUnixTimestamp)(result.lastPayment)
         };
     }
     async getSubscriptionWithDetails({ sender, address, id }) {
@@ -126,8 +143,8 @@ export class SubscriptionsSDK extends BaseSDK {
         const result = (await this.client.getSubscriptionWithDetails({ ...sendParams, args: { key: { address, id } } }));
         return {
             ...result,
-            highlightColor: bytesToHexColor(result.highlightColor),
-            lastPayment: convertToUnixTimestamp(result.lastPayment),
+            highlightColor: (0, utils_2.bytesToHexColor)(result.highlightColor),
+            lastPayment: (0, utils_3.convertToUnixTimestamp)(result.lastPayment),
         };
     }
     /**
@@ -185,8 +202,8 @@ export class SubscriptionsSDK extends BaseSDK {
     }
     async newService({ sender, signer, asset = 0n, passes = 0n, gateId = 0n, ...rest }) {
         const sendParams = this.getRequiredSendParams({ sender, signer });
-        validateHexColor(rest.highlightColor);
-        const highlightColor = hexColorToBytes(rest.highlightColor);
+        (0, utils_2.validateHexColor)(rest.highlightColor);
+        const highlightColor = (0, utils_2.hexColorToBytes)(rest.highlightColor);
         // Check if we need to opt the contract into the asset (ASA services only)
         const isAsaService = asset !== 0n;
         const needsOptIn = isAsaService && !(await this.isOptedInToAsset(asset));
@@ -194,7 +211,7 @@ export class SubscriptionsSDK extends BaseSDK {
         const paymentAmount = await this.newServiceCost({ ...sendParams, asset });
         const payment = this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(paymentAmount),
+            amount: (0, algokit_utils_1.microAlgo)(paymentAmount),
             receiver: this.client.appAddress.toString(),
         });
         if (rest.description.length === 0) {
@@ -206,7 +223,7 @@ export class SubscriptionsSDK extends BaseSDK {
             const optInCost = await this.optInCost({ ...sendParams, asset });
             const optInPayment = await this.client.algorand.createTransaction.payment({
                 ...sendParams,
-                amount: microAlgo(optInCost),
+                amount: (0, algokit_utils_1.microAlgo)(optInCost),
                 receiver: this.client.appAddress.toString(),
             });
             group.optIn({
@@ -229,24 +246,24 @@ export class SubscriptionsSDK extends BaseSDK {
             }
         });
         // chunk description, max is: 3151
-        if (rest.description.length > MAX_DESCRIPTION_LENGTH) {
-            throw new Error(`Description length exceeds maximum of ${MAX_DESCRIPTION_LENGTH} characters`);
+        if (rest.description.length > constants_1.MAX_DESCRIPTION_LENGTH) {
+            throw new Error(`Description length exceeds maximum of ${constants_1.MAX_DESCRIPTION_LENGTH} characters`);
         }
         // setServiceDescription(offset: uint64, data: bytes): void
         // [selector:4][offset:8][data_length:2][data:N] = 2048, max data = 2034 bytes
-        if (rest.description.length > MAX_DESCRIPTION_CHUNK_SIZE) {
+        if (rest.description.length > constants_1.MAX_DESCRIPTION_CHUNK_SIZE) {
             group.setServiceDescription({
                 ...sendParams,
                 args: {
                     offset: 0n,
-                    data: Buffer.from(rest.description).subarray(0, MAX_DESCRIPTION_CHUNK_SIZE)
+                    data: Buffer.from(rest.description).subarray(0, constants_1.MAX_DESCRIPTION_CHUNK_SIZE)
                 }
             });
             group.setServiceDescription({
                 ...sendParams,
                 args: {
-                    offset: BigInt(MAX_DESCRIPTION_CHUNK_SIZE),
-                    data: Buffer.from(rest.description).subarray(MAX_DESCRIPTION_CHUNK_SIZE)
+                    offset: BigInt(constants_1.MAX_DESCRIPTION_CHUNK_SIZE),
+                    data: Buffer.from(rest.description).subarray(constants_1.MAX_DESCRIPTION_CHUNK_SIZE)
                 }
             });
         }
@@ -278,7 +295,7 @@ export class SubscriptionsSDK extends BaseSDK {
         group.opUp({
             ...sendParams,
             args: {},
-            maxFee: microAlgos(1000),
+            maxFee: (0, algokit_utils_2.microAlgos)(1000),
         });
         await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
     }
@@ -292,7 +309,7 @@ export class SubscriptionsSDK extends BaseSDK {
         group.opUp({
             ...sendParams,
             args: {},
-            maxFee: microAlgos(1000),
+            maxFee: (0, algokit_utils_2.microAlgos)(1000),
         });
         await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
     }
@@ -301,7 +318,7 @@ export class SubscriptionsSDK extends BaseSDK {
         const paymentAmount = await this.blockCost({ sender, signer });
         const payment = this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(paymentAmount),
+            amount: (0, algokit_utils_1.microAlgo)(paymentAmount),
             receiver: this.client.appAddress.toString(),
         });
         const group = this.client.newGroup();
@@ -315,7 +332,7 @@ export class SubscriptionsSDK extends BaseSDK {
         group.opUp({
             ...sendParams,
             args: {},
-            maxFee: microAlgos(1000),
+            maxFee: (0, algokit_utils_2.microAlgos)(1000),
         });
         await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
     }
@@ -329,7 +346,7 @@ export class SubscriptionsSDK extends BaseSDK {
         group.opUp({
             ...sendParams,
             args: {},
-            maxFee: microAlgos(1000),
+            maxFee: (0, algokit_utils_2.microAlgos)(1000),
         });
         await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
     }
@@ -354,7 +371,7 @@ export class SubscriptionsSDK extends BaseSDK {
             : subscribeCost;
         const payment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(paymentAmount),
+            amount: (0, algokit_utils_1.microAlgo)(paymentAmount),
             receiver: this.client.appAddress.toString(), // Convert Address to string to avoid instanceof issues
         });
         const group = this.client.newGroup();
@@ -363,7 +380,7 @@ export class SubscriptionsSDK extends BaseSDK {
             const optInCost = await this.optInCost({ ...sendParams, asset });
             const optInPayment = await this.client.algorand.createTransaction.payment({
                 ...sendParams,
-                amount: microAlgo(optInCost),
+                amount: (0, algokit_utils_1.microAlgo)(optInCost),
                 receiver: this.client.appAddress.toString(),
             });
             group.optIn({
@@ -439,12 +456,12 @@ export class SubscriptionsSDK extends BaseSDK {
         group.opUp({
             ...sendParams,
             args: {},
-            maxFee: microAlgos(1000),
+            maxFee: (0, algokit_utils_2.microAlgos)(1000),
         });
         group.opUp({
             ...sendParams,
             args: {},
-            maxFee: microAlgos(1000),
+            maxFee: (0, algokit_utils_2.microAlgos)(1000),
             note: '1'
         });
         console.log('group built:', (await (await group.composer()).build()).transactions);
@@ -467,7 +484,7 @@ export class SubscriptionsSDK extends BaseSDK {
         group.opUp({
             ...sendParams,
             args: {},
-            maxFee: microAlgos(1000),
+            maxFee: (0, algokit_utils_2.microAlgos)(1000),
         });
         await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
     }
@@ -492,7 +509,7 @@ export class SubscriptionsSDK extends BaseSDK {
         else {
             const payment = await this.client.algorand.createTransaction.payment({
                 ...sendParams,
-                amount: microAlgo(amount),
+                amount: (0, algokit_utils_1.microAlgo)(amount),
                 receiver: this.client.appAddress.toString(),
             });
             group.deposit({
@@ -506,7 +523,7 @@ export class SubscriptionsSDK extends BaseSDK {
         group.opUp({
             ...sendParams,
             args: {},
-            maxFee: microAlgos(1000),
+            maxFee: (0, algokit_utils_2.microAlgos)(1000),
         });
         await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
     }
@@ -523,7 +540,7 @@ export class SubscriptionsSDK extends BaseSDK {
         group.opUp({
             ...sendParams,
             args: {},
-            maxFee: microAlgos(1000),
+            maxFee: (0, algokit_utils_2.microAlgos)(1000),
         });
         await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
     }
@@ -548,7 +565,7 @@ export class SubscriptionsSDK extends BaseSDK {
         group.opUp({
             ...sendParams,
             args: {},
-            maxFee: microAlgos(1000),
+            maxFee: (0, algokit_utils_2.microAlgos)(1000),
         });
         await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
     }
@@ -565,9 +582,10 @@ export class SubscriptionsSDK extends BaseSDK {
         group.opUp({
             ...sendParams,
             args: {},
-            maxFee: microAlgos(1000),
+            maxFee: (0, algokit_utils_2.microAlgos)(1000),
         });
         await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
     }
 }
+exports.SubscriptionsSDK = SubscriptionsSDK;
 //# sourceMappingURL=index.js.map

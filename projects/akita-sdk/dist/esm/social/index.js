@@ -1,19 +1,59 @@
-import { microAlgo } from "@algorandfoundation/algokit-utils";
-import algosdk, { makeEmptyTransactionSigner } from "algosdk";
-import { DEFAULT_READER, DEFAULT_SEND_PARAMS } from "../constants";
-import { ENV_VAR_NAMES, resolveAppIdWithClient, getAppIdFromEnv, detectNetworkFromClient } from "../config";
-import { AkitaDaoFactory, } from '../generated/AkitaDAOClient';
-import { AkitaSocialFactory, } from '../generated/AkitaSocialClient';
-import { AkitaSocialGraphFactory, } from '../generated/AkitaSocialGraphClient';
-import { AkitaSocialImpactFactory, } from '../generated/AkitaSocialImpactClient';
-import { AkitaSocialModerationFactory } from '../generated/AkitaSocialModerationClient';
-import { hasSenderSigner } from "../types";
-import { RefType, } from "./types";
-import { AMENDMENT_MBR, BLOCKS_MBR, BOX_COST_PER_BYTE, CID_LENGTH, EDIT_BACK_REF_MBR, FOLLOWS_MBR, IMPACT_META_MBR, META_MBR, MIN_POSTS_MBR, REACTIONS_MBR, REACTIONLIST_MBR, VOTELIST_MBR, VOTES_MBR, MODERATORS_MBR, BANNED_MBR, ACTIONS_MBR, MIN_PAYWALL_MBR, PAYWALL_PAY_OPTION_SIZE, TIP_SEND_TYPE_ARC58, } from "./constants";
-export * from './types';
-export * from './constants';
-export class SocialSDK {
-    constructor({ algorand, daoAppId, socialFactoryParams = {}, graphFactoryParams = {}, impactFactoryParams = {}, moderationFactoryParams = {}, readerAccount = DEFAULT_READER, sendParams = DEFAULT_SEND_PARAMS, ipfsUrl = '', }) {
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RefType = exports.SocialSDK = void 0;
+const algokit_utils_1 = require("@algorandfoundation/algokit-utils");
+const algosdk_1 = __importStar(require("algosdk"));
+const constants_1 = require("../constants");
+const config_1 = require("../config");
+const AkitaDAOClient_1 = require("../generated/AkitaDAOClient");
+const AkitaSocialClient_1 = require("../generated/AkitaSocialClient");
+const AkitaSocialGraphClient_1 = require("../generated/AkitaSocialGraphClient");
+const AkitaSocialImpactClient_1 = require("../generated/AkitaSocialImpactClient");
+const AkitaSocialModerationClient_1 = require("../generated/AkitaSocialModerationClient");
+const types_1 = require("../types");
+const types_2 = require("./types");
+Object.defineProperty(exports, "RefType", { enumerable: true, get: function () { return types_2.RefType; } });
+const constants_2 = require("./constants");
+__exportStar(require("./types"), exports);
+__exportStar(require("./constants"), exports);
+class SocialSDK {
+    constructor({ algorand, daoAppId, socialFactoryParams = {}, graphFactoryParams = {}, impactFactoryParams = {}, moderationFactoryParams = {}, readerAccount = constants_1.DEFAULT_READER, sendParams = constants_1.DEFAULT_SEND_PARAMS, ipfsUrl = '', }) {
         // DAO client for reading config (lightweight - only used for state reads)
         // Optional: only created when daoAppId is provided
         this.daoClient = null;
@@ -21,8 +61,8 @@ export class SocialSDK {
         this._socialFees = null;
         this._akitaAssets = null;
         this.algorand = algorand;
-        this.network = detectNetworkFromClient(algorand);
-        this.daoAppId = daoAppId ?? getAppIdFromEnv(ENV_VAR_NAMES.DAO_APP_ID);
+        this.network = (0, config_1.detectNetworkFromClient)(algorand);
+        this.daoAppId = daoAppId ?? (0, config_1.getAppIdFromEnv)(config_1.ENV_VAR_NAMES.DAO_APP_ID);
         this.readerAccount = readerAccount;
         this.sendParams = { ...sendParams };
         this.ipfsUrl = ipfsUrl;
@@ -34,30 +74,30 @@ export class SocialSDK {
             this.sendParams.signer = socialFactoryParams.defaultSigner;
         }
         // Resolve app IDs from params, environment, or network config
-        const resolvedSocialAppId = resolveAppIdWithClient(algorand, socialFactoryParams.appId, ENV_VAR_NAMES.SOCIAL_APP_ID, 'SocialSDK.social');
-        const resolvedGraphAppId = resolveAppIdWithClient(algorand, graphFactoryParams.appId, ENV_VAR_NAMES.SOCIAL_GRAPH_APP_ID, 'SocialSDK.graph');
-        const resolvedImpactAppId = resolveAppIdWithClient(algorand, impactFactoryParams.appId, ENV_VAR_NAMES.SOCIAL_IMPACT_APP_ID, 'SocialSDK.impact');
-        const resolvedModerationAppId = resolveAppIdWithClient(algorand, moderationFactoryParams.appId, ENV_VAR_NAMES.SOCIAL_MODERATION_APP_ID, 'SocialSDK.moderation');
+        const resolvedSocialAppId = (0, config_1.resolveAppIdWithClient)(algorand, socialFactoryParams.appId, config_1.ENV_VAR_NAMES.SOCIAL_APP_ID, 'SocialSDK.social');
+        const resolvedGraphAppId = (0, config_1.resolveAppIdWithClient)(algorand, graphFactoryParams.appId, config_1.ENV_VAR_NAMES.SOCIAL_GRAPH_APP_ID, 'SocialSDK.graph');
+        const resolvedImpactAppId = (0, config_1.resolveAppIdWithClient)(algorand, impactFactoryParams.appId, config_1.ENV_VAR_NAMES.SOCIAL_IMPACT_APP_ID, 'SocialSDK.impact');
+        const resolvedModerationAppId = (0, config_1.resolveAppIdWithClient)(algorand, moderationFactoryParams.appId, config_1.ENV_VAR_NAMES.SOCIAL_MODERATION_APP_ID, 'SocialSDK.moderation');
         // Initialize all clients with resolved app IDs
-        this.socialClient = new AkitaSocialFactory({ algorand }).getAppClientById({
+        this.socialClient = new AkitaSocialClient_1.AkitaSocialFactory({ algorand }).getAppClientById({
             ...socialFactoryParams,
             appId: resolvedSocialAppId,
         });
-        this.graphClient = new AkitaSocialGraphFactory({ algorand }).getAppClientById({
+        this.graphClient = new AkitaSocialGraphClient_1.AkitaSocialGraphFactory({ algorand }).getAppClientById({
             ...graphFactoryParams,
             appId: resolvedGraphAppId,
         });
-        this.impactClient = new AkitaSocialImpactFactory({ algorand }).getAppClientById({
+        this.impactClient = new AkitaSocialImpactClient_1.AkitaSocialImpactFactory({ algorand }).getAppClientById({
             ...impactFactoryParams,
             appId: resolvedImpactAppId,
         });
-        this.moderationClient = new AkitaSocialModerationFactory({ algorand }).getAppClientById({
+        this.moderationClient = new AkitaSocialModerationClient_1.AkitaSocialModerationFactory({ algorand }).getAppClientById({
             ...moderationFactoryParams,
             appId: resolvedModerationAppId,
         });
         // Only create DAO client when a valid daoAppId is provided
         if (this.daoAppId !== undefined && this.daoAppId > 0n) {
-            this.daoClient = new AkitaDaoFactory({ algorand }).getAppClientById({ appId: this.daoAppId });
+            this.daoClient = new AkitaDAOClient_1.AkitaDaoFactory({ algorand }).getAppClientById({ appId: this.daoAppId });
         }
         this.socialAppId = this.socialClient.appId;
         this.graphAppId = this.graphClient.appId;
@@ -97,7 +137,7 @@ export class SocialSDK {
     }
     getRequiredSendParams(params = {}) {
         const sendParams = this.getSendParams(params);
-        if (!hasSenderSigner(sendParams)) {
+        if (!(0, types_1.hasSenderSigner)(sendParams)) {
             throw new Error('Sender and signer must be provided either explicitly or through defaults at SDK instantiation');
         }
         return sendParams;
@@ -106,7 +146,7 @@ export class SocialSDK {
         return {
             ...this.sendParams,
             ...(sender !== undefined ? { sender } : { sender: this.readerAccount }),
-            signer: makeEmptyTransactionSigner()
+            signer: (0, algosdk_1.makeEmptyTransactionSigner)()
         };
     }
     // ============================================================================
@@ -297,7 +337,7 @@ export class SocialSDK {
      * @returns Extra MBR amount in microAlgos
      */
     calculateTipExtraMbr(tipMbrInfo) {
-        if (tipMbrInfo.type === TIP_SEND_TYPE_ARC58) {
+        if (tipMbrInfo.type === constants_2.TIP_SEND_TYPE_ARC58) {
             return tipMbrInfo.arc58;
         }
         return 0n;
@@ -314,12 +354,12 @@ export class SocialSDK {
      * @param isAmendment - Whether this is an edit/amendment (adds extra MBR)
      * @returns MBR in microAlgos
      */
-    calculatePostMBR(cidLength = CID_LENGTH, isAmendment = false) {
-        const postsMbr = MIN_POSTS_MBR + (BOX_COST_PER_BYTE * BigInt(cidLength));
-        let total = postsMbr + VOTES_MBR + VOTELIST_MBR;
+    calculatePostMBR(cidLength = constants_2.CID_LENGTH, isAmendment = false) {
+        const postsMbr = constants_2.MIN_POSTS_MBR + (constants_2.BOX_COST_PER_BYTE * BigInt(cidLength));
+        let total = postsMbr + constants_2.VOTES_MBR + constants_2.VOTELIST_MBR;
         if (isAmendment) {
             // For edits: amendment MBR (marking original) + edit back-ref MBR (back-pointer in edit)
-            total += AMENDMENT_MBR + EDIT_BACK_REF_MBR;
+            total += constants_2.AMENDMENT_MBR + constants_2.EDIT_BACK_REF_MBR;
         }
         return total;
     }
@@ -332,11 +372,11 @@ export class SocialSDK {
      * @param needsEmptyPost - Whether an empty post needs to be created for the reference
      * @returns MBR in microAlgos
      */
-    calculateReplyMBR(cidLength = CID_LENGTH, isAmendment = false, needsEmptyPost = false) {
+    calculateReplyMBR(cidLength = constants_2.CID_LENGTH, isAmendment = false, needsEmptyPost = false) {
         let total = this.calculatePostMBR(cidLength, isAmendment);
         if (needsEmptyPost) {
             // Empty post has 0 CID length but still needs posts + votes MBR
-            total += MIN_POSTS_MBR + VOTES_MBR;
+            total += constants_2.MIN_POSTS_MBR + constants_2.VOTES_MBR;
         }
         return total;
     }
@@ -348,9 +388,9 @@ export class SocialSDK {
      * @returns MBR in microAlgos
      */
     calculateVoteMBR(needsEmptyPost = false) {
-        let total = VOTELIST_MBR;
+        let total = constants_2.VOTELIST_MBR;
         if (needsEmptyPost) {
-            total += MIN_POSTS_MBR + VOTES_MBR;
+            total += constants_2.MIN_POSTS_MBR + constants_2.VOTES_MBR;
         }
         return total;
     }
@@ -363,12 +403,12 @@ export class SocialSDK {
      * @returns MBR in microAlgos
      */
     calculateReactMBR(isFirstReactionWithNFT = true, needsEmptyPost = false) {
-        let total = REACTIONLIST_MBR;
+        let total = constants_2.REACTIONLIST_MBR;
         if (isFirstReactionWithNFT) {
-            total += REACTIONS_MBR;
+            total += constants_2.REACTIONS_MBR;
         }
         if (needsEmptyPost) {
-            total += MIN_POSTS_MBR + VOTES_MBR;
+            total += constants_2.MIN_POSTS_MBR + constants_2.VOTES_MBR;
         }
         return total;
     }
@@ -377,14 +417,14 @@ export class SocialSDK {
      * @returns MBR in microAlgos
      */
     calculateFollowMBR() {
-        return FOLLOWS_MBR;
+        return constants_2.FOLLOWS_MBR;
     }
     /**
      * Calculate the MBR required for a block
      * @returns MBR in microAlgos
      */
     calculateBlockMBR() {
-        return BLOCKS_MBR;
+        return constants_2.BLOCKS_MBR;
     }
     /**
      * Calculate the MBR required for initializing meta
@@ -392,7 +432,7 @@ export class SocialSDK {
      * @returns MBR in microAlgos
      */
     calculateMetaMBR() {
-        return META_MBR + IMPACT_META_MBR;
+        return constants_2.META_MBR + constants_2.IMPACT_META_MBR;
     }
     /**
      * Calculate the MBR required for a paywall
@@ -404,28 +444,28 @@ export class SocialSDK {
      */
     calculatePayWallMBR(userOptionsCount, agentOptionsCount) {
         const totalOptions = userOptionsCount + agentOptionsCount;
-        return MIN_PAYWALL_MBR + (BOX_COST_PER_BYTE * PAYWALL_PAY_OPTION_SIZE * BigInt(totalOptions));
+        return constants_2.MIN_PAYWALL_MBR + (constants_2.BOX_COST_PER_BYTE * constants_2.PAYWALL_PAY_OPTION_SIZE * BigInt(totalOptions));
     }
     /**
      * Calculate the MBR required for adding a moderator
      * @returns MBR in microAlgos
      */
     calculateModeratorMBR() {
-        return MODERATORS_MBR;
+        return constants_2.MODERATORS_MBR;
     }
     /**
      * Calculate the MBR required for banning a user
      * @returns MBR in microAlgos
      */
     calculateBanMBR() {
-        return BANNED_MBR;
+        return constants_2.BANNED_MBR;
     }
     /**
      * Calculate the MBR required for adding an action
      * @returns MBR in microAlgos
      */
     calculateActionMBR() {
-        return ACTIONS_MBR;
+        return constants_2.ACTIONS_MBR;
     }
     // ============================================================================
     // READ METHODS - Social Contract
@@ -572,7 +612,7 @@ export class SocialSDK {
         const mbrAmount = this.calculateMetaMBR();
         const mbrPayment = this.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(mbrAmount),
+            amount: (0, algokit_utils_1.microAlgo)(mbrAmount),
             receiver: this.socialClient.appAddress,
         });
         const result = await this.socialClient.send.initMeta({
@@ -639,7 +679,7 @@ export class SocialSDK {
         const mbrAmount = this.calculatePostMBR(cid.length, false);
         const mbrPayment = this.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(mbrAmount),
+            amount: (0, algokit_utils_1.microAlgo)(mbrAmount),
             receiver: this.socialClient.appAddress,
         });
         // AKTA tip transfer (required by contract - validates postFee)
@@ -702,7 +742,7 @@ export class SocialSDK {
         const mbrAmount = this.calculatePostMBR(cid.length, true);
         const mbrPayment = this.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(mbrAmount),
+            amount: (0, algokit_utils_1.microAlgo)(mbrAmount),
             receiver: this.socialClient.appAddress,
         });
         const tipTxn = this.algorand.createTransaction.assetTransfer({
@@ -753,7 +793,7 @@ export class SocialSDK {
         const mbrAmount = this.calculateReplyMBR(cid.length, false, false);
         const mbrPayment = this.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(mbrAmount),
+            amount: (0, algokit_utils_1.microAlgo)(mbrAmount),
             receiver: this.socialClient.appAddress,
         });
         const tipTxn = this.algorand.createTransaction.assetTransfer({
@@ -840,7 +880,7 @@ export class SocialSDK {
         const mbrAmount = this.calculateVoteMBR(false);
         const mbrPayment = this.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(mbrAmount),
+            amount: (0, algokit_utils_1.microAlgo)(mbrAmount),
             receiver: this.socialClient.appAddress,
         });
         const tipTxn = this.algorand.createTransaction.assetTransfer({
@@ -904,7 +944,7 @@ export class SocialSDK {
         // No MBR for inverting, just the payment transaction structure
         const mbrPayment = this.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(0),
+            amount: (0, algokit_utils_1.microAlgo)(0),
             receiver: this.socialClient.appAddress,
         });
         // Tip is required when inverting the vote
@@ -957,7 +997,7 @@ export class SocialSDK {
         // No MBR for deleting
         const mbrPayment = this.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(0),
+            amount: (0, algokit_utils_1.microAlgo)(0),
             receiver: this.socialClient.appAddress,
         });
         // No tip required when deleting
@@ -1021,7 +1061,7 @@ export class SocialSDK {
         const mbrAmount = this.calculateReactMBR(true, false);
         const mbrPayment = this.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(mbrAmount),
+            amount: (0, algokit_utils_1.microAlgo)(mbrAmount),
             receiver: this.socialClient.appAddress,
         });
         const tipTxn = this.algorand.createTransaction.assetTransfer({
@@ -1200,7 +1240,7 @@ export class SocialSDK {
      * Convert address to first 16 bytes for reaction list lookup
      */
     addressToBytes16(address) {
-        const decoded = algosdk.decodeAddress(address);
+        const decoded = algosdk_1.default.decodeAddress(address);
         return decoded.publicKey.slice(0, 16);
     }
     // ============================================================================
@@ -1218,7 +1258,7 @@ export class SocialSDK {
         const mbrAmount = this.calculateFollowMBR();
         const mbrPayment = this.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(mbrAmount),
+            amount: (0, algokit_utils_1.microAlgo)(mbrAmount),
             receiver: this.graphClient.appAddress,
         });
         if (gateTxn) {
@@ -1263,7 +1303,7 @@ export class SocialSDK {
         const mbrAmount = this.calculateBlockMBR();
         const mbrPayment = this.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(mbrAmount),
+            amount: (0, algokit_utils_1.microAlgo)(mbrAmount),
             receiver: this.graphClient.appAddress,
         });
         await this.graphClient.send.block({
@@ -1299,7 +1339,7 @@ export class SocialSDK {
         const mbrAmount = this.calculatePayWallMBR(userPayInfo.length, agentPayInfo.length);
         const mbrPayment = this.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(mbrAmount),
+            amount: (0, algokit_utils_1.microAlgo)(mbrAmount),
             receiver: this.socialClient.appAddress,
         });
         // ViewPayWallValue expects tuples [type, assetOrSubId, amount][]
@@ -1337,7 +1377,7 @@ export class SocialSDK {
         const mbrAmount = this.calculateModeratorMBR();
         const mbrPayment = this.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(mbrAmount),
+            amount: (0, algokit_utils_1.microAlgo)(mbrAmount),
             receiver: this.moderationClient.appAddress,
         });
         await this.moderationClient.send.addModerator({
@@ -1368,7 +1408,7 @@ export class SocialSDK {
         const mbrAmount = this.calculateBanMBR();
         const mbrPayment = this.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(mbrAmount),
+            amount: (0, algokit_utils_1.microAlgo)(mbrAmount),
             receiver: this.moderationClient.appAddress,
         });
         await this.moderationClient.send.ban({
@@ -1423,7 +1463,7 @@ export class SocialSDK {
         const mbrAmount = this.calculateActionMBR();
         const mbrPayment = this.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(mbrAmount),
+            amount: (0, algokit_utils_1.microAlgo)(mbrAmount),
             receiver: this.moderationClient.appAddress,
         });
         await this.moderationClient.send.addAction({
@@ -1446,6 +1486,5 @@ export class SocialSDK {
         });
     }
 }
-// Re-export the RefType enum for convenience
-export { RefType };
+exports.SocialSDK = SocialSDK;
 //# sourceMappingURL=index.js.map

@@ -1,18 +1,35 @@
-import { microAlgo } from "@algorandfoundation/algokit-utils";
-import { BaseSDK } from "../base";
-import { ENV_VAR_NAMES } from "../config";
-import { MetaMerklesFactory, } from '../generated/MetaMerklesClient';
-export * from "./types";
-export * from "./tree";
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MetaMerklesSDK = void 0;
+const algokit_utils_1 = require("@algorandfoundation/algokit-utils");
+const base_1 = require("../base");
+const config_1 = require("../config");
+const MetaMerklesClient_1 = require("../generated/MetaMerklesClient");
+__exportStar(require("./types"), exports);
+__exportStar(require("./tree"), exports);
 /** Cost in microAlgo for adding a new tree type */
 const ADD_TYPE_COST = 100000000n;
 /**
  * SDK for interacting with the MetaMerkles contract.
  * Use this to manage merkle tree roots, metadata, and verify merkle proofs.
  */
-export class MetaMerklesSDK extends BaseSDK {
+class MetaMerklesSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: MetaMerklesFactory, ...params }, ENV_VAR_NAMES.META_MERKLES_APP_ID);
+        super({ factory: MetaMerklesClient_1.MetaMerklesFactory, ...params }, config_1.ENV_VAR_NAMES.META_MERKLES_APP_ID);
     }
     // ========== Read Methods ==========
     /**
@@ -198,7 +215,7 @@ export class MetaMerklesSDK extends BaseSDK {
         const cost = await this.rootCosts({ name });
         const payment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(cost),
+            amount: (0, algokit_utils_1.microAlgo)(cost),
             receiver: this.client.appAddress,
         });
         await this.client.send.addRoot({
@@ -238,7 +255,7 @@ export class MetaMerklesSDK extends BaseSDK {
         await this.client.send.deleteRoot({
             ...sendParams,
             // Extra fee for inner payment to return MBR
-            extraFee: microAlgo(1000),
+            extraFee: (0, algokit_utils_1.microAlgo)(1000),
             args: { name },
         });
     }
@@ -253,7 +270,7 @@ export class MetaMerklesSDK extends BaseSDK {
         const cost = await this.dataCosts({ name, key, value });
         const payment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(cost),
+            amount: (0, algokit_utils_1.microAlgo)(cost),
             receiver: this.client.appAddress,
         });
         await this.client.send.addData({
@@ -275,7 +292,7 @@ export class MetaMerklesSDK extends BaseSDK {
         await this.client.send.deleteData({
             ...sendParams,
             // Extra fee for inner payment to return MBR
-            extraFee: microAlgo(1000),
+            extraFee: (0, algokit_utils_1.microAlgo)(1000),
             args: { name, key },
         });
     }
@@ -289,7 +306,7 @@ export class MetaMerklesSDK extends BaseSDK {
         const sendParams = this.getRequiredSendParams({ sender, signer });
         const payment = await this.client.algorand.createTransaction.payment({
             ...sendParams,
-            amount: microAlgo(ADD_TYPE_COST),
+            amount: (0, algokit_utils_1.microAlgo)(ADD_TYPE_COST),
             receiver: this.client.appAddress,
         });
         // Convert SchemaPart enum values to numbers for the contract
@@ -389,4 +406,5 @@ export class MetaMerklesSDK extends BaseSDK {
         });
     }
 }
+exports.MetaMerklesSDK = MetaMerklesSDK;
 //# sourceMappingURL=index.js.map

@@ -109,6 +109,7 @@ export class AbstractedAccountFactory extends FactoryContract {
       .create({
         args: [
           this.childContractVersion.value,
+          this.akitaDAO.value.id,
           controlledAddress,
           admin,
           this.domain.value,

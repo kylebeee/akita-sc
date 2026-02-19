@@ -1,9 +1,12 @@
-import { BaseSDK } from "../../base";
-import { StakingPluginFactory } from "../../generated/StakingPluginClient";
-import { getTxns } from "../utils";
-export class StakingPluginSDK extends BaseSDK {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.StakingPluginSDK = void 0;
+const base_1 = require("../../base");
+const StakingPluginClient_1 = require("../../generated/StakingPluginClient");
+const utils_1 = require("../utils");
+class StakingPluginSDK extends base_1.BaseSDK {
     constructor(params) {
-        super({ factory: StakingPluginFactory, ...params });
+        super({ factory: StakingPluginClient_1.StakingPluginFactory, ...params });
     }
     stake(args) {
         const methodName = 'stake';
@@ -11,7 +14,7 @@ export class StakingPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -38,7 +41,7 @@ export class StakingPluginSDK extends BaseSDK {
             return (spendingAddress) => ({
                 appId: this.client.appId,
                 selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
-                getTxns
+                getTxns: utils_1.getTxns
             });
         }
         const { sender, signer } = args;
@@ -60,4 +63,5 @@ export class StakingPluginSDK extends BaseSDK {
         });
     }
 }
+exports.StakingPluginSDK = StakingPluginSDK;
 //# sourceMappingURL=staking.js.map
