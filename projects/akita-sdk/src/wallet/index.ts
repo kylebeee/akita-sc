@@ -1,5 +1,5 @@
 import { AbstractAccountBoxMbrData, AbstractedAccountArgs, AbstractedAccountFactory, AllowanceKey, EscrowInfo, PluginKey, type AbstractedAccountClient, ExecutionInfo, AbstractedAccountComposer, PluginInfoFromTuple, EscrowInfoFromTuple } from '../generated/AbstractedAccountClient'
-import { AddAllowanceArgs, AddPluginArgs, AllowanceInfo, BuildWalletUsePluginParams, CanCallParams, ExecutionBuildGroup, MbrParams, MethodOffset, PluginInfo, RekeyArgs, WalletAddPluginParams, WalletGlobalState, WalletUsePluginParams } from './types';
+import { AddAllowanceArgs, AddPluginArgs, AllowanceInfo, BuildWalletUsePluginParams, CanCallParams, ExecutionBuildGroup, FundsRequest, MbrParams, MethodOffset, PluginInfo, RekeyArgs, WalletAddPluginParams, WalletGlobalState, WalletUsePluginParams } from './types';
 import { isPluginSDKReturn, MaybeSigner, NewContractSDKParams, SDKClient, GroupReturn, TxnReturn, hasSenderSigner, ExpandedSendParamsWithSigner } from '../types';
 import { BaseSDK } from '../base';
 import { ENV_VAR_NAMES } from '../config';
@@ -448,13 +448,26 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
   async usePlugin(params: WalletUsePluginParams): Promise<GroupReturn> {
 
     const sendParams = this.getSendParams(params);
+    const { escrow = '', fundsRequest = [], consolidateFees = false } = params;
 
-    const { plugins, caller, length, group, sendParams: preparedSendParams } = await this.prepareUsePlugin(params);
-    const { escrow = '', fundsRequest, consolidateFees = false } = params;
+    const hasAlgoFundsRequest = fundsRequest.length > 0 && fundsRequest.some(fr => fr.asset === 0n);
+
+    // When fundsRequest includes ALGO, inflate for simulation (coverFees reimburses
+    // Txn.fee from the escrow, so the escrow needs extra during simulation when fees
+    // are set to maxFee). After simulation we deflate to the real calculated fee.
+    const suggestedParams = await this.client.algorand.getSuggestedParams();
+    const MAX_SIM_FEE = BigInt(suggestedParams.minFee) * 272n;
+
+    const buildFundsRequest = hasAlgoFundsRequest
+      ? fundsRequest.map(fr => fr.asset === 0n ? { ...fr, amount: fr.amount + MAX_SIM_FEE } : fr)
+      : fundsRequest;
+
+    const { plugins, caller, length, group, sendParams: preparedSendParams } =
+      await this.prepareUsePlugin({ ...params, fundsRequest: buildFundsRequest });
 
     let result: GroupReturn;
 
-    if (consolidateFees) {
+    if (consolidateFees || hasAlgoFundsRequest) {
       // Build the ATC from the group
       const atc = (await (await group.composer()).build()).atc;
       const appliedAtc = forceProperties(atc, {
@@ -462,12 +475,9 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
         signer: preparedSendParams.signer
       });
 
-      // Get suggested params for fee calculation
-      const suggestedParams = await this.client.algorand.getSuggestedParams();
-
       // Set max fees for all transactions to allow prepareGroupWithCost to work
       const maxFees = new Map<number, AlgoAmount>(
-        Array.from({ length }, (_, i) => [i, microAlgo(BigInt(suggestedParams.minFee) * 272n)])
+        Array.from({ length }, (_, i) => [i, microAlgo(MAX_SIM_FEE)])
       );
 
       // Use prepareGroupWithCost to populate resources and calculate fees
@@ -488,7 +498,29 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
       const feeGroup = populatedAtc.clone().buildGroup();
       const totalFees = feeGroup.reduce((acc, txn) => acc + txn.txn.fee, 0n);
 
-      const consolidatedAtc = forceProperties(populatedAtc, {
+      // Deflate the fundsRequest: replace inflated MAX_SIM_FEE with real totalFees
+      let finalAtc = populatedAtc;
+      if (hasAlgoFundsRequest) {
+        const modifiedGroup = populatedAtc.clone().buildGroup();
+        const rekeyTxn = modifiedGroup[0] as any;
+        const appArgs = rekeyTxn.txn.applicationCall.appArgs as Uint8Array[];
+        const fundsRequestArgIndex = appArgs.length - 1;
+        appArgs[fundsRequestArgIndex] = this.adjustFundsRequestAmounts(
+          appArgs[fundsRequestArgIndex],
+          fundsRequest,
+          totalFees,
+        );
+
+        const rebuiltAtc = new algosdk.AtomicTransactionComposer();
+        modifiedGroup.forEach((t: any) => {
+          t.txn['group'] = undefined;
+          rebuiltAtc.addTransaction(t);
+        });
+        (rebuiltAtc as any)['methodCalls'] = (populatedAtc as any)['methodCalls'];
+        finalAtc = rebuiltAtc;
+      }
+
+      const consolidatedAtc = forceProperties(finalAtc, {
         fees: new Map([
           [0, microAlgo(totalFees)],
           ...Array.from({ length: length - 1 }, (_, i) => [i + 1, microAlgo(0n)] as [number, AlgoAmount]),
@@ -510,6 +542,35 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
       ).catch(error => {
         console.warn('Failed to update plugin cache:', error);
       });
+    }
+
+    return result;
+  }
+
+  /**
+   * Modify the ABI-encoded fundsRequest argument in a rekey transaction.
+   * Replaces the inflated simulation amounts with the correct amounts (original + realFee).
+   *
+   * The fundsRequest arg is encoded as `(uint64,uint64)[]`:
+   *   2 bytes: element count (big-endian uint16)
+   *   Per element: 8 bytes asset (big-endian uint64) + 8 bytes amount (big-endian uint64)
+   */
+  private adjustFundsRequestAmounts(
+    encoded: Uint8Array,
+    originalFR: FundsRequest[],
+    realFee: bigint,
+  ): Uint8Array {
+    const result = new Uint8Array(encoded);
+    const view = new DataView(result.buffer, result.byteOffset, result.byteLength);
+    const count = view.getUint16(0);
+
+    for (let i = 0; i < count; i++) {
+      const offset = 2 + i * 16;
+      const asset = view.getBigUint64(offset);
+      const original = originalFR.find(fr => fr.asset === asset);
+      if (original && asset === 0n) {
+        view.setBigUint64(offset + 8, original.amount + realFee);
+      }
     }
 
     return result;
@@ -996,6 +1057,6 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
   }
 
   async balance(assets: bigint[]): Promise<bigint[]> {
-    return (await this.client.send.balance({ args: { assets } })).return as unknown as bigint[];
+    return (await this.client.send.balance({ args: { assets }, extraFee: microAlgo((1_000 * assets.length)) })).return as unknown as bigint[];
   }
 }

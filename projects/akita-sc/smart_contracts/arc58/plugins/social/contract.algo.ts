@@ -512,7 +512,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
     const { isUp: wasUp } = abiCall<typeof AkitaSocial.prototype.getVote>({
       sender,
       appId: social,
-      args: [ref],
+      args: [sender, ref],
     }).returnValue
 
     const mbrPayment = itxn.payment({

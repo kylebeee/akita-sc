@@ -1,0 +1,33 @@
+import { defineConfig } from 'tsup'
+
+export default defineConfig({
+  entry: {
+    'index': 'src/index.ts',
+    'auction/index': 'src/auction/index.ts',
+    'connect/index': 'src/connect/index.ts',
+    'dao/index': 'src/dao/index.ts',
+    'dao-deployable/index': 'src/dao-deployable/index.ts',
+    'escrow/index': 'src/escrow/index.ts',
+    'gates/index': 'src/gates/index.ts',
+    'hyper-swap/index': 'src/hyper-swap/index.ts',
+    'marketplace/index': 'src/marketplace/index.ts',
+    'meta-merkles/index': 'src/meta-merkles/index.ts',
+    'poll/index': 'src/poll/index.ts',
+    'prize-box/index': 'src/prize-box/index.ts',
+    'raffle/index': 'src/raffle/index.ts',
+    'rewards/index': 'src/rewards/index.ts',
+    'social/index': 'src/social/index.ts',
+    'staking/index': 'src/staking/index.ts',
+    'staking-pool/index': 'src/staking-pool/index.ts',
+    'subscriptions/index': 'src/subscriptions/index.ts',
+    'wallet/index': 'src/wallet/index.ts',
+    'types': 'src/types.ts',
+  },
+  format: ['cjs', 'esm'],
+  dts: false,
+  splitting: true,
+  sourcemap: true,
+  clean: true,
+  outDir: 'dist',
+  external: ['algosdk', '@algorandfoundation/algokit-utils'],
+})

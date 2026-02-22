@@ -2703,10 +2703,12 @@ editVote:
     // const { isUp: wasUp } = abiCall<typeof AkitaSocial.prototype.getVote>({
     //   sender,
     //   appId: social,
-    //   args: [ref],
+    //   args: [sender, ref],
     // }).returnValue
     itxn_begin
-    pushbytes 0xf4ea50e4 // method "getVote(byte[32])(uint64,bool)"
+    pushbytes 0x9e174bb6 // method "getVote(address,byte[32])(uint64,bool)"
+    itxn_field ApplicationArgs
+    dig 2
     itxn_field ApplicationArgs
     uncover 4
     itxn_field ApplicationArgs

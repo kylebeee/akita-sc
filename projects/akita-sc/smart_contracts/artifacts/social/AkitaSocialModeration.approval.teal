@@ -3,8 +3,8 @@
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
-    intcblock 0 1 32 8 18900 29700
-    bytecblock "akita_dao" "d" "wallet" 0x151f7c75 "n" 0x00 "version" "sal" 0xeac6d922
+    intcblock 1 0 32 8 18900 29700
+    bytecblock "akita_dao" "d" "wallet" "n" 0x00 0x151f7c75 "version" "sal" 0xeac6d922
     // smart_contracts/social/moderation.algo.ts:15
     // export class AkitaSocialModeration extends UpgradeableAkitaBaseContract {
     pushbytes 0xea9180dd // method "update(string)void"
@@ -27,7 +27,7 @@ main_switch_case_next@3:
 main_opUp_route@17:
     // smart_contracts/utils/base-contracts/base.ts:43
     // opUp(): void { }
-    intc_1 // 1
+    intc_0 // 1
     return
 
 main_create_NoOp@19:
@@ -50,136 +50,13 @@ main_update_route@2:
     b update
 
 
-// smart_contracts/utils/functions.ts::originOrTxnSender(walletID: uint64) -> bytes:
-originOrTxnSender:
-    // smart_contracts/utils/functions.ts:145
-    // export function originOrTxnSender(walletID: Application): Account {
-    proto 1 1
-    // smart_contracts/utils/functions.ts:146
-    // return originOr(walletID, Txn.sender)
-    txn Sender
-    // smart_contracts/utils/functions.ts:139
-    // if (walletID.id === 0) {
-    frame_dig -1
-    bnz originOrTxnSender_after_if_else@3
-    frame_dig 0
-
-originOrTxnSender_after_inlined_smart_contracts/utils/functions.ts::originOr@4:
-    // smart_contracts/utils/functions.ts:146
-    // return originOr(walletID, Txn.sender)
-    swap
-    retsub
-
-originOrTxnSender_after_if_else@3:
-    // smart_contracts/utils/functions.ts:161-164
-    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
-    //   walletID,
-    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
-    // )
-    frame_dig -1
-    // smart_contracts/utils/functions.ts:163
-    // Bytes(AbstractAccountGlobalStateKeysControlledAddress)
-    pushbytes "controlled_address"
-    // smart_contracts/utils/functions.ts:161-164
-    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
-    //   walletID,
-    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
-    // )
-    app_global_get_ex
-    pop
-    // smart_contracts/utils/functions.ts:146
-    // return originOr(walletID, Txn.sender)
-    b originOrTxnSender_after_inlined_smart_contracts/utils/functions.ts::originOr@4
-
-
-// smart_contracts/utils/functions.ts::getWalletIDUsingAkitaDAO(akitaDAO: uint64, address: bytes) -> uint64:
-getWalletIDUsingAkitaDAO:
-    // smart_contracts/utils/functions.ts:176
-    // export function getWalletIDUsingAkitaDAO(akitaDAO: Application, address: Account): Application {
-    proto 2 1
-    // smart_contracts/utils/functions.ts:55
-    // const [otherAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysOtherAppList))
-    frame_dig -2
-    pushbytes "oal"
-    app_global_get_ex
-    pop
-    // smart_contracts/utils/functions.ts:60
-    // return getOtherAppList(akitaDAO).escrow
-    pushint 24 // 24
-    extract_uint64
-    // smart_contracts/utils/functions.ts:182-185
-    // const data = abiCall<typeof EscrowFactory.prototype.get>({
-    //   appId: escrowFactory,
-    //   args: [address]
-    // }).returnValue
-    itxn_begin
-    pushbytes 0x3c1a6f33 // method "get(address)byte[]"
-    itxn_field ApplicationArgs
-    frame_dig -1
-    itxn_field ApplicationArgs
-    itxn_field ApplicationID
-    pushint 6 // appl
-    itxn_field TypeEnum
-    intc_0 // 0
-    itxn_field Fee
-    itxn_submit
-    itxn LastLog
-    dup
-    extract 4 0
-    dig 1
-    extract 0 4
-    bytec_3 // 0x151f7c75
-    ==
-    assert // Bytes has valid prefix
-    dup
-    intc_0 // 0
-    extract_uint16
-    pushint 2 // 2
-    +
-    swap
-    len
-    ==
-    assert // invalid number of bytes for (len+uint8[])
-    extract 6 0
-    dup
-    // smart_contracts/utils/functions.ts:187
-    // if (Bytes(data).length === 0 || Bytes(data).length !== 8) {
-    len
-    dup
-    bz getWalletIDUsingAkitaDAO_if_body@6
-    frame_dig 1
-    intc_3 // 8
-    !=
-    bz getWalletIDUsingAkitaDAO_after_if_else@7
-
-getWalletIDUsingAkitaDAO_if_body@6:
-    // smart_contracts/utils/functions.ts:188
-    // return 0
-    intc_0 // 0
-
-getWalletIDUsingAkitaDAO_after_inlined_smart_contracts/utils/functions.ts::getWalletID@8:
-    // smart_contracts/utils/functions.ts:178
-    // return Application(getWalletID(escrowFactory, address))
-    frame_bury 0
-    retsub
-
-getWalletIDUsingAkitaDAO_after_if_else@7:
-    // smart_contracts/utils/functions.ts:191
-    // return btoi(data)
-    frame_dig 0
-    btoi
-    // smart_contracts/utils/functions.ts:178
-    // return Application(getWalletID(escrowFactory, address))
-    b getWalletIDUsingAkitaDAO_after_inlined_smart_contracts/utils/functions.ts::getWalletID@8
-
-
 // smart_contracts/social/moderation.algo.ts::AkitaSocialModeration.create[routing]() -> void:
 create:
     // smart_contracts/social/moderation.algo.ts:28
     // @abimethod({ onCreate: 'require' })
     txna ApplicationArgs 1
     dup
-    intc_0 // 0
+    intc_1 // 0
     extract_uint16
     pushint 2 // 2
     +
@@ -211,7 +88,7 @@ create:
     app_global_put
     // smart_contracts/social/moderation.algo.ts:28
     // @abimethod({ onCreate: 'require' })
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
@@ -220,11 +97,11 @@ addModerator:
     // smart_contracts/social/moderation.algo.ts:36
     // addModerator(mbrPayment: gtxn.PaymentTxn, address: Account): void {
     txn GroupIndex
-    intc_1 // 1
+    intc_0 // 1
     -
     dup
     gtxns TypeEnum
-    intc_1 // pay
+    intc_0 // pay
     ==
     assert // transaction type is pay
     txna ApplicationArgs 1
@@ -238,7 +115,7 @@ addModerator:
     txn Sender
     // smart_contracts/utils/base-contracts/base.ts:32
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
-    intc_0 // 0
+    intc_1 // 0
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
@@ -315,7 +192,7 @@ addModerator:
     pop
     // smart_contracts/social/moderation.algo.ts:36
     // addModerator(mbrPayment: gtxn.PaymentTxn, address: Account): void {
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
@@ -334,7 +211,7 @@ removeModerator:
     txn Sender
     // smart_contracts/utils/base-contracts/base.ts:32
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
-    intc_0 // 0
+    intc_1 // 0
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
@@ -388,9 +265,9 @@ removeModerator:
     //     receiver: Txn.sender,
     //     amount: ModeratorsMBR
     //   })
-    intc_1 // 1
+    intc_0 // 1
     itxn_field TypeEnum
-    intc_0 // 0
+    intc_1 // 0
     itxn_field Fee
     // smart_contracts/social/moderation.algo.ts:58-63
     // itxn
@@ -402,7 +279,7 @@ removeModerator:
     itxn_submit
     // smart_contracts/social/moderation.algo.ts:52
     // removeModerator(address: Account): void {
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
@@ -411,11 +288,11 @@ ban:
     // smart_contracts/social/moderation.algo.ts:66
     // ban(mbrPayment: gtxn.PaymentTxn, address: Account, expiration: uint64): void {
     txn GroupIndex
-    intc_1 // 1
+    intc_0 // 1
     -
     dup
     gtxns TypeEnum
-    intc_1 // pay
+    intc_0 // pay
     ==
     assert // transaction type is pay
     txna ApplicationArgs 1
@@ -431,44 +308,33 @@ ban:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/social/moderation.algo.ts:67
-    // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:29
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
-    // smart_contracts/social/moderation.algo.ts:67
-    // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    app_global_get_ex
-    assert // check GlobalState exists
-    txn Sender
-    callsub getWalletIDUsingAkitaDAO
-    // smart_contracts/social/moderation.algo.ts:68
-    // const origin = originOrTxnSender(wallet)
-    callsub originOrTxnSender
     // smart_contracts/social/moderation.algo.ts:20
     // moderators = BoxMap<Account, uint64>({ keyPrefix: AkitaSocialBoxPrefixModerators })
     bytec_1 // "d"
-    swap
+    // smart_contracts/social/moderation.algo.ts:67
+    // assert(this.moderators(Txn.sender).exists, ERR_NOT_A_MODERATOR)
+    txn Sender
+    // smart_contracts/social/moderation.algo.ts:20
+    // moderators = BoxMap<Account, uint64>({ keyPrefix: AkitaSocialBoxPrefixModerators })
     concat
-    // smart_contracts/social/moderation.algo.ts:70
-    // assert(this.moderators(origin).exists, ERR_NOT_A_MODERATOR)
+    // smart_contracts/social/moderation.algo.ts:67
+    // assert(this.moderators(Txn.sender).exists, ERR_NOT_A_MODERATOR)
     box_len
     bury 1
     assert // Sender is not a moderator
     // smart_contracts/social/moderation.algo.ts:22
     // banned = BoxMap<Account, uint64>({ keyPrefix: AkitaSocialBoxPrefixBanned })
-    bytec 4 // "n"
+    bytec_3 // "n"
     uncover 2
     concat
-    // smart_contracts/social/moderation.algo.ts:71
+    // smart_contracts/social/moderation.algo.ts:68
     // assert(!this.banned(address).exists, ERR_ALREADY_BANNED)
     dup
     box_len
     bury 1
     !
     assert // This account is already banned
-    // smart_contracts/social/moderation.algo.ts:73-80
+    // smart_contracts/social/moderation.algo.ts:70-77
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -479,10 +345,10 @@ ban:
     // )
     dig 2
     gtxns Receiver
-    // smart_contracts/social/moderation.algo.ts:76
+    // smart_contracts/social/moderation.algo.ts:73
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/social/moderation.algo.ts:73-80
+    // smart_contracts/social/moderation.algo.ts:70-77
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -494,10 +360,10 @@ ban:
     ==
     uncover 3
     gtxns Amount
-    // smart_contracts/social/moderation.algo.ts:77
+    // smart_contracts/social/moderation.algo.ts:74
     // amount: BannedMBR
     intc 4 // 18900
-    // smart_contracts/social/moderation.algo.ts:73-80
+    // smart_contracts/social/moderation.algo.ts:70-77
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -509,20 +375,20 @@ ban:
     ==
     &&
     assert // Invalid payment
-    // smart_contracts/social/moderation.algo.ts:82
+    // smart_contracts/social/moderation.algo.ts:79
     // this.banned(address).value = expiration
     swap
     itob
     box_put
     // smart_contracts/social/moderation.algo.ts:66
     // ban(mbrPayment: gtxn.PaymentTxn, address: Account, expiration: uint64): void {
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
 // smart_contracts/social/moderation.algo.ts::AkitaSocialModeration.unban[routing]() -> void:
 unban:
-    // smart_contracts/social/moderation.algo.ts:85
+    // smart_contracts/social/moderation.algo.ts:82
     // unban(address: Account): void {
     txna ApplicationArgs 1
     dup
@@ -530,80 +396,72 @@ unban:
     intc_2 // 32
     ==
     assert // invalid number of bytes for uint8[32]
-    // smart_contracts/social/moderation.algo.ts:86
-    // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:29
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
-    // smart_contracts/social/moderation.algo.ts:86
-    // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    app_global_get_ex
-    assert // check GlobalState exists
-    txn Sender
-    callsub getWalletIDUsingAkitaDAO
-    // smart_contracts/social/moderation.algo.ts:87
-    // const origin = originOrTxnSender(wallet)
-    callsub originOrTxnSender
     // smart_contracts/social/moderation.algo.ts:20
     // moderators = BoxMap<Account, uint64>({ keyPrefix: AkitaSocialBoxPrefixModerators })
     bytec_1 // "d"
-    dig 1
+    // smart_contracts/social/moderation.algo.ts:83
+    // assert(this.moderators(Txn.sender).exists, ERR_NOT_A_MODERATOR)
+    txn Sender
+    // smart_contracts/social/moderation.algo.ts:20
+    // moderators = BoxMap<Account, uint64>({ keyPrefix: AkitaSocialBoxPrefixModerators })
     concat
-    // smart_contracts/social/moderation.algo.ts:89
-    // assert(this.moderators(origin).exists, ERR_NOT_A_MODERATOR)
+    // smart_contracts/social/moderation.algo.ts:83
+    // assert(this.moderators(Txn.sender).exists, ERR_NOT_A_MODERATOR)
     box_len
     bury 1
     assert // Sender is not a moderator
     // smart_contracts/social/moderation.algo.ts:22
     // banned = BoxMap<Account, uint64>({ keyPrefix: AkitaSocialBoxPrefixBanned })
-    bytec 4 // "n"
-    uncover 2
+    bytec_3 // "n"
+    swap
     concat
-    // smart_contracts/social/moderation.algo.ts:90
+    // smart_contracts/social/moderation.algo.ts:84
     // this.banned(address).delete()
     box_del
     pop
-    // smart_contracts/social/moderation.algo.ts:92-97
+    // smart_contracts/social/moderation.algo.ts:86-91
     // itxn
     //   .payment({
-    //     receiver: origin,
+    //     receiver: Txn.sender,
     //     amount: BannedMBR
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/social/moderation.algo.ts:95
+    // smart_contracts/social/moderation.algo.ts:88
+    // receiver: Txn.sender,
+    txn Sender
+    // smart_contracts/social/moderation.algo.ts:89
     // amount: BannedMBR
     intc 4 // 18900
     itxn_field Amount
     itxn_field Receiver
-    // smart_contracts/social/moderation.algo.ts:92-96
+    // smart_contracts/social/moderation.algo.ts:86-90
     // itxn
     //   .payment({
-    //     receiver: origin,
+    //     receiver: Txn.sender,
     //     amount: BannedMBR
     //   })
-    intc_1 // 1
+    intc_0 // 1
     itxn_field TypeEnum
-    intc_0 // 0
+    intc_1 // 0
     itxn_field Fee
-    // smart_contracts/social/moderation.algo.ts:92-97
+    // smart_contracts/social/moderation.algo.ts:86-91
     // itxn
     //   .payment({
-    //     receiver: origin,
+    //     receiver: Txn.sender,
     //     amount: BannedMBR
     //   })
     //   .submit()
     itxn_submit
-    // smart_contracts/social/moderation.algo.ts:85
+    // smart_contracts/social/moderation.algo.ts:82
     // unban(address: Account): void {
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
 // smart_contracts/social/moderation.algo.ts::AkitaSocialModeration.flagPost[routing]() -> void:
 flagPost:
-    // smart_contracts/social/moderation.algo.ts:100
+    // smart_contracts/social/moderation.algo.ts:94
     // flagPost(ref: bytes<32>): void {
     txna ApplicationArgs 1
     dup
@@ -611,38 +469,27 @@ flagPost:
     intc_2 // 32
     ==
     assert // invalid number of bytes for uint8[32]
-    // smart_contracts/social/moderation.algo.ts:101
-    // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:29
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
-    // smart_contracts/social/moderation.algo.ts:101
-    // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    app_global_get_ex
-    assert // check GlobalState exists
-    txn Sender
-    callsub getWalletIDUsingAkitaDAO
-    // smart_contracts/social/moderation.algo.ts:102
-    // const origin = originOrTxnSender(wallet)
-    callsub originOrTxnSender
     // smart_contracts/social/moderation.algo.ts:20
     // moderators = BoxMap<Account, uint64>({ keyPrefix: AkitaSocialBoxPrefixModerators })
     bytec_1 // "d"
-    swap
+    // smart_contracts/social/moderation.algo.ts:95
+    // assert(this.moderators(Txn.sender).exists, ERR_NOT_A_MODERATOR)
+    txn Sender
+    // smart_contracts/social/moderation.algo.ts:20
+    // moderators = BoxMap<Account, uint64>({ keyPrefix: AkitaSocialBoxPrefixModerators })
     concat
-    // smart_contracts/social/moderation.algo.ts:104
-    // assert(this.moderators(origin).exists, ERR_NOT_A_MODERATOR)
+    // smart_contracts/social/moderation.algo.ts:95
+    // assert(this.moderators(Txn.sender).exists, ERR_NOT_A_MODERATOR)
     box_len
     bury 1
     assert // Sender is not a moderator
-    // smart_contracts/social/moderation.algo.ts:106
+    // smart_contracts/social/moderation.algo.ts:97
     // const { social } = getAkitaSocialAppList(this.akitaDAO.value)
-    intc_0 // 0
+    intc_1 // 0
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/social/moderation.algo.ts:106
+    // smart_contracts/social/moderation.algo.ts:97
     // const { social } = getAkitaSocialAppList(this.akitaDAO.value)
     app_global_get_ex
     assert // check GlobalState exists
@@ -651,11 +498,11 @@ flagPost:
     bytec 7 // "sal"
     app_global_get_ex
     pop
-    // smart_contracts/social/moderation.algo.ts:106
+    // smart_contracts/social/moderation.algo.ts:97
     // const { social } = getAkitaSocialAppList(this.akitaDAO.value)
-    intc_0 // 0
+    intc_1 // 0
     extract_uint64
-    // smart_contracts/social/moderation.algo.ts:107-110
+    // smart_contracts/social/moderation.algo.ts:98-101
     // abiCall<typeof AkitaSocial.prototype.setPostFlag>({
     //   appId: social,
     //   args: [ref, true]
@@ -665,30 +512,30 @@ flagPost:
     itxn_field ApplicationArgs
     swap
     itxn_field ApplicationArgs
-    // smart_contracts/social/moderation.algo.ts:109
+    // smart_contracts/social/moderation.algo.ts:100
     // args: [ref, true]
     pushbytes 0x80
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    // smart_contracts/social/moderation.algo.ts:107-110
+    // smart_contracts/social/moderation.algo.ts:98-101
     // abiCall<typeof AkitaSocial.prototype.setPostFlag>({
     //   appId: social,
     //   args: [ref, true]
     // })
     pushint 6 // appl
     itxn_field TypeEnum
-    intc_0 // 0
+    intc_1 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/social/moderation.algo.ts:100
+    // smart_contracts/social/moderation.algo.ts:94
     // flagPost(ref: bytes<32>): void {
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
 // smart_contracts/social/moderation.algo.ts::AkitaSocialModeration.unflagPost[routing]() -> void:
 unflagPost:
-    // smart_contracts/social/moderation.algo.ts:113
+    // smart_contracts/social/moderation.algo.ts:104
     // unflagPost(ref: bytes<32>): void {
     txna ApplicationArgs 1
     dup
@@ -696,38 +543,27 @@ unflagPost:
     intc_2 // 32
     ==
     assert // invalid number of bytes for uint8[32]
-    // smart_contracts/social/moderation.algo.ts:114
-    // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:29
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
-    // smart_contracts/social/moderation.algo.ts:114
-    // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    app_global_get_ex
-    assert // check GlobalState exists
-    txn Sender
-    callsub getWalletIDUsingAkitaDAO
-    // smart_contracts/social/moderation.algo.ts:115
-    // const origin = originOrTxnSender(wallet)
-    callsub originOrTxnSender
     // smart_contracts/social/moderation.algo.ts:20
     // moderators = BoxMap<Account, uint64>({ keyPrefix: AkitaSocialBoxPrefixModerators })
     bytec_1 // "d"
-    swap
+    // smart_contracts/social/moderation.algo.ts:105
+    // assert(this.moderators(Txn.sender).exists, ERR_NOT_A_MODERATOR)
+    txn Sender
+    // smart_contracts/social/moderation.algo.ts:20
+    // moderators = BoxMap<Account, uint64>({ keyPrefix: AkitaSocialBoxPrefixModerators })
     concat
-    // smart_contracts/social/moderation.algo.ts:117
-    // assert(this.moderators(origin).exists, ERR_NOT_A_MODERATOR)
+    // smart_contracts/social/moderation.algo.ts:105
+    // assert(this.moderators(Txn.sender).exists, ERR_NOT_A_MODERATOR)
     box_len
     bury 1
     assert // Sender is not a moderator
-    // smart_contracts/social/moderation.algo.ts:119
+    // smart_contracts/social/moderation.algo.ts:107
     // const { social } = getAkitaSocialAppList(this.akitaDAO.value)
-    intc_0 // 0
+    intc_1 // 0
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/social/moderation.algo.ts:119
+    // smart_contracts/social/moderation.algo.ts:107
     // const { social } = getAkitaSocialAppList(this.akitaDAO.value)
     app_global_get_ex
     assert // check GlobalState exists
@@ -736,11 +572,11 @@ unflagPost:
     bytec 7 // "sal"
     app_global_get_ex
     pop
-    // smart_contracts/social/moderation.algo.ts:119
+    // smart_contracts/social/moderation.algo.ts:107
     // const { social } = getAkitaSocialAppList(this.akitaDAO.value)
-    intc_0 // 0
+    intc_1 // 0
     extract_uint64
-    // smart_contracts/social/moderation.algo.ts:120-123
+    // smart_contracts/social/moderation.algo.ts:108-111
     // abiCall<typeof AkitaSocial.prototype.setPostFlag>({
     //   appId: social,
     //   args: [ref, false]
@@ -750,37 +586,37 @@ unflagPost:
     itxn_field ApplicationArgs
     swap
     itxn_field ApplicationArgs
-    // smart_contracts/social/moderation.algo.ts:122
+    // smart_contracts/social/moderation.algo.ts:110
     // args: [ref, false]
-    bytec 5 // 0x00
+    bytec 4 // 0x00
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    // smart_contracts/social/moderation.algo.ts:120-123
+    // smart_contracts/social/moderation.algo.ts:108-111
     // abiCall<typeof AkitaSocial.prototype.setPostFlag>({
     //   appId: social,
     //   args: [ref, false]
     // })
     pushint 6 // appl
     itxn_field TypeEnum
-    intc_0 // 0
+    intc_1 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/social/moderation.algo.ts:113
+    // smart_contracts/social/moderation.algo.ts:104
     // unflagPost(ref: bytes<32>): void {
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
 // smart_contracts/social/moderation.algo.ts::AkitaSocialModeration.addAction[routing]() -> void:
 addAction:
-    // smart_contracts/social/moderation.algo.ts:126
+    // smart_contracts/social/moderation.algo.ts:114
     // addAction(mbrPayment: gtxn.PaymentTxn, actionAppID: uint64, content: CID): void {
     txn GroupIndex
-    intc_1 // 1
+    intc_0 // 1
     -
     dup
     gtxns TypeEnum
-    intc_1 // pay
+    intc_0 // pay
     ==
     assert // transaction type is pay
     txna ApplicationArgs 1
@@ -796,12 +632,12 @@ addAction:
     pushint 36 // 36
     ==
     assert // invalid number of bytes for uint8[36]
-    // smart_contracts/social/moderation.algo.ts:127
+    // smart_contracts/social/moderation.algo.ts:115
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     txn Sender
     // smart_contracts/utils/base-contracts/base.ts:32
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
-    intc_0 // 0
+    intc_1 // 0
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
@@ -812,13 +648,13 @@ addAction:
     bytec_2 // "wallet"
     app_global_get_ex
     pop
-    // smart_contracts/social/moderation.algo.ts:127
+    // smart_contracts/social/moderation.algo.ts:115
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/social/moderation.algo.ts:128
+    // smart_contracts/social/moderation.algo.ts:116
     // assert(!this.actions(actionAppID).exists, ERR_ALREADY_AN_ACTION)
     swap
     itob
@@ -827,14 +663,14 @@ addAction:
     pushbytes "a"
     swap
     concat
-    // smart_contracts/social/moderation.algo.ts:128
+    // smart_contracts/social/moderation.algo.ts:116
     // assert(!this.actions(actionAppID).exists, ERR_ALREADY_AN_ACTION)
     dup
     box_len
     bury 1
     !
     assert // Already an action
-    // smart_contracts/social/moderation.algo.ts:130-137
+    // smart_contracts/social/moderation.algo.ts:118-125
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -845,10 +681,10 @@ addAction:
     // )
     dig 2
     gtxns Receiver
-    // smart_contracts/social/moderation.algo.ts:133
+    // smart_contracts/social/moderation.algo.ts:121
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/social/moderation.algo.ts:130-137
+    // smart_contracts/social/moderation.algo.ts:118-125
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -860,10 +696,10 @@ addAction:
     ==
     uncover 3
     gtxns Amount
-    // smart_contracts/social/moderation.algo.ts:134
+    // smart_contracts/social/moderation.algo.ts:122
     // amount: ActionsMBR
     intc 5 // 29700
-    // smart_contracts/social/moderation.algo.ts:130-137
+    // smart_contracts/social/moderation.algo.ts:118-125
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -875,19 +711,19 @@ addAction:
     ==
     &&
     assert // Invalid payment
-    // smart_contracts/social/moderation.algo.ts:139
+    // smart_contracts/social/moderation.algo.ts:127
     // this.actions(actionAppID).value = { content }
     swap
     box_put
-    // smart_contracts/social/moderation.algo.ts:126
+    // smart_contracts/social/moderation.algo.ts:114
     // addAction(mbrPayment: gtxn.PaymentTxn, actionAppID: uint64, content: CID): void {
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
 // smart_contracts/social/moderation.algo.ts::AkitaSocialModeration.removeAction[routing]() -> void:
 removeAction:
-    // smart_contracts/social/moderation.algo.ts:142
+    // smart_contracts/social/moderation.algo.ts:130
     // removeAction(actionAppID: uint64): void {
     txna ApplicationArgs 1
     dup
@@ -896,12 +732,12 @@ removeAction:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/social/moderation.algo.ts:143
+    // smart_contracts/social/moderation.algo.ts:131
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     txn Sender
     // smart_contracts/utils/base-contracts/base.ts:32
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
-    intc_0 // 0
+    intc_1 // 0
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
@@ -912,13 +748,13 @@ removeAction:
     bytec_2 // "wallet"
     app_global_get_ex
     pop
-    // smart_contracts/social/moderation.algo.ts:143
+    // smart_contracts/social/moderation.algo.ts:131
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/social/moderation.algo.ts:144
+    // smart_contracts/social/moderation.algo.ts:132
     // assert(this.actions(actionAppID).exists, ERR_ALREADY_AN_ACTION)
     itob
     // smart_contracts/social/moderation.algo.ts:24
@@ -926,17 +762,17 @@ removeAction:
     pushbytes "a"
     swap
     concat
-    // smart_contracts/social/moderation.algo.ts:144
+    // smart_contracts/social/moderation.algo.ts:132
     // assert(this.actions(actionAppID).exists, ERR_ALREADY_AN_ACTION)
     dup
     box_len
     bury 1
     assert // Already an action
-    // smart_contracts/social/moderation.algo.ts:146
+    // smart_contracts/social/moderation.algo.ts:134
     // this.actions(actionAppID).delete()
     box_del
     pop
-    // smart_contracts/social/moderation.algo.ts:148-153
+    // smart_contracts/social/moderation.algo.ts:136-141
     // itxn
     //   .payment({
     //     receiver: Txn.sender,
@@ -944,25 +780,25 @@ removeAction:
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/social/moderation.algo.ts:150
+    // smart_contracts/social/moderation.algo.ts:138
     // receiver: Txn.sender,
     txn Sender
-    // smart_contracts/social/moderation.algo.ts:151
+    // smart_contracts/social/moderation.algo.ts:139
     // amount: ActionsMBR
     intc 5 // 29700
     itxn_field Amount
     itxn_field Receiver
-    // smart_contracts/social/moderation.algo.ts:148-152
+    // smart_contracts/social/moderation.algo.ts:136-140
     // itxn
     //   .payment({
     //     receiver: Txn.sender,
     //     amount: ActionsMBR
     //   })
-    intc_1 // 1
+    intc_0 // 1
     itxn_field TypeEnum
-    intc_0 // 0
+    intc_1 // 0
     itxn_field Fee
-    // smart_contracts/social/moderation.algo.ts:148-153
+    // smart_contracts/social/moderation.algo.ts:136-141
     // itxn
     //   .payment({
     //     receiver: Txn.sender,
@@ -970,15 +806,15 @@ removeAction:
     //   })
     //   .submit()
     itxn_submit
-    // smart_contracts/social/moderation.algo.ts:142
+    // smart_contracts/social/moderation.algo.ts:130
     // removeAction(actionAppID: uint64): void {
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
 // smart_contracts/social/moderation.algo.ts::AkitaSocialModeration.isBanned[routing]() -> void:
 isBanned:
-    // smart_contracts/social/moderation.algo.ts:158
+    // smart_contracts/social/moderation.algo.ts:146
     // @abimethod({ readonly: true })
     txna ApplicationArgs 1
     dup
@@ -988,11 +824,11 @@ isBanned:
     assert // invalid number of bytes for uint8[32]
     // smart_contracts/social/moderation.algo.ts:22
     // banned = BoxMap<Account, uint64>({ keyPrefix: AkitaSocialBoxPrefixBanned })
-    bytec 4 // "n"
+    bytec_3 // "n"
     swap
     concat
     dup
-    // smart_contracts/social/moderation.algo.ts:160
+    // smart_contracts/social/moderation.algo.ts:148
     // return this.banned(account).exists && this.banned(account).value > Global.latestTimestamp
     box_len
     bury 1
@@ -1004,30 +840,30 @@ isBanned:
     global LatestTimestamp
     >
     bz isBanned_bool_false@4
-    intc_1 // 1
+    intc_0 // 1
 
 isBanned_bool_merge@5:
-    // smart_contracts/social/moderation.algo.ts:158
+    // smart_contracts/social/moderation.algo.ts:146
     // @abimethod({ readonly: true })
-    bytec 5 // 0x00
-    intc_0 // 0
+    bytec 4 // 0x00
+    intc_1 // 0
     uncover 2
     setbit
-    bytec_3 // 0x151f7c75
+    bytec 5 // 0x151f7c75
     swap
     concat
     log
-    intc_1 // 1
+    intc_0 // 1
     return
 
 isBanned_bool_false@4:
-    intc_0 // 0
+    intc_1 // 0
     b isBanned_bool_merge@5
 
 
 // smart_contracts/social/moderation.algo.ts::AkitaSocialModeration.isModerator[routing]() -> void:
 isModerator:
-    // smart_contracts/social/moderation.algo.ts:163
+    // smart_contracts/social/moderation.algo.ts:151
     // @abimethod({ readonly: true })
     txna ApplicationArgs 1
     dup
@@ -1040,27 +876,27 @@ isModerator:
     bytec_1 // "d"
     swap
     concat
-    // smart_contracts/social/moderation.algo.ts:165
+    // smart_contracts/social/moderation.algo.ts:153
     // return this.moderators(account).exists
     box_len
     bury 1
-    // smart_contracts/social/moderation.algo.ts:163
+    // smart_contracts/social/moderation.algo.ts:151
     // @abimethod({ readonly: true })
-    bytec 5 // 0x00
-    intc_0 // 0
+    bytec 4 // 0x00
+    intc_1 // 0
     uncover 2
     setbit
-    bytec_3 // 0x151f7c75
+    bytec 5 // 0x151f7c75
     swap
     concat
     log
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
 // smart_contracts/social/moderation.algo.ts::AkitaSocialModeration.moderatorMeta[routing]() -> void:
 moderatorMeta:
-    // smart_contracts/social/moderation.algo.ts:168
+    // smart_contracts/social/moderation.algo.ts:156
     // @abimethod({ readonly: true })
     txna ApplicationArgs 1
     dup
@@ -1074,18 +910,18 @@ moderatorMeta:
     swap
     concat
     dup
-    // smart_contracts/social/moderation.algo.ts:170
+    // smart_contracts/social/moderation.algo.ts:158
     // if (this.moderators(user).exists) {
     box_len
     bury 1
     bz moderatorMeta_after_if_else@3
-    // smart_contracts/social/moderation.algo.ts:173
+    // smart_contracts/social/moderation.algo.ts:161
     // lastActive: this.moderators(user).value
     dup
     box_get
     assert // Box must have value
     btoi
-    // smart_contracts/social/moderation.algo.ts:171-174
+    // smart_contracts/social/moderation.algo.ts:159-162
     // return {
     //   exists: true,
     //   lastActive: this.moderators(user).value
@@ -1096,20 +932,20 @@ moderatorMeta:
     concat
 
 moderatorMeta_after_inlined_smart_contracts/social/moderation.algo.ts::AkitaSocialModeration.moderatorMeta@4:
-    // smart_contracts/social/moderation.algo.ts:168
+    // smart_contracts/social/moderation.algo.ts:156
     // @abimethod({ readonly: true })
-    bytec_3 // 0x151f7c75
+    bytec 5 // 0x151f7c75
     swap
     concat
     log
-    intc_1 // 1
+    intc_0 // 1
     return
 
 moderatorMeta_after_if_else@3:
-    // smart_contracts/social/moderation.algo.ts:176
+    // smart_contracts/social/moderation.algo.ts:164
     // return { exists: false, lastActive: 0 }
     pushbytes 0x000000000000000000
-    // smart_contracts/social/moderation.algo.ts:168
+    // smart_contracts/social/moderation.algo.ts:156
     // @abimethod({ readonly: true })
     b moderatorMeta_after_inlined_smart_contracts/social/moderation.algo.ts::AkitaSocialModeration.moderatorMeta@4
 
@@ -1120,7 +956,7 @@ update:
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txna ApplicationArgs 1
     dup
-    intc_0 // 0
+    intc_1 // 0
     extract_uint16
     pushint 2 // 2
     +
@@ -1134,7 +970,7 @@ update:
     txn Sender
     // smart_contracts/utils/base-contracts/base.ts:32
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
-    intc_0 // 0
+    intc_1 // 0
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
@@ -1176,7 +1012,7 @@ update:
     app_global_put
     // smart_contracts/utils/base-contracts/base.ts:48
     // @abimethod({ allowActions: ['UpdateApplication'] })
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
@@ -1196,7 +1032,7 @@ updateAkitaDAO:
     txn Sender
     // smart_contracts/utils/base-contracts/base.ts:32
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
-    intc_0 // 0
+    intc_1 // 0
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
@@ -1222,5 +1058,5 @@ updateAkitaDAO:
     app_global_put
     // smart_contracts/utils/base-contracts/base.ts:38
     // updateAkitaDAO(akitaDAO: Application): void {
-    intc_1 // 1
+    intc_0 // 1
     return

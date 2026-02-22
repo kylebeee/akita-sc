@@ -3,7 +3,7 @@ import { abiCall } from "@algorandfoundation/algorand-typescript/arc4"
 import { classes } from 'polytype'
 import { UpgradeableAkitaBaseContract } from "../utils/base-contracts/base"
 import { ERR_FAILED_GATE, ERR_INVALID_PAYMENT } from "../utils/errors"
-import { gateCheck, getAkitaSocialAppList, getWalletIDUsingAkitaDAO, originOrTxnSender } from "../utils/functions"
+import { gateCheck, getAkitaSocialAppList } from "../utils/functions"
 import { BaseSocial } from "./base"
 import { AkitaSocialBoxPrefixBlocks, AkitaSocialBoxPrefixFollows } from "./constants"
 import type { AkitaSocial } from "./contract.algo"
@@ -67,17 +67,17 @@ export class AkitaSocialGraph extends classes(BaseSocial, UpgradeableAkitaBaseCo
     })
   }
 
-  private createFollow(origin: Account, address: Account): void {
-    assert(!this.isBanned(origin), ERR_BANNED)
-    assert(!this.isBlocked(address, origin), ERR_BLOCKED)
-    assert(origin !== address, ERR_SELF_FOLLOW)
+  private createFollow(sender: Account, address: Account): void {
+    assert(!this.isBanned(sender), ERR_BANNED)
+    assert(!this.isBlocked(address, sender), ERR_BLOCKED)
+    assert(sender !== address, ERR_SELF_FOLLOW)
     
-    // Check if the follower (origin) is automated - automated accounts can't follow
-    const { automated } = this.getMeta(origin)
+    // Check if the follower is automated - automated accounts can't follow
+    const { automated } = this.getMeta(sender)
     assert(!automated, ERR_AUTOMATED_ACCOUNT)
 
     // Create the follows key using user-follower pair
-    const followsKey = this.flw(address, origin)
+    const followsKey = this.flw(address, sender)
     
     // Check if already following
     assert(!this.follows(followsKey).exists, ERR_ALREADY_FOLLOWING)
@@ -94,11 +94,8 @@ export class AkitaSocialGraph extends classes(BaseSocial, UpgradeableAkitaBaseCo
   // we dont remove followers because that requires us to know the index
   // instead, blocking supersedes following
   block(mbrPayment: gtxn.PaymentTxn, address: Account): void {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
-
-    assert(!this.isBanned(origin), ERR_BANNED)
-    assert(origin !== address, ERR_SELF_BLOCK)
+    assert(!this.isBanned(Txn.sender), ERR_BANNED)
+    assert(Txn.sender !== address, ERR_SELF_BLOCK)
 
     assertMatch(
       mbrPayment,
@@ -109,22 +106,19 @@ export class AkitaSocialGraph extends classes(BaseSocial, UpgradeableAkitaBaseCo
       ERR_INVALID_PAYMENT
     )
 
-    const blocksKey = this.blk(origin, address)
+    const blocksKey = this.blk(Txn.sender, address)
     this.blocks(blocksKey).create()
   }
 
   unblock(address: Account): void {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
+    assert(!this.isBanned(Txn.sender), ERR_BANNED)
 
-    assert(!this.isBanned(origin), ERR_BANNED)
-
-    const blocksKey = this.blk(origin, address)
+    const blocksKey = this.blk(Txn.sender, address)
     this.blocks(blocksKey).delete()
 
     itxn
       .payment({
-        receiver: origin,
+        receiver: Txn.sender,
         amount: this.mbr(Bytes('')).blocks
       })
       .submit()
@@ -135,12 +129,8 @@ export class AkitaSocialGraph extends classes(BaseSocial, UpgradeableAkitaBaseCo
     gateTxn: gtxn.ApplicationCallTxn,
     address: Account
   ): void {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
-
-    // assert(this.meta(address).exists, ERR_META_DOESNT_EXIST)
     const { followGateID } = this.getMeta(address)
-    assert(gateCheck(gateTxn, this.akitaDAO.value, origin, followGateID), ERR_FAILED_GATE)
+    assert(gateCheck(gateTxn, this.akitaDAO.value, Txn.sender, followGateID), ERR_FAILED_GATE)
 
     const { follows } = this.mbr(Bytes(''))
     assertMatch(
@@ -152,14 +142,10 @@ export class AkitaSocialGraph extends classes(BaseSocial, UpgradeableAkitaBaseCo
       ERR_INVALID_PAYMENT
     )
 
-    this.createFollow(origin, address)
+    this.createFollow(Txn.sender, address)
   }
 
   follow(mbrPayment: gtxn.PaymentTxn, address: Account): void {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
-
-    // assert(this.meta(address).exists, ERR_META_DOESNT_EXIST)
     const { followGateID } = this.getMeta(address)
     assert(followGateID === 0, ERR_HAS_GATE)
 
@@ -173,31 +159,24 @@ export class AkitaSocialGraph extends classes(BaseSocial, UpgradeableAkitaBaseCo
       ERR_INVALID_PAYMENT
     )
 
-    this.createFollow(origin, address)
+    this.createFollow(Txn.sender, address)
   }
 
   unfollow(address: Account): void {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
-
-    assert(!this.isBanned(origin), ERR_BANNED)
-
+    assert(!this.isBanned(Txn.sender), ERR_BANNED)
     // Create the follows key using user-follower pair
-    const followsKey = this.flw(address, origin)
-    
+    const followsKey = this.flw(address, Txn.sender)
     // Check if actually following
     assert(this.follows(followsKey).exists, ERR_NOT_FOLLOWING)
 
-    const { followerCount } = this.getMeta(address)
-    // followerIndex stays the same (it's the next index to use), only count decreases
-    const { followerIndex } = this.getMeta(address)
-    this.updateFollowerMeta(address, followerIndex, followerCount - 1)
+    const { followerCount, followerIndex } = this.getMeta(address)
 
+    this.updateFollowerMeta(address, followerIndex, followerCount - 1)
     this.follows(followsKey).delete()
 
     itxn
       .payment({
-        receiver: origin,
+        receiver: Txn.sender,
         amount: this.mbr(Bytes('')).follows
       })
       .submit()

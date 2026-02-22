@@ -38,10 +38,10 @@ export { RewardsSDK } from './rewards'
 export { SocialSDK } from './social'
 export { StakingSDK } from './staking'
 export { StakingPoolSDK, StakingPoolFactorySDK } from './staking-pool'
-export { 
-  SubscriptionsSDK, 
-  bytesToHexColor, 
-  hexColorToBytes, 
+export {
+  SubscriptionsSDK,
+  bytesToHexColor,
+  hexColorToBytes,
   ServicesKey,
   type Service,
   type NewServiceArgs,

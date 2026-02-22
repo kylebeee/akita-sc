@@ -3,11 +3,11 @@ import { abiCall, abimethod } from '@algorandfoundation/algorand-typescript/arc4
 import { AssetHolding, btoi, itob } from '@algorandfoundation/algorand-typescript/op'
 import { classes } from 'polytype'
 import { ERR_FAILED_GATE, ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
-import { akitaSocialFee, calcPercent, gateCheck, getAkitaAssets, getAkitaSocialAppList, getOriginAccount, getPluginAppList, getSocialFees, getWalletIDUsingAkitaDAO, impactRange, originOr, originOrTxnSender, referralFee, sendReferralPayment } from '../utils/functions'
+import { akitaSocialFee, calcPercent, gateCheck, getAkitaAssets, getAkitaSocialAppList, getOriginAccount, getPluginAppList, getSocialFees, getWalletIDUsingAkitaDAO, impactRange, referralFee, sendReferralPayment } from '../utils/functions'
 import { CID } from '../utils/types/base'
 import { AkitaSocialBoxPrefixMeta, AkitaSocialboxPrefixPayWall, AkitaSocialBoxPrefixPosts, AkitaSocialBoxPrefixReactionList, AkitaSocialBoxPrefixReactions, AkitaSocialBoxPrefixVoteList, AkitaSocialBoxPrefixVotes, AkitaSocialGlobalStateKeysPaywallID, AmendmentMBR, EditBackRefMBR, ImpactMetaMBR, MAX_TIMESTAMP_DRIFT, ONE_DAY, PostTypeEditPost, PostTypeEditReply, PostTypePost, PostTypeReply, RefTypeAddress, RefTypeApp, RefTypeAsset, RefTypeExternal, RefTypePost, TipActionPost, TipActionReact, TipSendTypeARC58, TWO_YEARS } from './constants'
 import { ERR_ALREADY_REACTED, ERR_ALREADY_VOTED, ERR_AUTOMATED_ACCOUNT, ERR_BANNED, ERR_BLOCKED, ERR_HAS_GATE, ERR_HAVENT_VOTED, ERR_INVALID_APP, ERR_INVALID_ASSET, ERR_INVALID_PAYWALL, ERR_INVALID_REF_LENGTH, ERR_INVALID_REPLY_TYPE, ERR_IS_A_REPLY, ERR_IS_ALREADY_AMENDED, ERR_META_ALREADY_EXISTS, ERR_META_DOESNT_EXIST, ERR_NO_SELF_VOTE, ERR_NOT_A_REPLY, ERR_NOT_GRAPH, ERR_NOT_YOUR_POST_TO_EDIT, ERR_POST_NOT_FOUND, ERR_REPLY_NOT_FOUND, ERR_TIMESTAMP_TOO_OLD, ERR_USER_DOES_NOT_OWN_NFT } from './errors'
-import { MetaValue, PostMeta, PostType, PostValue, ReactionListKey, ReactionsKey, RefType, TipAction, ViewPayWallValue, VoteListKey, VoteListValue, VotesValue } from './types'
+import { MetaValue, PostType, PostValue, ReactionListKey, ReactionsKey, RefType, TipAction, ViewPayWallValue, VoteListKey, VoteListValue, VotesValue } from './types'
 
 // CONTRACT IMPORTS
 import type { AbstractedAccount } from '../arc58/account/contract.algo'
@@ -49,9 +49,8 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
-  private isCreator(creator: Account, wallet: Application): boolean {
-    const origin = getOriginAccount(wallet)
-    return creator === origin
+  private isCreator(creator: Account, sender: Account): boolean {
+    return creator === sender
   }
 
   private isReply(postType: PostType): boolean {
@@ -411,7 +410,6 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
 
   private createPost(
     postKey: bytes<32>,
-    origin: Account,
     mbrPayment: gtxn.PaymentTxn,
     cid: CID,
     gateID: uint64,
@@ -420,12 +418,12 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     postType: PostType,
     amendmentOf: bytes<32>,
   ): void {
-    assert(!this.isBanned(origin), ERR_BANNED)
+    assert(!this.isBanned(Txn.sender), ERR_BANNED)
     assert(
       (!usePayWall && payWallID === 0) || (
         usePayWall && (
           payWallID !== 0 && this.paywall(payWallID).exists ||
-          payWallID === 0 && this.paywall(this.meta(origin).value.defaultPayWallID).exists
+          payWallID === 0 && this.paywall(this.meta(Txn.sender).value.defaultPayWallID).exists
         )
       ),
       ERR_INVALID_PAYWALL
@@ -438,9 +436,9 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
 
     // update streak before we measure impact
     // this way we guarantee the box exists
-    this.updateStreak(origin)
+    this.updateStreak(Txn.sender)
 
-    const impact = this.getUserImpact(origin)
+    const impact = this.getUserImpact(Txn.sender)
 
     assert(!this.posts(postKey).exists, 'ERR:POST_EXISTS')
 
@@ -453,7 +451,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
 
     this.posts(postKey).value = {
       ref: postRef,
-      creator: origin,
+      creator: Txn.sender,
       timestamp: Global.latestTimestamp,
       gateID: gateID,
       usePayWall,
@@ -462,13 +460,12 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
       postType: postType,
     }
     this.updateVotes(postKey, true, impact)
-    this.createVoteList(postKey, true, origin, impact)
+    this.createVoteList(postKey, true, Txn.sender, impact)
     this.sendPostPayment()
   }
 
   private createReply(
     replyKey: bytes<32>,
-    origin: Account,
     mbrPayment: gtxn.PaymentTxn,
     mbrNeeded: uint64,
     cid: CID,
@@ -479,13 +476,13 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     postType: PostType,
     amendmentOf: bytes<32>,
   ): void {
-    assert(!this.isBanned(origin), ERR_BANNED)
+    assert(!this.isBanned(Txn.sender), ERR_BANNED)
     const { creator } = this.posts(parentRef).value
-    assert(!this.isBlocked(creator, origin), ERR_BLOCKED)
+    assert(!this.isBlocked(creator, Txn.sender), ERR_BLOCKED)
 
     // update streak before we measure impact
     // this way we guarantee the box exists
-    this.updateStreak(origin)
+    this.updateStreak(Txn.sender)
 
     const { reactFee } = getSocialFees(this.akitaDAO.value)
     const creatorImpact = this.getUserImpact(creator)
@@ -514,45 +511,44 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
 
     this.posts(replyKey).value = {
       ref: replyRef,
-      creator: origin,
+      creator: Txn.sender,
       timestamp: Global.latestTimestamp,
-      gateID: gateID,
+      gateID,
       usePayWall,
       payWallID,
       againstContentPolicy: false,
       postType: postType,
     }
 
-    const senderImpact = this.getUserImpact(origin)
+    const senderImpact = this.getUserImpact(Txn.sender)
     this.updateVotes(replyKey, true, senderImpact)
-    this.createVoteList(replyKey, true, origin, senderImpact)
+    this.createVoteList(replyKey, true, Txn.sender, senderImpact)
   }
 
   private createVote(
-    origin: Account,
     mbrPayment: gtxn.PaymentTxn,
     mbrNeeded: uint64,
     ref: bytes<32>,
     isUp: boolean
   ): void {
-    assert(!this.isBanned(origin), ERR_BANNED)
+    assert(!this.isBanned(Txn.sender), ERR_BANNED)
     assert(this.posts(ref).exists, ERR_POST_NOT_FOUND)
 
     const { creator } = this.posts(ref).value
-    assert(!this.isBlocked(creator, origin), ERR_BLOCKED)
+    assert(!this.isBlocked(creator, Txn.sender), ERR_BLOCKED)
 
-    const voteListKey: VoteListKey = { user: b16(origin.bytes), ref: b16(ref) }
+    const voteListKey: VoteListKey = { user: b16(Txn.sender.bytes), ref: b16(ref) }
     assert(!this.votelist(voteListKey).exists, ERR_ALREADY_VOTED)
-    assert(origin !== creator, ERR_NO_SELF_VOTE)
+    assert(Txn.sender !== creator, ERR_NO_SELF_VOTE)
 
-    const senderIsAutomated = this.meta(origin).value.automated
+    const senderIsAutomated = this.meta(Txn.sender).value.automated
     assert(!senderIsAutomated, ERR_AUTOMATED_ACCOUNT)
 
     const akta = getAkitaAssets(this.akitaDAO.value).akta
 
     // update streak before we measure impact
     // this way we guarantee the box exists
-    this.updateStreak(origin)
+    this.updateStreak(Txn.sender)
     const { reactFee, impactTaxMin, impactTaxMax } = getSocialFees(this.akitaDAO.value)
 
     if (isUp) {
@@ -591,32 +587,31 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     }
 
     // calls a transaction
-    const senderImpact = this.getUserImpact(origin)
+    const senderImpact = this.getUserImpact(Txn.sender)
     this.updateVotes(ref, isUp, senderImpact)
-    this.createVoteList(ref, isUp, origin, senderImpact)
+    this.createVoteList(ref, isUp, Txn.sender, senderImpact)
   }
 
   private createReaction(
-    origin: Account,
     mbrPayment: gtxn.PaymentTxn,
     mbrNeeded: uint64,
     ref: bytes<32>,
     NFT: uint64
   ): void {
-    assert(!this.isBanned(origin), ERR_BANNED)
+    assert(!this.isBanned(Txn.sender), ERR_BANNED)
     assert(this.posts(ref).exists, ERR_POST_NOT_FOUND)
     const { creator } = this.posts(ref).value
-    assert(!this.isBlocked(creator, origin), ERR_BLOCKED)
+    assert(!this.isBlocked(creator, Txn.sender), ERR_BLOCKED)
     // sender has NFT
-    assert(AssetHolding.assetBalance(origin, NFT)[0] > 0, ERR_USER_DOES_NOT_OWN_NFT)
+    assert(AssetHolding.assetBalance(Txn.sender, NFT)[0] > 0, ERR_USER_DOES_NOT_OWN_NFT)
 
-    const reactionListKey: ReactionListKey = { user: b16(origin.bytes), ref: b16(ref), NFT }
+    const reactionListKey: ReactionListKey = { user: b16(Txn.sender.bytes), ref: b16(ref), NFT }
 
     assert(!this.reactionlist(reactionListKey).exists, ERR_ALREADY_REACTED)
 
     // update streak before we measure impact
     // this way we guarantee the box exists
-    this.updateStreak(origin)
+    this.updateStreak(Txn.sender)
 
     const { reactFee, impactTaxMin, impactTaxMax } = getSocialFees(this.akitaDAO.value)
     const recipientImpact = this.getUserImpact(creator)
@@ -752,17 +747,14 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     usePayWall: boolean,
     payWallID: uint64
   ): void {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
-
     // Validate timestamp is recent (within MAX_TIMESTAMP_DRIFT seconds)
     assert(Global.latestTimestamp - timestamp <= MAX_TIMESTAMP_DRIFT, ERR_TIMESTAMP_TOO_OLD)
 
     // Derive deterministic post key from: creator + timestamp + userNonce
-    const postKey = op.sha256(origin.bytes.concat(itob(timestamp)).concat(nonce))
+    const postKey = op.sha256(Txn.sender.bytes.concat(itob(timestamp)).concat(nonce))
 
     this.validateTip(tip, TipActionPost)
-    this.createPost(postKey, origin, mbrPayment, cid, gateID, usePayWall, payWallID, PostTypePost, op.bzero(32) as bytes<32>)
+    this.createPost(postKey, mbrPayment, cid, gateID, usePayWall, payWallID, PostTypePost, op.bzero(32) as bytes<32>)
   }
 
   editPost(
@@ -771,24 +763,21 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     cid: CID,
     amendment: bytes<32>
   ): void {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
-
     assert(this.posts(amendment).exists, ERR_POST_NOT_FOUND)
     const { creator, ref, gateID, usePayWall, payWallID, postType } = this.posts(amendment).value
-    assert(this.isCreator(creator, wallet), ERR_NOT_YOUR_POST_TO_EDIT)
+    assert(this.isCreator(creator, Txn.sender), ERR_NOT_YOUR_POST_TO_EDIT)
     assert(!this.isReply(postType), ERR_IS_A_REPLY)
     assert(!this.isAmended(ref, postType), ERR_IS_ALREADY_AMENDED)
 
     // Derive deterministic post key from: creator + originalPostKey + newCID
     // This cryptographically links the edit to its original and makes same edits idempotent
-    const editKey = op.sha256(origin.bytes.concat(amendment).concat(Bytes(cid)))
+    const editKey = op.sha256(Txn.sender.bytes.concat(amendment).concat(Bytes(cid)))
 
     // Mark the original post as amended, linking to the new edit key
     this.posts(amendment).value.ref = ref.concat(Bytes('a').concat(editKey))
 
     this.validateTip(tip, TipActionPost)
-    this.createPost(editKey, origin, mbrPayment, cid, gateID, usePayWall, payWallID, PostTypeEditPost, amendment)
+    this.createPost(editKey, mbrPayment, cid, gateID, usePayWall, payWallID, PostTypeEditPost, amendment)
   }
 
   gatedReply(
@@ -804,8 +793,6 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     usePayWall: boolean,
     payWallID: uint64
   ): void {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
     const { refBytes, creator: fallback } = this.toBytes32(type, ref)
 
     // Validate timestamp is recent
@@ -813,16 +800,16 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
 
     assert(this.posts(refBytes).exists, ERR_POST_NOT_FOUND)
     const { creator, gateID: postGateID } = this.posts(refBytes).value
-    assert(gateCheck(gateTxn, this.akitaDAO.value, origin, postGateID), ERR_FAILED_GATE)
+    assert(gateCheck(gateTxn, this.akitaDAO.value, Txn.sender, postGateID), ERR_FAILED_GATE)
 
     const c = (fallback === Global.zeroAddress) ? creator : fallback
     const addedMbr = this.createEmptyPostIfNecessary(refBytes, c)
 
     // Derive deterministic reply key from: creator + timestamp + userNonce
-    const replyKey = op.sha256(origin.bytes.concat(itob(timestamp)).concat(nonce))
+    const replyKey = op.sha256(Txn.sender.bytes.concat(itob(timestamp)).concat(nonce))
 
     this.validateTip(tip, TipActionReact)
-    this.createReply(replyKey, origin, mbrPayment, addedMbr, cid, refBytes, gateID, usePayWall, payWallID, PostTypeReply, op.bzero(32) as bytes<32>)
+    this.createReply(replyKey, mbrPayment, addedMbr, cid, refBytes, gateID, usePayWall, payWallID, PostTypeReply, op.bzero(32) as bytes<32>)
   }
 
   reply(
@@ -837,8 +824,6 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     usePayWall: boolean,
     payWallID: uint64
   ): void {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
     const { refBytes, creator: fallback } = this.toBytes32(type, ref)
 
     // Validate timestamp is recent
@@ -852,10 +837,10 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     const addedMbr = this.createEmptyPostIfNecessary(refBytes, c)
 
     // Derive deterministic reply key from: creator + timestamp + userNonce
-    const replyKey = op.sha256(origin.bytes.concat(itob(timestamp)).concat(nonce))
+    const replyKey = op.sha256(Txn.sender.bytes.concat(itob(timestamp)).concat(nonce))
 
     this.validateTip(tip, TipActionReact)
-    this.createReply(replyKey, origin, mbrPayment, addedMbr, cid, refBytes, gateID, usePayWall, payWallID, PostTypeReply, op.bzero(32) as bytes<32>)
+    this.createReply(replyKey, mbrPayment, addedMbr, cid, refBytes, gateID, usePayWall, payWallID, PostTypeReply, op.bzero(32) as bytes<32>)
   }
 
   gatedEditReply(
@@ -866,16 +851,15 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     amendment: bytes<32>,
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
 
     assert(this.posts(amendment).exists, ERR_REPLY_NOT_FOUND)
     const { creator, ref, gateID, usePayWall, payWallID, postType } = this.posts(amendment).value
-    assert(this.isCreator(creator, wallet), ERR_NOT_YOUR_POST_TO_EDIT)
+    assert(this.isCreator(creator, Txn.sender), ERR_NOT_YOUR_POST_TO_EDIT)
     assert(this.isReply(postType), ERR_NOT_A_REPLY)
     assert(!this.isAmended(ref, postType), ERR_IS_ALREADY_AMENDED)
 
     // Derive deterministic edit key from: creator + originalReplyKey + newCID
-    const editKey = op.sha256(origin.bytes.concat(amendment).concat(Bytes(cid)))
+    const editKey = op.sha256(Txn.sender.bytes.concat(amendment).concat(Bytes(cid)))
 
     // Mark the original reply as amended, linking to the new edit key
     this.posts(amendment).value.ref = ref.concat(Bytes('a').concat(editKey))
@@ -883,10 +867,10 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     // Extract parent post ref from reply's ref (CID is first 36 bytes, parentRef is next 32)
     const parentPostRef = ref.slice(36, 68).toFixed({ length: 32 })
     const { gateID: ogPostGateID } = this.posts(parentPostRef).value
-    assert(gateCheck(gateTxn, this.akitaDAO.value, origin, ogPostGateID), ERR_FAILED_GATE)
+    assert(gateCheck(gateTxn, this.akitaDAO.value, Txn.sender, ogPostGateID), ERR_FAILED_GATE)
 
     this.validateTip(tip, TipActionReact)
-    this.createReply(editKey, origin, mbrPayment, 0, cid, parentPostRef, gateID, usePayWall, payWallID, PostTypeEditReply, amendment)
+    this.createReply(editKey, mbrPayment, 0, cid, parentPostRef, gateID, usePayWall, payWallID, PostTypeEditReply, amendment)
   }
 
   editReply(
@@ -895,17 +879,14 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     cid: CID,
     amendment: bytes<32>
   ): void {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
-
     assert(this.posts(amendment).exists, ERR_REPLY_NOT_FOUND)
     const { creator, ref, gateID, usePayWall, payWallID, postType } = this.posts(amendment).value
-    assert(this.isCreator(creator, wallet), ERR_NOT_YOUR_POST_TO_EDIT)
+    assert(this.isCreator(creator, Txn.sender), ERR_NOT_YOUR_POST_TO_EDIT)
     assert(this.isReply(postType), ERR_NOT_A_REPLY)
     assert(!this.isAmended(ref, postType), ERR_IS_ALREADY_AMENDED)
 
     // Derive deterministic edit key from: creator + originalReplyKey + newCID
-    const editKey = op.sha256(origin.bytes.concat(amendment).concat(Bytes(cid)))
+    const editKey = op.sha256(Txn.sender.bytes.concat(amendment).concat(Bytes(cid)))
 
     // Mark the original reply as amended, linking to the new edit key
     this.posts(amendment).value.ref = ref.concat(Bytes('a').concat(editKey))
@@ -916,7 +897,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     assert(ogPostGateID === 0, ERR_HAS_GATE)
 
     this.validateTip(tip, TipActionReact)
-    this.createReply(editKey, origin, mbrPayment, 0, cid, parentPostRef, gateID, usePayWall, payWallID, PostTypeEditReply, amendment)
+    this.createReply(editKey, mbrPayment, 0, cid, parentPostRef, gateID, usePayWall, payWallID, PostTypeEditReply, amendment)
   }
 
   vote(
@@ -926,9 +907,6 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     type: RefType,
     isUp: boolean
   ): void {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
-
     let { refBytes, creator } = this.toBytes32(type, ref)
     if (type === RefTypePost) {
       assert(this.posts(refBytes).exists, ERR_POST_NOT_FOUND);
@@ -939,7 +917,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
 
     this.validateTip(tip, TipActionReact)
     const mbrNeeded: uint64 = this.mbr(Bytes('')).votelist + addedMbr
-    this.createVote(origin, mbrPayment, mbrNeeded, refBytes, isUp)
+    this.createVote(mbrPayment, mbrNeeded, refBytes, isUp)
   }
 
   editVote(
@@ -948,10 +926,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     ref: bytes<32>,
     flip: boolean
   ): void {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
-
-    const voteListKey: VoteListKey = { user: b16(origin.bytes), ref: b16(ref) }
+    const voteListKey: VoteListKey = { user: b16(Txn.sender.bytes), ref: b16(ref) }
     assert(this.votelist(voteListKey).exists, ERR_HAVENT_VOTED)
 
     const { impact, isUp } = this.votelist(voteListKey).value
@@ -967,7 +942,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
       // refund user
       itxn
         .payment({
-          receiver: origin,
+          receiver: Txn.sender,
           amount: this.mbr(Bytes('')).votelist
         })
         .submit()
@@ -977,7 +952,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
 
     // if the user wants to flip their vote, vote again but the opposite way
     this.validateTip(tip, TipActionReact)
-    this.createVote(origin, mbrPayment, 0, ref, !isUp)
+    this.createVote(mbrPayment, 0, ref, !isUp)
   }
 
   gatedReact(
@@ -988,19 +963,17 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     type: RefType,
     NFT: uint64
   ): void {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
     const { refBytes, creator: fallback } = this.toBytes32(type, ref)
 
     assert(this.posts(refBytes).exists, ERR_POST_NOT_FOUND)
     const { creator, gateID } = this.posts(refBytes).value
-    assert(gateCheck(gateTxn, this.akitaDAO.value, origin, gateID), ERR_FAILED_GATE)
+    assert(gateCheck(gateTxn, this.akitaDAO.value, Txn.sender, gateID), ERR_FAILED_GATE)
 
     const c = (fallback === Global.zeroAddress) ? creator : fallback
     const addedMbr = this.createEmptyPostIfNecessary(refBytes, c)
 
     this.validateTip(tip, TipActionReact)
-    this.createReaction(origin, mbrPayment, addedMbr, refBytes, NFT)
+    this.createReaction(mbrPayment, addedMbr, refBytes, NFT)
   }
 
   react(
@@ -1010,8 +983,6 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     type: RefType,
     NFT: uint64
   ): void {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
     const { refBytes, creator: fallback } = this.toBytes32(type, ref)
 
     assert(this.posts(refBytes).exists, ERR_POST_NOT_FOUND)
@@ -1022,19 +993,16 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     const addedMbr = this.createEmptyPostIfNecessary(refBytes, c)
 
     this.validateTip(tip, TipActionReact)
-    this.createReaction(origin, mbrPayment, addedMbr, refBytes, NFT)
+    this.createReaction(mbrPayment, addedMbr, refBytes, NFT)
   }
 
   deleteReaction(ref: bytes<32>, NFT: uint64): void {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
-
-    assert(!this.isBanned(origin), ERR_BANNED)
+    assert(!this.isBanned(Txn.sender), ERR_BANNED)
     assert(this.posts(ref).exists, ERR_POST_NOT_FOUND)
     const { creator } = this.posts(ref).value
-    assert(!this.isBlocked(creator, origin), ERR_BLOCKED)
+    assert(!this.isBlocked(creator, Txn.sender), ERR_BLOCKED)
 
-    const reactionListKey: ReactionListKey = { user: b16(origin.bytes), ref: b16(ref), NFT }
+    const reactionListKey: ReactionListKey = { user: b16(Txn.sender.bytes), ref: b16(ref), NFT }
 
     assert(this.reactionlist(reactionListKey).exists, ERR_ALREADY_REACTED)
 
@@ -1043,7 +1011,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
 
     itxn
       .payment({
-        receiver: origin,
+        receiver: Txn.sender,
         amount: this.mbr(Bytes('')).reactionlist,
 
       })
@@ -1066,10 +1034,9 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     akitaNFT: uint64,
   ): uint64 {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, user)
-    const origin = originOr(wallet, user)
     const userIsSender = (Txn.sender === user)
 
-    assert(!this.meta(origin).exists, ERR_META_ALREADY_EXISTS)
+    assert(!this.meta(Txn.sender).exists, ERR_META_ALREADY_EXISTS)
 
     assertMatch(
       mbrPayment,
@@ -1090,12 +1057,12 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
       .submit()
 
     if (automated) {
-      this.createDefaultMeta(origin, userIsSender, wallet.id, true)
+      this.createDefaultMeta(Txn.sender, userIsSender, wallet.id, true)
 
       abiCall<typeof AkitaSocialImpact.prototype.cacheMeta>({
         appId: impact,
         args: [
-          origin,
+          Txn.sender,
           0,
           0,
           0
@@ -1105,19 +1072,19 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
       return 0
     }
 
-    this.createDefaultMeta(origin, userIsSender, wallet.id, false)
+    this.createDefaultMeta(Txn.sender, userIsSender, wallet.id, false)
 
     const impactScore = abiCall<typeof AkitaSocialImpact.prototype.cacheMeta>({
       appId: getAkitaSocialAppList(this.akitaDAO.value).impact,
       args: [
-        origin,
+        Txn.sender,
         subscriptionIndex,
         NFD,
         akitaNFT
       ]
     }).returnValue
 
-    return impactScore + this.getSocialImpactScore(origin)
+    return impactScore + this.getSocialImpactScore(Txn.sender)
   }
 
   createPayWall(mbrPayment: gtxn.PaymentTxn, payWall: ViewPayWallValue): uint64 {
@@ -1147,21 +1114,18 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     akitaNFT: uint64,
     defaultPayWallID: uint64
   ): void {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
+    assert(this.meta(Txn.sender).exists, ERR_META_DOESNT_EXIST)
 
-    assert(this.meta(origin).exists, ERR_META_DOESNT_EXIST)
-
-    this.meta(origin).value.followGateID = followGateID
-    this.meta(origin).value.addressGateID = addressGateID
+    this.meta(Txn.sender).value.followGateID = followGateID
+    this.meta(Txn.sender).value.addressGateID = addressGateID
     assert(this.paywall(defaultPayWallID).exists, 'ERR:NOPAYWALL')
-    this.meta(origin).value.defaultPayWallID = defaultPayWallID
+    this.meta(Txn.sender).value.defaultPayWallID = defaultPayWallID
 
     const impact = getAkitaSocialAppList(this.akitaDAO.value).impact
     abiCall<typeof AkitaSocialImpact.prototype.cacheMeta>({
       appId: impact,
       args: [
-        origin,
+        Txn.sender,
         subscriptionIndex,
         NFD,
         akitaNFT
@@ -1213,24 +1177,18 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
   }
 
   @abimethod({ readonly: true })
-  getVote(ref: bytes<32>): VoteListValue {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
-
-    const voteListKey: VoteListKey = { user: b16(origin.bytes), ref: b16(ref) }
+  getVote(account: Account, ref: bytes<32>): VoteListValue {
+    const voteListKey: VoteListKey = { user: b16(account.bytes), ref: b16(ref) }
     assert(this.votelist(voteListKey).exists, ERR_HAVENT_VOTED)
 
     return this.votelist(voteListKey).value
   }
 
   @abimethod({ readonly: true })
-  getVotes(refs: bytes<32>[]): VoteListValue[] {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
-
+  getVotes(keys: { user: Account, ref: bytes<32> }[]): VoteListValue[] {
     const votes: VoteListValue[] = []
-    for (const ref of refs) {
-      const voteListKey: VoteListKey = { user: b16(origin.bytes), ref: b16(ref) }
+    for (const { user, ref } of clone(keys)) {
+      const voteListKey: VoteListKey = { user: b16(user.bytes), ref: b16(ref) }
       if (this.votelist(voteListKey).exists) {
         votes.push(this.votelist(voteListKey).value)
       } else {

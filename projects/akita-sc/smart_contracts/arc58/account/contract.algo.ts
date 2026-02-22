@@ -907,7 +907,7 @@ export class AbstractedAccount extends Contract {
 
       itxn
         .payment({
-          sender: this.controlledAddress.value,
+          sender: this.spendingAddress.value,
           receiver: Txn.sender,
           amount: reimbursement,
           rekeyTo: pluginApp.address,

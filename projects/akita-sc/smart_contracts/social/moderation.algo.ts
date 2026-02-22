@@ -3,7 +3,7 @@ import { abiCall, abimethod } from '@algorandfoundation/algorand-typescript/arc4
 import { ERR_NOT_AKITA_DAO } from '../errors'
 import { UpgradeableAkitaBaseContract } from '../utils/base-contracts/base'
 import { ERR_INVALID_PAYMENT } from '../utils/errors'
-import { getAkitaSocialAppList, getWalletIDUsingAkitaDAO, originOrTxnSender } from '../utils/functions'
+import { getAkitaSocialAppList } from '../utils/functions'
 import { CID } from '../utils/types/base'
 import { ActionsMBR, AkitaSocialBoxPrefixActions, AkitaSocialBoxPrefixBanned, AkitaSocialBoxPrefixModerators, BannedMBR, ModeratorsMBR } from './constants'
 import { ERR_ALREADY_A_MODERATOR, ERR_ALREADY_AN_ACTION, ERR_ALREADY_BANNED, ERR_NOT_A_MODERATOR } from './errors'
@@ -64,10 +64,7 @@ export class AkitaSocialModeration extends UpgradeableAkitaBaseContract {
   }
 
   ban(mbrPayment: gtxn.PaymentTxn, address: Account, expiration: uint64): void {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
-
-    assert(this.moderators(origin).exists, ERR_NOT_A_MODERATOR)
+    assert(this.moderators(Txn.sender).exists, ERR_NOT_A_MODERATOR)
     assert(!this.banned(address).exists, ERR_ALREADY_BANNED)
 
     assertMatch(
@@ -83,25 +80,19 @@ export class AkitaSocialModeration extends UpgradeableAkitaBaseContract {
   }
 
   unban(address: Account): void {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
-
-    assert(this.moderators(origin).exists, ERR_NOT_A_MODERATOR)
+    assert(this.moderators(Txn.sender).exists, ERR_NOT_A_MODERATOR)
     this.banned(address).delete()
 
     itxn
       .payment({
-        receiver: origin,
+        receiver: Txn.sender,
         amount: BannedMBR
       })
       .submit()
   }
 
   flagPost(ref: bytes<32>): void {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
-
-    assert(this.moderators(origin).exists, ERR_NOT_A_MODERATOR)
+    assert(this.moderators(Txn.sender).exists, ERR_NOT_A_MODERATOR)
 
     const { social } = getAkitaSocialAppList(this.akitaDAO.value)
     abiCall<typeof AkitaSocial.prototype.setPostFlag>({
@@ -111,10 +102,7 @@ export class AkitaSocialModeration extends UpgradeableAkitaBaseContract {
   }
 
   unflagPost(ref: bytes<32>): void {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-    const origin = originOrTxnSender(wallet)
-
-    assert(this.moderators(origin).exists, ERR_NOT_A_MODERATOR)
+    assert(this.moderators(Txn.sender).exists, ERR_NOT_A_MODERATOR)
 
     const { social } = getAkitaSocialAppList(this.akitaDAO.value)
     abiCall<typeof AkitaSocial.prototype.setPostFlag>({

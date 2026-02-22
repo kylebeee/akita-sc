@@ -4,7 +4,7 @@
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
     intcblock 0 1 2 8 400 18900 27700
-    bytecblock "controlled_address" "" "e" "p" "last_user_interaction" 0x151f7c75 "last_change" 0x0000 0x00 "x" 0x002a "spending_address" 0x0002 "admin" 0x01 "n" "d" 0x000a "a" "rekey_index" "akita_dao" "domain" "escrow_factory" "revocation" 0x0001 "current_plugin" 0x6cc3f606 "version" "nickname" "factory_app" 0x002c
+    bytecblock "controlled_address" "" "e" "p" "last_user_interaction" 0x151f7c75 "last_change" 0x0000 0x00 "x" "spending_address" 0x002a 0x0002 "admin" 0x01 "n" "d" 0x000a "a" "rekey_index" "akita_dao" "domain" "escrow_factory" "revocation" 0x0001 "current_plugin" 0x6cc3f606 "version" "nickname" "factory_app" 0x002c
     txn ApplicationID
     bnz main_after_if_else@2
     // smart_contracts/arc58/account/contract.algo.ts:150
@@ -472,7 +472,7 @@ create_ternary_merge@4:
     app_global_put
     // smart_contracts/arc58/account/contract.algo.ts:146
     // spendingAddress = GlobalState<Account>({ key: AbstractAccountGlobalStateKeysSpendingAddress })
-    bytec 11 // "spending_address"
+    bytec 10 // "spending_address"
     // smart_contracts/arc58/account/contract.algo.ts:651
     // this.spendingAddress.value = Global.zeroAddress;
     global ZeroAddress
@@ -1134,7 +1134,7 @@ arc58_verifyAuthAddress:
     intc_0 // 0
     // smart_contracts/arc58/account/contract.algo.ts:146
     // spendingAddress = GlobalState<Account>({ key: AbstractAccountGlobalStateKeysSpendingAddress })
-    bytec 11 // "spending_address"
+    bytec 10 // "spending_address"
     // smart_contracts/arc58/account/contract.algo.ts:815
     // assert(this.spendingAddress.value.authAddress === this.getAuthAddress());
     app_global_get_ex
@@ -1187,7 +1187,7 @@ arc58_verifyAuthAddress_ternary_merge@5:
     assert
     // smart_contracts/arc58/account/contract.algo.ts:146
     // spendingAddress = GlobalState<Account>({ key: AbstractAccountGlobalStateKeysSpendingAddress })
-    bytec 11 // "spending_address"
+    bytec 10 // "spending_address"
     // smart_contracts/arc58/account/contract.algo.ts:816
     // this.spendingAddress.value = Global.zeroAddress
     global ZeroAddress
@@ -1833,7 +1833,7 @@ arc58_addPlugin_after_if_else@11:
     swap
     concat
     swap
-    bytec 10 // 0x002a
+    bytec 11 // 0x002a
     concat
     swap
     concat
@@ -2289,7 +2289,7 @@ arc58_removePlugin_bool_merge@5:
     swap
     concat
     swap
-    bytec 10 // 0x002a
+    bytec 11 // 0x002a
     concat
     swap
     concat
@@ -2594,7 +2594,7 @@ arc58_addNamedPlugin_after_if_else@11:
     swap
     concat
     swap
-    bytec 10 // 0x002a
+    bytec 11 // 0x002a
     concat
     swap
     concat
@@ -3327,7 +3327,7 @@ arc58_pluginReclaim:
     dig 2
     concat
     swap
-    bytec 10 // 0x002a
+    bytec 11 // 0x002a
     concat
     swap
     concat
@@ -3569,7 +3569,7 @@ arc58_pluginOptInEscrow:
     dig 2
     concat
     swap
-    bytec 10 // 0x002a
+    bytec 11 // 0x002a
     concat
     swap
     concat
@@ -5812,7 +5812,7 @@ pluginCallAllowed:
     frame_dig -2
     concat
     swap
-    bytec 10 // 0x002a
+    bytec 11 // 0x002a
     concat
     swap
     concat
@@ -6589,7 +6589,7 @@ smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_rekeyToP
     dup
     frame_bury 1
     swap
-    bytec 10 // 0x002a
+    bytec 11 // 0x002a
     concat
     swap
     concat
@@ -6633,7 +6633,7 @@ smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_rekeyToP
     assert // application exists
     // smart_contracts/arc58/account/contract.algo.ts:146
     // spendingAddress = GlobalState<Account>({ key: AbstractAccountGlobalStateKeysSpendingAddress })
-    bytec 11 // "spending_address"
+    bytec 10 // "spending_address"
     // smart_contracts/arc58/account/contract.algo.ts:894
     // this.spendingAddress.value = spendingApp.address
     swap
@@ -7327,7 +7327,7 @@ smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_rekeyToP
     // smart_contracts/arc58/account/contract.algo.ts:908-916
     // itxn
     //   .payment({
-    //     sender: this.controlledAddress.value,
+    //     sender: this.spendingAddress.value,
     //     receiver: Txn.sender,
     //     amount: reimbursement,
     //     rekeyTo: pluginApp.address,
@@ -7336,13 +7336,13 @@ smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_rekeyToP
     //   .submit()
     itxn_begin
     // smart_contracts/arc58/account/contract.algo.ts:910
-    // sender: this.controlledAddress.value,
+    // sender: this.spendingAddress.value,
     intc_0 // 0
-    // smart_contracts/arc58/account/contract.algo.ts:132
-    // controlledAddress = GlobalState<Account>({ key: AbstractAccountGlobalStateKeysControlledAddress });
-    bytec_0 // "controlled_address"
+    // smart_contracts/arc58/account/contract.algo.ts:146
+    // spendingAddress = GlobalState<Account>({ key: AbstractAccountGlobalStateKeysSpendingAddress })
+    bytec 10 // "spending_address"
     // smart_contracts/arc58/account/contract.algo.ts:910
-    // sender: this.controlledAddress.value,
+    // sender: this.spendingAddress.value,
     app_global_get_ex
     assert // check GlobalState exists
     // smart_contracts/arc58/account/contract.algo.ts:911
@@ -7365,7 +7365,7 @@ smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_rekeyToP
     // smart_contracts/arc58/account/contract.algo.ts:908-915
     // itxn
     //   .payment({
-    //     sender: this.controlledAddress.value,
+    //     sender: this.spendingAddress.value,
     //     receiver: Txn.sender,
     //     amount: reimbursement,
     //     rekeyTo: pluginApp.address,
@@ -7378,7 +7378,7 @@ smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_rekeyToP
     // smart_contracts/arc58/account/contract.algo.ts:908-916
     // itxn
     //   .payment({
-    //     sender: this.controlledAddress.value,
+    //     sender: this.spendingAddress.value,
     //     receiver: Txn.sender,
     //     amount: reimbursement,
     //     rekeyTo: pluginApp.address,
@@ -7439,7 +7439,7 @@ smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_rekeyToP
     intc_0 // 0
     // smart_contracts/arc58/account/contract.algo.ts:146
     // spendingAddress = GlobalState<Account>({ key: AbstractAccountGlobalStateKeysSpendingAddress })
-    bytec 11 // "spending_address"
+    bytec 10 // "spending_address"
     // smart_contracts/arc58/account/contract.algo.ts:920
     // sender: this.spendingAddress.value,
     app_global_get_ex
@@ -7779,7 +7779,7 @@ smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_rekeyToP
     assert // check GlobalState exists
     // smart_contracts/arc58/account/contract.algo.ts:146
     // spendingAddress = GlobalState<Account>({ key: AbstractAccountGlobalStateKeysSpendingAddress })
-    bytec 11 // "spending_address"
+    bytec 10 // "spending_address"
     // smart_contracts/arc58/account/contract.algo.ts:897
     // this.spendingAddress.value = this.controlledAddress.value
     swap

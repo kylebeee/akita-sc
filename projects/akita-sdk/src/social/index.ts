@@ -660,9 +660,9 @@ export class SocialSDK {
   /**
    * Get vote data for a post reference (returns impact and direction of vote)
    */
-  async getVote({ sender, signer, ref }: MaybeSigner & { ref: PostRef }): Promise<VoteListValue> {
+  async getVote({ sender, signer, account, ref }: MaybeSigner & { account: string; ref: PostRef }): Promise<VoteListValue> {
     const sendParams = this.getSendParams({ sender, signer });
-    return await this.socialClient.getVote({ ...sendParams, args: { ref } });
+    return await this.socialClient.getVote({ ...sendParams, args: { account, ref } });
   }
 
   /**
@@ -671,9 +671,9 @@ export class SocialSDK {
    * For posts the user hasn't voted on, returns { impact: 0n, isUp: false }
    * This method is more efficient than calling getVote multiple times and won't error on missing votes
    */
-  async getVotes({ sender, signer, refs }: MaybeSigner & { refs: PostRef[] }): Promise<VoteListValue[]> {
+  async getVotes({ sender, signer, keys }: MaybeSigner & { keys: { account: string; ref: PostRef }[] }): Promise<VoteListValue[]> {
     const sendParams = this.getSendParams({ sender, signer });
-    const result = await this.socialClient.getVotes({ ...sendParams, args: { refs } });
+    const result = await this.socialClient.getVotes({ ...sendParams, args: { keys: keys.map(({ account, ref }) => [account, ref]) } });
     // Transform tuples [impact, isUp] to VoteListValue objects
     return result.map(([impact, isUp]) => ({ impact, isUp }));
   }
